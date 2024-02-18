@@ -10,6 +10,7 @@ import (
 	"current/common"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/mmcdole/gofeed"
 )
 
 type API struct {
@@ -22,6 +23,120 @@ func NewAPI(c *http.Client) *API {
 	}
 }
 
+// GetFeed attempts to retrieve a valid RSS/Atom/JSON feed
+// from the given URL string.
+//
+// The URL string must include a scheme and must point to
+// a resource that returns a valid feed. (ie: https:whatever.com/feed).
+//
+// GetFeed uses github.com/mmcdole/gofeed to make the request
+// and parse the response body.
+func (api *API) GetFeed(feedUrl string) (*gofeed.Feed, error) {
+	feed := &gofeed.Feed{}
+	fp := gofeed.NewParser()
+
+	feed, err := fp.ParseURL(feedUrl)
+
+	// fmt.Println("feed type: ", reflect.TypeOf(feed).String())
+
+	if err != nil {
+		fmt.Println("feed parsing err: ", err)
+		return feed, err
+	}
+
+	return feed, nil
+}
+
+// GuessFeedLinks attempts to guess the endpoint
+// where an RSS/Atom/JSON feed lives given a valid
+// URL (ie: https://siteurl.com).
+// Note, it should be called only after a full, valid
+// site URL has been determined and after api.FindFeedLinks
+// has failed
+func (api *API) GuessFeedLinks(siteUrl string) ([]string, error) {
+	confirmed := []string{}
+	guesses := []string{}
+
+	// for each common feed path
+	// attempt to create a valid url
+	// if valid, append to potentialGuesses
+	for _, path := range common.CommonFeedPaths {
+		u, err := url.ParseRequestURI(siteUrl + path)
+		if err != nil {
+			return confirmed, err
+		}
+		guesses = append(guesses, u.String())
+	}
+
+	// For each guess, append one of the common feed
+	// extensions, as long as the guess does not already
+	// end with "/" or one of the common extensions
+	// for _, guess := range guesses {
+	// 	for _, ext := range common.CommonFeedExtensions {
+	// 		if !strings.HasSuffix(guess, "/") && !strings.HasSuffix(guess, ext) {
+	// 			withExt := guess + ext
+	// 			guesses = append(guesses, withExt)
+	// 		}
+	// 	}
+	// }
+
+	// Create len(guesses) channels
+	// and make requests concurrently.
+	// If we receive httpStatusOK &&
+	// header.Content-Type is in ValidContentTypes
+	// we probably have a match
+	type Result struct {
+		Res   *http.Response
+		Error error
+	}
+	ch := make(chan Result, len(guesses))
+
+	for _, guess := range guesses {
+		u := guess
+		go func() {
+			res, err := api.Client.Get(u)
+			if err != nil {
+				ch <- Result{
+					Res:   &http.Response{},
+					Error: err,
+				}
+			}
+
+			if res.StatusCode != http.StatusOK {
+				ch <- Result{
+					Res:   res,
+					Error: fmt.Errorf("bad result"),
+				}
+			} else {
+				ch <- Result{
+					Res:   res,
+					Error: nil,
+				}
+			}
+		}()
+	}
+
+	for _, guess := range guesses {
+		result := <-ch
+		if result.Error == nil {
+			res := result.Res
+
+			if res.Body != nil {
+				defer res.Body.Close()
+				contentType := res.Header.Get("Content-Type")
+				if slices.Contains(common.ValidDocContentTypes, common.DocContentType(contentType)) {
+					confirmed = append(confirmed, guess)
+				}
+			}
+		}
+	}
+	return confirmed, nil
+}
+
+// FindFeedLinks searches the document at a given URL for
+// feed links. The scheme ("https:") of the URL can be omitted
+// and this function will try to create a full url.URL by prepending
+// "https:".
 func (api *API) FindFeedLinks(siteUrl string) ([]string, error) {
 	links := []string{}
 	safeUrl, err := util.MakeUrl(siteUrl)
@@ -59,7 +174,7 @@ func (api *API) FindFeedLinks(siteUrl string) ([]string, error) {
 			return
 		}
 
-		if !slices.Contains(common.ValidFeedLinkTypes, linkType) {
+		if !slices.Contains(common.ValidContentTypes, common.ContentType(linkType)) {
 			return
 		}
 
