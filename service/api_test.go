@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestAPI_DiscoverFeedLink(t *testing.T) {
+func TestAPI_FindFeedLinks(t *testing.T) {
 	// httptest.Server will automatically select a
 	// port, but we need to send absolute urls
 	// so, we define a listener
