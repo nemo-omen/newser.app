@@ -1,0 +1,15 @@
+package search
+
+import (
+	"current/view/layout"
+)
+
+templ Index() {
+	@layout.Base() {
+		<h1>Search</h1>
+		<form action="/search" method="POST">
+			<label for="searchurl">Search for a Feed</label>
+			<input type="text" name="searchurl" id="search-url"/>
+		</form>
+	}
+}

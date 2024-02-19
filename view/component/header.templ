@@ -1,0 +1,24 @@
+package component
+
+func getCurrentPath(ctx context.Context) string {
+	currentPath := ctx.Value("currentPath")
+	if currentPath != nil {
+		return ctx.Value("currentPath").(string)
+	}
+	return ""
+}
+
+templ Header() {
+	<header>
+		<a href="/" id="main-site-link">
+			Current
+		</a>
+		<nav>
+			<ul>
+				<li><a href="/">Home</a></li>
+				<li><a href="/search">Search</a></li>
+			</ul>
+		</nav>
+		{ getCurrentPath(ctx) }
+	</header>
+}

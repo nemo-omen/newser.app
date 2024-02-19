@@ -1,40 +1,29 @@
 package main
 
 import (
-	"current/service"
-	"fmt"
-	"net/http"
-	"os"
+	"current/custommiddleware"
+	"current/handler"
 
-	"github.com/mmcdole/gofeed"
+	"github.com/labstack/echo/v4"
+)
+
+const (
+	port = ":4321"
 )
 
 func main() {
-	feeds := []*gofeed.Feed{}
-	api := service.NewAPI(http.DefaultClient)
-	links, err := api.FindFeedLinks("jeffcaldwell.is")
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	app := echo.New()
+	app.Use(custommiddleware.NewMiddlewareContextValue)
+	app.Use(custommiddleware.CurrentPath)
 
-	if len(links) == 0 {
-		links, err = api.GuessFeedLinks("https://jeffcaldwell.is")
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-	}
+	homeHandler := handler.HomeHandler{}
+	searchHandler := handler.SearchHandler{}
+	wsHandler := handler.WsHandler{}
 
-	for _, link := range links {
-		fmt.Println("feed link: ", link)
-		feed, err := api.GetFeed(link)
-		if err == nil {
-			feeds = append(feeds, feed)
-		}
-	}
+	app.GET("/", homeHandler.HandleGetIndex)
+	app.GET("/search", searchHandler.HandleGetIndex)
+	app.POST("/search", searchHandler.HandlePostSearch)
+	app.GET("/livereload", wsHandler.HandleWsConnect)
 
-	for _, feed := range feeds {
-		fmt.Println("feed title: ", feed.Title)
-	}
+	app.Logger.Fatal(app.Start(port))
 }
