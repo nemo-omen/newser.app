@@ -243,3 +243,61 @@ func TestAPI_GetFeed(t *testing.T) {
 		})
 	}
 }
+
+func TestAPI_CheckSite(t *testing.T) {
+	l, err := net.Listen("tcp", "127.0.0.1:6666")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// and initialize the server without starting it
+	ts := httptest.NewUnstartedServer(http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path == "/bad" {
+				http.Error(w, "very very bad", http.StatusBadRequest)
+			}
+			if r.URL.Path == "/good" {
+				w.Write([]byte("okay, nice"))
+			}
+		},
+	))
+
+	// make sure default listener is closed
+	ts.Listener.Close()
+	// and assign our listener to testserver
+	ts.Listener = l
+	ts.Start()
+
+	defer ts.Close()
+
+	api := NewAPI(ts.Client())
+	baseUrl := "http://127.0.0.1:6666"
+
+	type args struct {
+		feedUrl string
+	}
+
+	tests := []struct {
+		name    string
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{"Check valid url", args{feedUrl: baseUrl + "/good"}, http.StatusOK, false},
+		{"Check invalid url", args{feedUrl: baseUrl + "/bad"}, http.StatusBadRequest, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			res, err := api.Client.Head(tt.args.feedUrl)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("API.CheckSite error= %v, wantErr= %v", err, tt.wantErr)
+				return
+			}
+			actual := res.StatusCode
+			if actual != tt.want {
+				t.Errorf("expected StatusCode %v, got %v", tt.want, actual)
+			}
+		})
+	}
+}

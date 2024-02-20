@@ -17,6 +17,7 @@ func main() {
 	app.Static("/public", "public")
 	app.Use(custommiddleware.NewMiddlewareContextValue)
 	app.Use(custommiddleware.CurrentPath)
+	app.Use(custommiddleware.HTMX)
 	app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:4321"},
 	}))

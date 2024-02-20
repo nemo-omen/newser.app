@@ -1,7 +1,6 @@
 package service
 
 import (
-	"current/util"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -23,6 +22,18 @@ func NewAPI(c *http.Client) *API {
 	}
 }
 
+// CheckSite tests whether a given url leads to
+// a valid site by sending a HEAD request and
+// returning whether the response StatusCode == 200
+// If the request results in an error, the result is false.
+func (api *API) CheckSite(siteUrl string) bool {
+	res, err := api.Client.Head(siteUrl)
+	if err != nil || res.StatusCode != http.StatusOK {
+		return false
+	}
+	return true
+}
+
 // GetFeed attempts to retrieve a valid RSS/Atom/JSON feed
 // from the given URL string.
 //
@@ -36,8 +47,6 @@ func (api *API) GetFeed(feedUrl string) (*gofeed.Feed, error) {
 	fp := gofeed.NewParser()
 
 	feed, err := fp.ParseURL(feedUrl)
-
-	// fmt.Println("feed type: ", reflect.TypeOf(feed).String())
 
 	if err != nil {
 		fmt.Println("feed parsing err: ", err)
@@ -90,15 +99,9 @@ func (api *API) GetFeedsConcurrent(feedUrls []string) ([]*gofeed.Feed, error) {
 // URL (ie: https://siteurl.com).
 // Note, it should be called only after after api.FindFeedLinks
 // has failed
-func (api *API) GuessFeedLinks(searchUrl string) ([]string, error) {
+func (api *API) GuessFeedLinks(siteUrl string) ([]string, error) {
 	confirmed := []string{}
 	guesses := []string{}
-
-	validURL, err := util.MakeUrl(searchUrl)
-	if err != nil {
-		return confirmed, err
-	}
-	siteUrl := validURL.String()
 
 	// for each common feed path
 	// attempt to create a valid url
@@ -177,17 +180,17 @@ func (api *API) GuessFeedLinks(searchUrl string) ([]string, error) {
 }
 
 // FindFeedLinks searches the document at a given URL for
-// feed links. The scheme ("https:") of the URL can be omitted
-// and this function will try to create a full url.URL by prepending
-// "https:".
+// feed links.
+// siteUrl should be a valid URL (ie: https://whatever.com)
 func (api *API) FindFeedLinks(siteUrl string) ([]string, error) {
 	links := []string{}
-	safeUrl, err := util.MakeUrl(siteUrl)
+
+	fullURL, err := url.ParseRequestURI(siteUrl)
 	if err != nil {
 		return links, err
 	}
 
-	res, err := api.Client.Get(safeUrl.String())
+	res, err := api.Client.Get(siteUrl)
 	if err != nil {
 		return links, err
 	}
@@ -232,8 +235,8 @@ func (api *API) FindFeedLinks(siteUrl string) ([]string, error) {
 		}
 
 		if !testUrl.IsAbs() {
-			testUrl.Scheme = safeUrl.Scheme
-			testUrl.Host = safeUrl.Host
+			testUrl.Scheme = fullURL.Scheme
+			testUrl.Host = fullURL.Host
 			links = append(links, testUrl.String())
 		} else {
 			links = append(links, href)
