@@ -47,15 +47,58 @@ func (api *API) GetFeed(feedUrl string) (*gofeed.Feed, error) {
 	return feed, nil
 }
 
+func (api *API) GetFeedsConcurrent(feedUrls []string) ([]*gofeed.Feed, error) {
+	feeds := []*gofeed.Feed{}
+	fp := gofeed.NewParser()
+	type Result struct {
+		Res   *gofeed.Feed
+		Error error
+	}
+
+	ch := make(chan Result, len(feedUrls))
+
+	for _, link := range feedUrls {
+		u := link
+		go func() {
+			res, err := fp.ParseURL(u)
+			if err != nil {
+				ch <- Result{
+					Res:   &gofeed.Feed{},
+					Error: err,
+				}
+			} else {
+				ch <- Result{
+					Res:   res,
+					Error: nil,
+				}
+			}
+		}()
+	}
+
+	for i := 0; i < len(feedUrls); i++ {
+		result := <-ch
+		if result.Error == nil {
+			feeds = append(feeds, result.Res)
+		}
+	}
+
+	return feeds, nil
+}
+
 // GuessFeedLinks attempts to guess the endpoint
 // where an RSS/Atom/JSON feed lives given a valid
 // URL (ie: https://siteurl.com).
-// Note, it should be called only after a full, valid
-// site URL has been determined and after api.FindFeedLinks
+// Note, it should be called only after after api.FindFeedLinks
 // has failed
-func (api *API) GuessFeedLinks(siteUrl string) ([]string, error) {
+func (api *API) GuessFeedLinks(searchUrl string) ([]string, error) {
 	confirmed := []string{}
 	guesses := []string{}
+
+	validURL, err := util.MakeUrl(searchUrl)
+	if err != nil {
+		return confirmed, err
+	}
+	siteUrl := validURL.String()
 
 	// for each common feed path
 	// attempt to create a valid url

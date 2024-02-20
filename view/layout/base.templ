@@ -8,17 +8,9 @@ templ Base() {
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<script src="/public/script/reload.js" type="module"></script>
 			<title>Current</title>
 		</head>
-		<script>
-      conn = new WebSocket("ws://" + document.location.host + "/livereload");  
-      conn.onclose = function (evt) {  
-        console.log("Connection Closed")  
-        setTimeout(function () {  
-          location.reload();
-        }, 2000);
-      };
-    </script>
 		<body>
 			@component.Header()
 			{ children... }

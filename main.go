@@ -5,6 +5,7 @@ import (
 	"current/handler"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 const (
@@ -13,8 +14,12 @@ const (
 
 func main() {
 	app := echo.New()
+	app.Static("/public", "public")
 	app.Use(custommiddleware.NewMiddlewareContextValue)
 	app.Use(custommiddleware.CurrentPath)
+	app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:4321"},
+	}))
 
 	homeHandler := handler.HomeHandler{}
 	searchHandler := handler.SearchHandler{}
