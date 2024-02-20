@@ -1,6 +1,8 @@
 package custommiddleware
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/labstack/echo/v4"
+)
 
 func HTMX(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {

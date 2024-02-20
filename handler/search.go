@@ -32,35 +32,28 @@ func (h SearchHandler) HandlePostSearch(c echo.Context) error {
 	api := service.NewAPI(http.DefaultClient)
 	formData := c.FormValue("searchurl")
 	feeds := []*gofeed.Feed{}
-	isHX := c.Get("isHX").(bool)
-	// Make sure we have a valid url
+	fmt.Println(c.Get("isHx"))
+	isHx := c.Get("isHx").(bool)
 	validUrl, err := util.MakeUrl(formData)
 	searchUrl := validUrl.String()
 
 	if err != nil {
-		return render(
-			c,
-			search.Index(
-				view.SearchPageProps{
-					Error: fmt.Sprintf("Not a valid url, try %v.com?", formData),
-					Feeds: feeds,
-				},
-			),
-		)
+		// return render(
+		// 	c,
+		// 	search.Index(
+		// 		view.SearchPageProps{
+		// 			Error: fmt.Sprintf("Not a valid url, try %v.com?", formData),
+		// 			Feeds: feeds,
+		// 		},
+		// 	),
+		// )
+		return render(c, component.Err(fmt.Sprintf("Not a valid url, try %v.com?", formData)))
 	}
 
 	// make sure a site exists at validUrl,
 	isSite := api.CheckSite(searchUrl)
 	if !isSite {
-		return render(
-			c,
-			search.Index(
-				view.SearchPageProps{
-					Error: fmt.Sprintf("Could not find a site at %v", searchUrl),
-					Feeds: feeds,
-				},
-			),
-		)
+		return render(c, component.Err(fmt.Sprintf("Could not find a site at %v", searchUrl)))
 	}
 
 	// we should safely be able to start checking
@@ -82,15 +75,7 @@ func (h SearchHandler) HandlePostSearch(c echo.Context) error {
 	if len(searchLinks) < 1 {
 		guessedLinks, err := api.GuessFeedLinks(searchUrl)
 		if err != nil {
-			return render(
-				c,
-				search.Index(
-					view.SearchPageProps{
-						Error: "Could not find links",
-						Feeds: feeds,
-					},
-				),
-			)
+			return render(c, component.Err(fmt.Sprintf("Couldn't find any feeds at %v", formData)))
 		}
 		searchLinks = append(searchLinks, guessedLinks...)
 	}
@@ -100,15 +85,12 @@ func (h SearchHandler) HandlePostSearch(c echo.Context) error {
 	if err != nil {
 		return render(
 			c,
-			search.Index(view.SearchPageProps{
-				Error: fmt.Sprintf("could not find any feeds at %v", formData),
-				Feeds: feeds,
-			}),
+			component.Err(fmt.Sprintf("could not find any feeds at %v", formData)),
 		)
 	}
 	feeds = append(feeds, feedsResult...)
 
-	if isHX {
+	if isHx {
 		return render(
 			c,
 			component.SearchResult(feeds),

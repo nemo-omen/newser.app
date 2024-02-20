@@ -8,16 +8,22 @@ import (
 
 templ Index(props view.SearchPageProps) {
 	@layout.Base() {
-		<h1>Search</h1>
-		<form action="/search" method="POST">
-			<fieldset>
-				<label for="searchurl">Search for a Feed</label>
-				<input type="text" name="searchurl" id="search-url"/>
-			</fieldset>
-			if props.Error != "" {
-				<span class="error">{ props.Error }</span>
-			}
-		</form>
-		@component.SearchResult(props.Feeds)
+		<main>
+			<h1>Search</h1>
+			<form
+				action="/search"
+				method="POST"
+				hx-post="/search"
+				hx-target="#search-results"
+				xh-swap="innerHTML"
+			>
+				<fieldset>
+					<label for="searchurl">Search for a Feed</label>
+					<input type="text" name="searchurl" id="search-url"/>
+				</fieldset>
+			</form>
+			<section id="search-results"></section>
+			@component.SearchResult(props.Feeds)
+		</main>
 	}
 }
