@@ -5,10 +5,12 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
+	"time"
 
 	"current/common"
 
 	"github.com/PuerkitoBio/goquery"
+	strip "github.com/grokify/html-strip-tags-go"
 	"github.com/mmcdole/gofeed"
 )
 
@@ -16,9 +18,12 @@ type API struct {
 	Client *http.Client
 }
 
-func NewAPI(c *http.Client) *API {
+func NewAPI() *API {
+	client := http.Client{
+		Timeout: 10 * time.Second,
+	}
 	return &API{
-		Client: c,
+		Client: &client,
 	}
 }
 
@@ -27,10 +32,17 @@ func NewAPI(c *http.Client) *API {
 // returning whether the response StatusCode == 200
 // If the request results in an error, the result is false.
 func (api *API) CheckSite(siteUrl string) bool {
+	fmt.Printf("Checking whether %v is a valid site", siteUrl)
 	res, err := api.Client.Head(siteUrl)
-	if err != nil || res.StatusCode != http.StatusOK {
+	if err != nil {
 		return false
 	}
+
+	if res.StatusCode != http.StatusOK {
+		return false
+	}
+
+	fmt.Println(res.Status)
 	return true
 }
 
@@ -53,12 +65,24 @@ func (api *API) GetFeed(feedUrl string) (*gofeed.Feed, error) {
 		return feed, err
 	}
 
+	// ensure feed description is free of html tags
+	feed.Description = strip.StripTags(feed.Description)
+	fmt.Println("description: ", feed.Description)
+
+	for _, item := range feed.Items {
+		// strip and truncate item description
+		item.Description = strip.StripTags(item.Description)
+		if len(item.Description) > 256 {
+			item.Description = item.Description[0:256] + "..."
+		}
+	}
+
 	return feed, nil
 }
 
 func (api *API) GetFeedsConcurrent(feedUrls []string) ([]*gofeed.Feed, error) {
 	feeds := []*gofeed.Feed{}
-	fp := gofeed.NewParser()
+	// fp := gofeed.NewParser()
 	type Result struct {
 		Res   *gofeed.Feed
 		Error error
@@ -67,9 +91,10 @@ func (api *API) GetFeedsConcurrent(feedUrls []string) ([]*gofeed.Feed, error) {
 	ch := make(chan Result, len(feedUrls))
 
 	for _, link := range feedUrls {
+		fmt.Println("Attempting to retrieve feed from ", link)
 		u := link
 		go func() {
-			res, err := fp.ParseURL(u)
+			res, err := api.GetFeed(u)
 			if err != nil {
 				ch <- Result{
 					Res:   &gofeed.Feed{},
@@ -100,6 +125,7 @@ func (api *API) GetFeedsConcurrent(feedUrls []string) ([]*gofeed.Feed, error) {
 // Note, it should be called only after after api.FindFeedLinks
 // has failed
 func (api *API) GuessFeedLinks(siteUrl string) ([]string, error) {
+	fmt.Println("Attempting to guess links at ", siteUrl)
 	confirmed := []string{}
 	guesses := []string{}
 
@@ -183,6 +209,7 @@ func (api *API) GuessFeedLinks(siteUrl string) ([]string, error) {
 // feed links.
 // siteUrl should be a valid URL (ie: https://whatever.com)
 func (api *API) FindFeedLinks(siteUrl string) ([]string, error) {
+	fmt.Println("Attempting to find deed links at", siteUrl)
 	links := []string{}
 
 	fullURL, err := url.ParseRequestURI(siteUrl)

@@ -6,28 +6,19 @@ import "github.com/mmcdole/gofeed"
 templ SearchResult(feeds []*gofeed.Feed) {
 	if len(feeds) > 0 {
 		<h2>We found { view.GetLen(feeds) } feeds</h2>
-		<ul>
+		<ul class={ feedPreviewList() }>
 			for _, feed := range feeds {
-				<li>
-					<h3>
-						{ feed.Title }
-					</h3>
-					<span>{ feed.FeedType }</span>
-					<p>
-						{ feed.Description }
-					</p>
-					<ul>
-						if len(feed.Items) > 2 {
-							for _, item := range feed.Items[0:2] {
-								<li>
-									<h4>{ item.Title }</h4>
-									@templ.Raw(item.Description)
-								</li>
-							}
-						}
-					</ul>
-				</li>
+				@FeedPreview(feed)
 			}
 		</ul>
 	}
+}
+
+css feedPreviewList() {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
 }

@@ -21,6 +21,7 @@ templ Index(props view.SearchPageProps) {
 					<label for="searchurl">Search for a Feed</label>
 					<input type="text" name="searchurl" id="search-url"/>
 				</fieldset>
+				<button type="submit">Search</button>
 			</form>
 			<section id="search-results"></section>
 			@component.SearchResult(props.Feeds)

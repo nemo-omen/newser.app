@@ -35,7 +35,7 @@ func Index(props view.SearchPageProps) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main><h1>Search</h1><form action=\"/search\" method=\"POST\" hx-post=\"/search\" hx-target=\"#search-results\" xh-swap=\"innerHTML\"><fieldset><label for=\"searchurl\">Search for a Feed</label> <input type=\"text\" name=\"searchurl\" id=\"search-url\"></fieldset></form><section id=\"search-results\"></section>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main><h1>Search</h1><form action=\"/search\" method=\"POST\" hx-post=\"/search\" hx-target=\"#search-results\" xh-swap=\"innerHTML\"><fieldset><label for=\"searchurl\">Search for a Feed</label> <input type=\"text\" name=\"searchurl\" id=\"search-url\"></fieldset><button type=\"submit\">Search</button></form><section id=\"search-results\"></section>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
