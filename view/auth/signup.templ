@@ -1,0 +1,34 @@
+package auth
+
+import "current/view/layout"
+
+templ Signup() {
+	@layout.Base() {
+		<main>
+			<h2>Sign Up</h2>
+			<form
+				action="/auth/signup"
+				method="POST"
+				hx-post="/auth/signup"
+				hx-boost="true"
+				hx-select="main"
+				hx-target="closest main"
+				hx-swap="outerHTML"
+			>
+				<fieldset>
+					<label for="email">Email</label>
+					<input type="email" name="email" id="email"/>
+				</fieldset>
+				<fieldset>
+					<label for="password">Password</label>
+					<input type="password" name="password" id="password"/>
+				</fieldset>
+				<fieldset>
+					<label for="password-confirm">Confirm Password</label>
+					<input type="password" name="password-confirm" id="password-confirm"/>
+				</fieldset>
+				<button type="submit">Sign Up</button>
+			</form>
+		</main>
+	}
+}

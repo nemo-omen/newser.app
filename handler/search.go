@@ -4,8 +4,8 @@ import (
 	"current/service"
 	"current/util"
 	"current/view"
+	"current/view/app/search"
 	"current/view/component"
-	"current/view/search"
 	"fmt"
 
 	"github.com/labstack/echo/v4"
