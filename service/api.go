@@ -18,12 +18,10 @@ type API struct {
 	Client *http.Client
 }
 
-func NewAPI() *API {
-	client := http.Client{
-		Timeout: 10 * time.Second,
-	}
+func NewAPI(client *http.Client) *API {
+	client.Timeout = 10 * time.Second
 	return &API{
-		Client: &client,
+		Client: client,
 	}
 }
 
@@ -32,7 +30,7 @@ func NewAPI() *API {
 // returning whether the response StatusCode == 200
 // If the request results in an error, the result is false.
 func (api *API) CheckSite(siteUrl string) bool {
-	fmt.Printf("Checking whether %v is a valid site", siteUrl)
+	// fmt.Printf("Checking whether %v is a valid site", siteUrl)
 	res, err := api.Client.Head(siteUrl)
 	if err != nil {
 		return false
@@ -42,7 +40,7 @@ func (api *API) CheckSite(siteUrl string) bool {
 		return false
 	}
 
-	fmt.Println(res.Status)
+	// fmt.Println(res.Status)
 	return true
 }
 
@@ -61,13 +59,13 @@ func (api *API) GetFeed(feedUrl string) (*gofeed.Feed, error) {
 	feed, err := fp.ParseURL(feedUrl)
 
 	if err != nil {
-		fmt.Println("feed parsing err: ", err)
+		// fmt.Println("feed parsing err: ", err)
 		return feed, err
 	}
 
 	// ensure feed description is free of html tags
 	feed.Description = strip.StripTags(feed.Description)
-	fmt.Println("description: ", feed.Description)
+	// fmt.Println("description: ", feed.Description)
 
 	for _, item := range feed.Items {
 		// strip and truncate item description
@@ -91,7 +89,7 @@ func (api *API) GetFeedsConcurrent(feedUrls []string) ([]*gofeed.Feed, error) {
 	ch := make(chan Result, len(feedUrls))
 
 	for _, link := range feedUrls {
-		fmt.Println("Attempting to retrieve feed from ", link)
+		// fmt.Println("Attempting to retrieve feed from ", link)
 		u := link
 		go func() {
 			res, err := api.GetFeed(u)
@@ -125,7 +123,7 @@ func (api *API) GetFeedsConcurrent(feedUrls []string) ([]*gofeed.Feed, error) {
 // Note, it should be called only after after api.FindFeedLinks
 // has failed
 func (api *API) GuessFeedLinks(siteUrl string) ([]string, error) {
-	fmt.Println("Attempting to guess links at ", siteUrl)
+	// fmt.Println("Attempting to guess links at ", siteUrl)
 	confirmed := []string{}
 	guesses := []string{}
 
@@ -209,7 +207,7 @@ func (api *API) GuessFeedLinks(siteUrl string) ([]string, error) {
 // feed links.
 // siteUrl should be a valid URL (ie: https://whatever.com)
 func (api *API) FindFeedLinks(siteUrl string) ([]string, error) {
-	fmt.Println("Attempting to find deed links at", siteUrl)
+	// fmt.Println("Attempting to find feed links at", siteUrl)
 	links := []string{}
 
 	fullURL, err := url.ParseRequestURI(siteUrl)

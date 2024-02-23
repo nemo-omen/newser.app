@@ -1,8 +1,8 @@
 package service
 
 import (
-	"current/domain"
 	"current/infra/repository"
+	"current/model"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -17,8 +17,8 @@ func NewUserService(repo repository.UserRepository) *UserService {
 	}
 }
 
-func (s UserService) SignUpUser(email, password string) (*domain.User, error) {
-	u := &domain.User{
+func (s UserService) SignUpUser(email, password string) (*model.User, error) {
+	u := &model.User{
 		Email: email,
 	}
 	hashed, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

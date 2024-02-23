@@ -2,7 +2,6 @@ package service
 
 import (
 	"current/common"
-	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -23,7 +22,7 @@ func TestAPI_FindFeedLinks(t *testing.T) {
 	// and initialize the server without starting it
 	ts := httptest.NewUnstartedServer(http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("request path: ", r.URL.Path)
+			// fmt.Println("request path: ", r.URL.Path)
 
 			if r.URL.Path == "/feedlinks" {
 				w.Write([]byte(LinksDoc))
@@ -106,22 +105,22 @@ func TestAPI_GuessFeedLink(t *testing.T) {
 				w.WriteHeader(404)
 				w.Write([]byte("Not found"))
 			}
-			fmt.Println("request path: ", r.URL.Path)
+			// fmt.Println("request path: ", r.URL.Path)
 
 			if r.URL.Path == "/feed/atom" {
-				fmt.Println(r.URL.Path)
+				// fmt.Println(r.URL.Path)
 				w.Header().Set("Content-Type", string(common.XMLDoc))
 				w.Write([]byte(DummyAtom))
 			}
 
 			if r.URL.Path == "/feed/rss" {
-				fmt.Println(r.URL.Path)
+				// fmt.Println(r.URL.Path)
 				w.Header().Set("Content-Type", string(common.XMLDoc))
 				w.Write([]byte(DummyRSS))
 			}
 
 			if r.URL.Path == "/feed/json" {
-				fmt.Println(r.URL.Path)
+				// fmt.Println(r.URL.Path)
 				w.Header().Set("Content-Type", string(common.JSONDoc))
 				w.Write([]byte(DummyJSON))
 			}
@@ -180,22 +179,22 @@ func TestAPI_GetFeed(t *testing.T) {
 				w.WriteHeader(404)
 				w.Write([]byte("Not found"))
 			}
-			fmt.Println("request path: ", r.URL.Path)
+			// fmt.Println("request path: ", r.URL.Path)
 
 			if r.URL.Path == "/feed/atom" {
-				fmt.Println(r.URL.Path)
+				// fmt.Println(r.URL.Path)
 				w.Header().Set("Content-Type", string(common.XMLDoc))
 				w.Write([]byte(DummyAtom))
 			}
 
 			if r.URL.Path == "/feed/rss" {
-				fmt.Println(r.URL.Path)
+				// fmt.Println(r.URL.Path)
 				w.Header().Set("Content-Type", string(common.XMLDoc))
 				w.Write([]byte(DummyRSS))
 			}
 
 			if r.URL.Path == "/feed/json" {
-				fmt.Println(r.URL.Path)
+				// fmt.Println(r.URL.Path)
 				w.Header().Set("Content-Type", string(common.JSONDoc))
 				w.Write([]byte(DummyJSON))
 			}
@@ -299,5 +298,24 @@ func TestAPI_CheckSite(t *testing.T) {
 				t.Errorf("expected StatusCode %v, got %v", tt.want, actual)
 			}
 		})
+	}
+}
+
+func Benchmark_GetFeedsConcurrent(b *testing.B) {
+	api := NewAPI(&http.Client{})
+	benchUrls := []string{
+		"https://jeffcaldwell.is/feed/atom",
+		"https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
+		"https://www.latimes.com/index.rss",
+		"https://www.myfoxzone.com/feeds/syndication/rss/news",
+		"https://www.engadget.com/rss.xml",
+		"https://hachyderm.io/@trainingmontage",
+	}
+
+	for i := 0; i < b.N; i++ {
+		_, err := api.GetFeedsConcurrent(benchUrls)
+		if err != nil {
+			//
+		}
 	}
 }

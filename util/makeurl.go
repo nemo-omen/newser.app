@@ -10,7 +10,7 @@ import (
 func MakeUrl(str string) (*url.URL, error) {
 	if IsUrl(str) {
 		u, err := url.ParseRequestURI(str)
-		fmt.Println("already a URL")
+		// fmt.Println("already a URL")
 		if err != nil {
 			log.Printf("error creating url: %+v", err)
 			return &url.URL{}, err

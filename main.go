@@ -31,7 +31,7 @@ func main() {
 	app.Use(custommiddleware.NewMiddlewareContextValue)
 	app.Use(custommiddleware.CurrentPath)
 	app.Use(custommiddleware.HTMX)
-	app.Use(middleware.Logger())
+	// app.Use(middleware.Logger())
 	app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:4321"},
 	}))
@@ -42,6 +42,7 @@ func main() {
 	authHandler := handler.AuthHandler{}
 	appHandler := handler.AppHandler{}
 	searchHandler := handler.SearchHandler{}
+	subHandler := handler.SubscriptionHandler{}
 	wsHandler := handler.WsHandler{}
 
 	app.GET("/", homeHandler.HandleGetIndex)
@@ -57,6 +58,10 @@ func main() {
 	authGroup.POST("/login", authHandler.HandlePostLogin)
 	authGroup.GET("/signup", authHandler.HandleGetSignup)
 	authGroup.POST("/signup", authHandler.HandlePostSignup)
+
+	subGroup := appGroup.Group("/subscriptions")
+	subGroup.GET("/", subHandler.HandleGetIndex)
+	subGroup.POST("/", subHandler.HandlePostSubscribe)
 
 	app.Logger.Fatal(app.Start(port))
 }

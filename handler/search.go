@@ -7,6 +7,7 @@ import (
 	"current/view/app/search"
 	"current/view/component"
 	"fmt"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/mmcdole/gofeed"
@@ -28,7 +29,7 @@ func (h SearchHandler) HandleGetIndex(c echo.Context) error {
 
 func (h SearchHandler) HandlePostSearch(c echo.Context) error {
 	searchLinks := []string{}
-	api := service.NewAPI()
+	api := service.NewAPI(&http.Client{})
 	formData := c.FormValue("searchurl")
 	feeds := []*gofeed.Feed{}
 	fmt.Println(c.Get("isHx"))

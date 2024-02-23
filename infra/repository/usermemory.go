@@ -1,22 +1,22 @@
 package repository
 
 import (
-	"current/domain"
+	"current/model"
 	"current/util"
 	"fmt"
 )
 
 type UserMemRepo struct {
-	Users []*domain.User
+	Users []*model.User
 }
 
 func NewUserMemRepo() *UserMemRepo {
 	return &UserMemRepo{
-		Users: []*domain.User{},
+		Users: []*model.User{},
 	}
 }
 
-func (r *UserMemRepo) Create(u *domain.User) (*domain.User, error) {
+func (r *UserMemRepo) Create(u *model.User) (*model.User, error) {
 	for _, uu := range r.Users {
 		if uu.Email == u.Email {
 			return u, fmt.Errorf("email %v already exists", u.Email)
@@ -30,23 +30,23 @@ func (r *UserMemRepo) Create(u *domain.User) (*domain.User, error) {
 	return u, nil
 }
 
-func (r *UserMemRepo) Get(id uint) (*domain.User, error) {
-	filtered := util.Filter[*domain.User](r.Users, func(u *domain.User) bool {
+func (r *UserMemRepo) Get(id uint) (*model.User, error) {
+	filtered := util.Filter[*model.User](r.Users, func(u *model.User) bool {
 		return u.Id == id
 	})
 
 	if len(filtered) < 1 {
-		return &domain.User{}, nil
+		return &model.User{}, nil
 	}
 
 	if len(filtered) > 1 {
-		return &domain.User{}, fmt.Errorf("found more than one user with id %v", id)
+		return &model.User{}, fmt.Errorf("found more than one user with id %v", id)
 	}
 
 	return filtered[0], nil
 }
 
-func (r *UserMemRepo) Update(u *domain.User) (*domain.User, error) {
+func (r *UserMemRepo) Update(u *model.User) (*model.User, error) {
 	storedUser, err := r.Get(u.Id)
 	if err != nil {
 		return u, err
@@ -56,7 +56,7 @@ func (r *UserMemRepo) Update(u *domain.User) (*domain.User, error) {
 }
 
 func (r *UserMemRepo) Delete(id uint) {
-	ret := make([]*domain.User, 0)
+	ret := make([]*model.User, 0)
 
 	for _, u := range r.Users {
 		if u.Id != id {

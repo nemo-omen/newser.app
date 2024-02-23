@@ -1,12 +1,12 @@
 package repository
 
 import (
-	"current/domain"
+	"current/model"
 )
 
 type UserRepository interface {
-	Create(u *domain.User) (*domain.User, error)
-	Get(id uint) (*domain.User, error)
-	Update(u *domain.User) (*domain.User, error)
+	Create(u *model.User) (*model.User, error)
+	Get(id uint) (*model.User, error)
+	Update(u *model.User) (*model.User, error)
 	Delete(id uint)
 }
