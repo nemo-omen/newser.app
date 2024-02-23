@@ -6,11 +6,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
-	"github.com/labstack/echo-contrib/session"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/echo/v5/middleware"
+	"github.com/pocketbase/pocketbase"
+	"github.com/pocketbase/pocketbase/apis"
+	"github.com/pocketbase/pocketbase/core"
 )
 
 const (
@@ -24,44 +24,61 @@ func main() {
 	}
 
 	mode := custommiddleware.NewMode(os.Getenv("MODE"))
-
-	app := echo.New()
-	app.Static("/public", "public")
-	app.Use(mode.SetMode)
-	app.Use(custommiddleware.NewMiddlewareContextValue)
-	app.Use(custommiddleware.CurrentPath)
-	app.Use(custommiddleware.HTMX)
-	// app.Use(middleware.Logger())
-	app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:4321"},
-	}))
-
-	app.Use(session.Middleware(sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))))
+	app := pocketbase.New()
+	// app.Static("/public", "public")
+	// app := echo.New()
 
 	homeHandler := handler.HomeHandler{}
-	authHandler := handler.AuthHandler{}
 	appHandler := handler.AppHandler{}
+	authHandler := handler.AuthHandler{}
 	searchHandler := handler.SearchHandler{}
 	subHandler := handler.SubscriptionHandler{}
 	wsHandler := handler.WsHandler{}
 
-	app.GET("/", homeHandler.HandleGetIndex)
-	app.GET("/livereload", wsHandler.HandleWsConnect)
+	// Load middleware
+	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
+		r := e.Router
+		r.GET("/public/**/*", apis.StaticDirectoryHandler(os.DirFS("./public"), false))
 
-	appGroup := app.Group("/app")
-	appGroup.GET("/", appHandler.HandleGetIndex)
-	appGroup.GET("/search", searchHandler.HandleGetIndex)
-	appGroup.POST("/search", searchHandler.HandlePostSearch)
+		r.Use(mode.SetMode)
+		r.Use(custommiddleware.NewMiddlewareContextValue)
+		r.Use(custommiddleware.CurrentPath)
+		r.Use(custommiddleware.HTMX)
+		// app.Use(middleware.Logger())
+		r.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+			AllowOrigins: []string{"http://localhost:4321"},
+		}))
 
-	authGroup := app.Group("/auth")
-	authGroup.GET("/login", authHandler.HandleGetLogin)
-	authGroup.POST("/login", authHandler.HandlePostLogin)
-	authGroup.GET("/signup", authHandler.HandleGetSignup)
-	authGroup.POST("/signup", authHandler.HandlePostSignup)
+		// r.Use(session.Middleware(sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))))
+		return nil
+	})
 
-	subGroup := appGroup.Group("/subscriptions")
-	subGroup.GET("/", subHandler.HandleGetIndex)
-	subGroup.POST("/", subHandler.HandlePostSubscribe)
+	// routes
+	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
+		r := e.Router
+		r.GET("/", homeHandler.HandleGetIndex)
+		r.GET("/livereload", wsHandler.HandleWsConnect)
 
-	app.Logger.Fatal(app.Start(port))
+		appGroup := r.Group("/app")
+		appGroup.GET("/", appHandler.HandleGetIndex)
+		appGroup.GET("/search", searchHandler.HandleGetIndex)
+		appGroup.POST("/search", searchHandler.HandlePostSearch)
+
+		authGroup := r.Group("/auth")
+		authGroup.GET("/login", authHandler.HandleGetLogin)
+		authGroup.POST("/login", authHandler.HandlePostLogin)
+		authGroup.GET("/signup", authHandler.HandleGetSignup)
+		authGroup.POST("/signup", authHandler.HandlePostSignup)
+
+		subGroup := appGroup.Group("/subscriptions")
+		subGroup.GET("/", subHandler.HandleGetIndex)
+		subGroup.POST("/", subHandler.HandlePostSubscribe)
+
+		return nil
+	})
+
+	if err := app.Start(); err != nil {
+		log.Fatal(err)
+	}
+	// app.Logger.Fatal(app.Start(port))
 }

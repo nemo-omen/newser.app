@@ -2,7 +2,7 @@ package handler
 
 import (
 	"github.com/gorilla/websocket"
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 )
 
 var upgrader = websocket.Upgrader{
