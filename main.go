@@ -25,8 +25,6 @@ func main() {
 
 	mode := custommiddleware.NewMode(os.Getenv("MODE"))
 	app := pocketbase.New()
-	// app.Static("/public", "public")
-	// app := echo.New()
 
 	homeHandler := handler.HomeHandler{}
 	appHandler := handler.AppHandler{}
