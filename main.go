@@ -6,11 +6,11 @@ import (
 	"log"
 	"os"
 
+	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
-	"github.com/labstack/echo/v5/middleware"
-	"github.com/pocketbase/pocketbase"
-	"github.com/pocketbase/pocketbase/apis"
-	"github.com/pocketbase/pocketbase/core"
+	"github.com/labstack/echo-contrib/session"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 const (
@@ -24,7 +24,7 @@ func main() {
 	}
 
 	mode := custommiddleware.NewMode(os.Getenv("MODE"))
-	app := pocketbase.New()
+	app := echo.New()
 
 	homeHandler := handler.HomeHandler{}
 	appHandler := handler.AppHandler{}
@@ -33,50 +33,36 @@ func main() {
 	subHandler := handler.SubscriptionHandler{}
 	wsHandler := handler.WsHandler{}
 
-	// Load middleware
-	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-		r := e.Router
-		r.GET("/public/**/*", apis.StaticDirectoryHandler(os.DirFS("./public"), false))
+	app.Static("/public", "public")
+	app.Use(mode.SetMode)
+	app.Use(session.Middleware(sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))))
+	app.Use(custommiddleware.NewMiddlewareContextValue)
+	app.Use(custommiddleware.CurrentPath)
+	app.Use(custommiddleware.HTMX)
+	app.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method: ${method}, uri: ${uri}, status: ${status}, error: ${error}\n",
+	}))
+	app.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:4321"},
+	}))
 
-		r.Use(mode.SetMode)
-		r.Use(custommiddleware.NewMiddlewareContextValue)
-		r.Use(custommiddleware.CurrentPath)
-		r.Use(custommiddleware.HTMX)
-		// app.Use(middleware.Logger())
-		r.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-			AllowOrigins: []string{"http://localhost:4321"},
-		}))
+	app.GET("/", homeHandler.HandleGetIndex)
+	app.GET("/livereload", wsHandler.HandleWsConnect)
 
-		// r.Use(session.Middleware(sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))))
-		return nil
-	})
+	appGroup := app.Group("/app")
+	appGroup.GET("/", appHandler.HandleGetIndex)
+	appGroup.GET("/search", searchHandler.HandleGetIndex)
+	appGroup.POST("/search", searchHandler.HandlePostSearch)
 
-	// routes
-	app.OnBeforeServe().Add(func(e *core.ServeEvent) error {
-		r := e.Router
-		r.GET("/", homeHandler.HandleGetIndex)
-		r.GET("/livereload", wsHandler.HandleWsConnect)
+	authGroup := app.Group("/auth")
+	authGroup.GET("/login", authHandler.HandleGetLogin)
+	authGroup.POST("/login", authHandler.HandlePostLogin)
+	authGroup.GET("/signup", authHandler.HandleGetSignup)
+	authGroup.POST("/signup", authHandler.HandlePostSignup)
 
-		appGroup := r.Group("/app")
-		appGroup.GET("/", appHandler.HandleGetIndex)
-		appGroup.GET("/search", searchHandler.HandleGetIndex)
-		appGroup.POST("/search", searchHandler.HandlePostSearch)
+	subGroup := appGroup.Group("/subscriptions")
+	subGroup.GET("/", subHandler.HandleGetIndex)
+	subGroup.POST("/", subHandler.HandlePostSubscribe)
 
-		authGroup := r.Group("/auth")
-		authGroup.GET("/login", authHandler.HandleGetLogin)
-		authGroup.POST("/login", authHandler.HandlePostLogin)
-		authGroup.GET("/signup", authHandler.HandleGetSignup)
-		authGroup.POST("/signup", authHandler.HandlePostSignup)
-
-		subGroup := appGroup.Group("/subscriptions")
-		subGroup.GET("/", subHandler.HandleGetIndex)
-		subGroup.POST("/", subHandler.HandlePostSubscribe)
-
-		return nil
-	})
-
-	if err := app.Start(); err != nil {
-		log.Fatal(err)
-	}
-	// app.Logger.Fatal(app.Start(port))
+	app.Logger.Fatal(app.Start(port))
 }

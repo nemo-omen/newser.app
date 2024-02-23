@@ -1,6 +1,6 @@
 package custommiddleware
 
-import "github.com/labstack/echo/v5"
+import "github.com/labstack/echo/v4"
 
 type Mode struct {
 	Dev  bool

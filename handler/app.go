@@ -4,7 +4,7 @@ import (
 	"current/view/app"
 	"fmt"
 
-	"github.com/labstack/echo/v5"
+	"github.com/labstack/echo/v4"
 )
 
 type AppHandler struct{}

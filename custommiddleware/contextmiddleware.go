@@ -3,7 +3,7 @@ package custommiddleware
 import (
 	"context"
 
-	"github.com/labstack/echo/v5"
+	"github.com/labstack/echo/v4"
 )
 
 func NewMiddlewareContextValue(next echo.HandlerFunc) echo.HandlerFunc {

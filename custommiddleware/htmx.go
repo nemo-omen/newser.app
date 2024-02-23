@@ -1,7 +1,7 @@
 package custommiddleware
 
 import (
-	"github.com/labstack/echo/v5"
+	"github.com/labstack/echo/v4"
 )
 
 func HTMX(next echo.HandlerFunc) echo.HandlerFunc {
