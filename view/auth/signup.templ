@@ -2,7 +2,14 @@ package auth
 
 import "current/view/layout"
 
-templ Signup() {
+type SignupFlash struct {
+	GlobalError   string
+	EmailError    string
+	PasswordError string
+	ConfirmError  string
+}
+
+templ Signup(flash *SignupFlash) {
 	@layout.Base() {
 		<main>
 			<h2>Sign Up</h2>

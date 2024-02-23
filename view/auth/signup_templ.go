@@ -12,7 +12,14 @@ import "bytes"
 
 import "current/view/layout"
 
-func Signup() templ.Component {
+type SignupFlash struct {
+	GlobalError   string
+	EmailError    string
+	PasswordError string
+	ConfirmError  string
+}
+
+func Signup(flash *SignupFlash) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
