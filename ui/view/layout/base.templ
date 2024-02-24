@@ -1,0 +1,31 @@
+package layout
+
+import "newser.app/ui/view/component"
+
+func getTitle(ctx context.Context) string {
+	title := ctx.Value("title")
+	if title != nil {
+		return title.(string)
+	}
+	return ""
+}
+
+templ Base() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<link rel="stylesheet" href="/static/style/main.css"/>
+			if getTitle(ctx) != "" {
+				<title>{ getTitle(ctx) }</title>
+			} else {
+				<title>Current</title>
+			}
+		</head>
+		<body>
+			@component.Header()
+			{ children... }
+		</body>
+	</html>
+}

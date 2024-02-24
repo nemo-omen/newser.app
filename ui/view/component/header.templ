@@ -1,0 +1,28 @@
+package component
+
+func getCurrentPath(ctx context.Context) string {
+	currentPath := ctx.Value("currentPath")
+	if currentPath != nil {
+		return currentPath.(string)
+	}
+	return ""
+}
+
+templ Header() {
+	<header>
+		<div class="header-inner">
+			<a href="/" id="main-site-link">
+				<h1>
+					Newser
+				</h1>
+			</a>
+			// TODO: Different nav for auth vs !auth
+			<nav aria-label="Main">
+				<ul>
+					<li><a href="/auth/login">Log In</a></li>
+					<li><a href="/auth/signup">Sign Up</a></li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+}
