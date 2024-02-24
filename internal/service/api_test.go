@@ -8,7 +8,7 @@ import (
 	"reflect"
 	"testing"
 
-	"newser.app/internal"
+	"newser.app/internal/shared"
 )
 
 func TestAPI_FindFeedLinks(t *testing.T) {
@@ -110,19 +110,19 @@ func TestAPI_GuessFeedLink(t *testing.T) {
 
 			if r.URL.Path == "/feed/atom" {
 				// fmt.Println(r.URL.Path)
-				w.Header().Set("Content-Type", string(internal.XMLDoc))
+				w.Header().Set("Content-Type", string(shared.XMLDoc))
 				w.Write([]byte(DummyAtom))
 			}
 
 			if r.URL.Path == "/feed/rss" {
 				// fmt.Println(r.URL.Path)
-				w.Header().Set("Content-Type", string(internal.XMLDoc))
+				w.Header().Set("Content-Type", string(shared.XMLDoc))
 				w.Write([]byte(DummyRSS))
 			}
 
 			if r.URL.Path == "/feed/json" {
 				// fmt.Println(r.URL.Path)
-				w.Header().Set("Content-Type", string(internal.JSONDoc))
+				w.Header().Set("Content-Type", string(shared.JSONDoc))
 				w.Write([]byte(DummyJSON))
 			}
 		},
@@ -184,19 +184,19 @@ func TestAPI_GetFeed(t *testing.T) {
 
 			if r.URL.Path == "/feed/atom" {
 				// fmt.Println(r.URL.Path)
-				w.Header().Set("Content-Type", string(internal.XMLDoc))
+				w.Header().Set("Content-Type", string(shared.XMLDoc))
 				w.Write([]byte(DummyAtom))
 			}
 
 			if r.URL.Path == "/feed/rss" {
 				// fmt.Println(r.URL.Path)
-				w.Header().Set("Content-Type", string(internal.XMLDoc))
+				w.Header().Set("Content-Type", string(shared.XMLDoc))
 				w.Write([]byte(DummyRSS))
 			}
 
 			if r.URL.Path == "/feed/json" {
 				// fmt.Println(r.URL.Path)
-				w.Header().Set("Content-Type", string(internal.JSONDoc))
+				w.Header().Set("Content-Type", string(shared.JSONDoc))
 				w.Write([]byte(DummyJSON))
 			}
 		},
