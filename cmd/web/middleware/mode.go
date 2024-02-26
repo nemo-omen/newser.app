@@ -1,8 +1,7 @@
 package middleware
 
 import (
-	"context"
-	"net/http"
+	"github.com/labstack/echo/v4"
 )
 
 type Mode struct {
@@ -17,11 +16,10 @@ func NewMode(mode string) *Mode {
 	return &Mode{Dev: false, Prod: true}
 }
 
-func (m *Mode) SetMode(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		c := r.Context()
-		c = context.WithValue(c, "dev", m.Dev)
-		c = context.WithValue(c, "prod", m.Prod)
-		next.ServeHTTP(w, r)
-	})
+func (m *Mode) SetMode(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		c.Set("dev", m.Dev)
+		c.Set("prod", m.Prod)
+		return next(c)
+	}
 }

@@ -1,19 +1,17 @@
 package middleware
 
 import (
-	"context"
-	"net/http"
+	"github.com/labstack/echo/v4"
 )
 
-func HTMX(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		hxHeader := r.Header.Get("HX-Request")
-		c := r.Context()
+func HTMX(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		hxHeader := c.Request().Header.Get("HX-Request")
 		if hxHeader != "" {
-			c = context.WithValue(c, "isHx", true)
+			c.Set("isHx", true)
 		} else {
-			c = context.WithValue(c, "isHx", false)
+			c.Set("isHx", false)
 		}
-		next.ServeHTTP(w, r)
-	})
+		return next(c)
+	}
 }

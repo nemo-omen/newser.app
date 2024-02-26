@@ -31,7 +31,15 @@ func Header() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<header><div class=\"header-inner\"><a href=\"/\" id=\"main-site-link\"><h1>Newser</h1></a><nav aria-label=\"Main\"><ul><li><a href=\"/auth/login\">Log In</a></li><li><a href=\"/auth/signup\">Sign Up</a></li></ul></nav></div></header>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<header><div class=\"header-inner\"><a href=\"/\" id=\"main-site-link\"><h1>Newser</h1></a>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = Flash().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav aria-label=\"Main\"><ul><li><a href=\"/auth/login\">Log In</a></li><li><a href=\"/auth/signup\">Sign Up</a></li></ul></nav></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

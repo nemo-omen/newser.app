@@ -1,56 +1,52 @@
 package main
 
 import (
-	"database/sql"
 	"flag"
-	"net/http"
-	"os"
-	"time"
 
-	_ "github.com/mattn/go-sqlite3"
-	"newser.app/cmd/web/core"
-	"newser.app/internal/repository"
-	"newser.app/internal/service"
+	// "github.com/alexedwards/scs/v2"
+	// "github.com/labstack/echo-contrib/session"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
+	"newser.app/cmd/web/handler"
+	custommiddleware "newser.app/cmd/web/middleware"
 )
 
 func main() {
-	addr := flag.String("addr", "4321", "HTTP network address")
+	addr := flag.String("addr", ":4321", "HTTP network address")
 	dev := flag.Bool("dev", false, "Whether to run the server in development mode")
-	dsn := flag.String("dsn", "/internal/data/newser.sqlite", "Sqlite dataa source name")
+	dsn := flag.String("dsn", "internal/data/newser.sqlite", "Sqlite dataa source name")
 	flag.Parse()
 
-	logger := core.Logger(*dev)
+	conf := custommiddleware.NewConfig(*dev, *dsn)
 
-	db, err := openDb(*dsn)
-	if err != nil {
-		logger.Error(err.Error())
-		os.Exit(1)
-	}
+	app := echo.New()
+	setLogLevel(app, *dev)
+	app.Static("/static", "ui/static")
+	app.Use(conf.SetConfig)
+	app.Use(custommiddleware.ContextValue)
+	setHandlers(app, *dsn)
 
-	defer db.Close()
-
-	app := &core.App{
-		Logger:      logger,
-		FeedRepo:    &repository.NewsfeedSqliteRepo{DB: db},
-		FeedService: &service.API{Client: &http.Client{Timeout: 5 * time.Second}},
-	}
-
-	app.Logger.Info("starting server", "addr", *addr)
-	app.Logger.Debug("dev mode", "dev", *dev)
-	err = http.ListenAndServe(":"+*addr, app.Routes())
-	app.Logger.Error(err.Error())
+	app.Logger.Fatal(app.Start(*addr))
 }
 
-func openDb(dsn string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", "dsn")
-	if err != nil {
-		return nil, err
+func setLogLevel(app *echo.Echo, dev bool) {
+	if l, ok := app.Logger.(*log.Logger); ok {
+		if dev {
+			l.SetLevel(log.DEBUG)
+			app.Logger.Debugf("Is Dev?: %v", dev)
+		} else {
+			l.SetLevel(log.INFO)
+		}
 	}
+}
 
-	err = db.Ping()
-	if err != nil {
-		db.Close()
-		return nil, err
-	}
-	return db, nil
+func setHandlers(app *echo.Echo, dsn string) {
+	homeHandler := handler.HomeHandler{}
+	authHandler := handler.NewAuthHandler(dsn)
+
+	app.GET("/", homeHandler.Home)
+	authGroup := app.Group("/auth")
+	authGroup.GET("/signup", authHandler.GetSignup)
+	authGroup.POST("/signup", authHandler.PostSignup)
+	authGroup.GET("/login", authHandler.GetLogin)
 }

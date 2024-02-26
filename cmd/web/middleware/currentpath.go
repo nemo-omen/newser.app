@@ -1,14 +1,16 @@
 package middleware
 
 import (
-	"context"
-	"net/http"
+	"github.com/labstack/echo/v4"
 )
 
-func CurrentPath(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		c := r.Context()
-		c = context.WithValue(c, "currentPath", r.URL.Path)
-		next.ServeHTTP(w, r)
-	})
+// SetCurrentPath sets a request context value
+// to the path of the current request URL. This
+// is used to pass the path to the templ Header component
+// to avoid prop drilling.
+func SetCurrentPath(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		c.Set("currentPath", c.Request().URL.Path)
+		return next(c)
+	}
 }

@@ -28,7 +28,7 @@ func NewAPI(client *http.Client) *API {
 // a valid site by sending a HEAD request and
 // returning whether the response StatusCode == 200
 // If the request results in an error, the result is false.
-func (api *API) CheckSite(siteUrl string) bool {
+func (api API) CheckSite(siteUrl string) bool {
 	// fmt.Printf("Checking whether %v is a valid site", siteUrl)
 	res, err := api.Client.Head(siteUrl)
 	if err != nil {
@@ -51,7 +51,7 @@ func (api *API) CheckSite(siteUrl string) bool {
 //
 // GetFeed uses github.com/mmcdole/gofeed to make the request
 // and parse the response body.
-func (api *API) GetFeed(feedUrl string) (*gofeed.Feed, error) {
+func (api API) GetFeed(feedUrl string) (*gofeed.Feed, error) {
 	feed := &gofeed.Feed{}
 	fp := gofeed.NewParser()
 
@@ -77,7 +77,7 @@ func (api *API) GetFeed(feedUrl string) (*gofeed.Feed, error) {
 	return feed, nil
 }
 
-func (api *API) GetFeedsConcurrent(feedUrls []string) ([]*gofeed.Feed, error) {
+func (api API) GetFeedsConcurrent(feedUrls []string) ([]*gofeed.Feed, error) {
 	feeds := []*gofeed.Feed{}
 	// fp := gofeed.NewParser()
 	type Result struct {
@@ -121,7 +121,7 @@ func (api *API) GetFeedsConcurrent(feedUrls []string) ([]*gofeed.Feed, error) {
 // URL (ie: https://siteurl.com).
 // Note, it should be called only after after api.FindFeedLinks
 // has failed
-func (api *API) GuessFeedLinks(siteUrl string) ([]string, error) {
+func (api API) GuessFeedLinks(siteUrl string) ([]string, error) {
 	// fmt.Println("Attempting to guess links at ", siteUrl)
 	confirmed := []string{}
 	guesses := []string{}
@@ -205,7 +205,7 @@ func (api *API) GuessFeedLinks(siteUrl string) ([]string, error) {
 // FindFeedLinks searches the document at a given URL for
 // feed links.
 // siteUrl should be a valid URL (ie: https://whatever.com)
-func (api *API) FindFeedLinks(siteUrl string) ([]string, error) {
+func (api API) FindFeedLinks(siteUrl string) ([]string, error) {
 	// fmt.Println("Attempting to find feed links at", siteUrl)
 	links := []string{}
 
