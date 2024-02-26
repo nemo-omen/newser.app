@@ -66,3 +66,7 @@ func (f Newsfeed) Less(i, k int) bool {
 func (f Newsfeed) Swap(i, k int) {
 	f.Articles[i], f.Articles[k] = f.Articles[k], f.Articles[i]
 }
+
+func (NewsfeedGorm) TableName() string {
+	return "newsfeeds"
+}

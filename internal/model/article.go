@@ -42,3 +42,7 @@ type ArticleGorm struct {
 	Updated         *string
 	UpdatedParsed   *time.Time
 }
+
+func (ArticleGorm) TableName() string {
+	return "articles"
+}

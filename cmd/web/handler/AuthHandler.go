@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"net/mail"
 	"regexp"
@@ -59,7 +60,7 @@ func (h AuthHandler) PostSignup(c echo.Context) error {
 	pass := c.Request().FormValue("password")
 	conf := c.Request().FormValue("confirm")
 
-	if !MinChars(pass, 8) {
+	if !MinChars(pass, 6) {
 		SetFlash(c, "passwordError", "password must be at least 8 characters long")
 		return c.Redirect(http.StatusSeeOther, "/auth/signup")
 	}
@@ -76,12 +77,12 @@ func (h AuthHandler) PostSignup(c echo.Context) error {
 
 	pHash := HashPassword(pass)
 
-	_, err := h.AuthService.Signup(email, pHash)
+	u, err := h.AuthService.Signup(email, pHash)
 	if err != nil {
 		SetFlash(c, "errorFlash", err.Error())
 	}
 
-	SetFlash(c, "successFlash", "You're signed up! Log in to get started.")
+	SetFlash(c, "successFlash", fmt.Sprintf("%v signed up! Log in to get started.", u.Email))
 
 	return c.Redirect(http.StatusSeeOther, "/auth/login")
 }

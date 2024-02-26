@@ -16,3 +16,7 @@ type PersonGorm struct {
 	Articles  []*ArticleGorm  `gorm:"many2many:article_people"`
 	Newsfeeds []*NewsfeedGorm `gorm:"many2many:newsfeed_people"`
 }
+
+func (PersonGorm) TableName() string {
+	return "people"
+}

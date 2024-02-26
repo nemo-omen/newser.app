@@ -14,6 +14,7 @@ type UserGormRepo struct {
 
 func NewUserGormRepo(dsn string) UserGormRepo {
 	db, err := gorm.Open(sqlite.Open(dsn))
+	db.AutoMigrate(&model.UserGorm{})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -25,8 +26,16 @@ func (r UserGormRepo) Get(id uint) (model.User, error) {
 }
 
 func (r UserGormRepo) Create(ug model.UserGorm) (model.User, error) {
-	// res := r.DB.Create(&ug)
-	return model.User{}, nil
+	res := r.DB.Create(&ug)
+	u := model.User{
+		Email: ug.Email,
+	}
+	if res.Error != nil {
+		return u, res.Error
+	}
+	u.Id = ug.ID
+
+	return u, nil
 }
 
 func (r UserGormRepo) All() []model.User {
