@@ -16,7 +16,8 @@ func SetAuthedSession(c echo.Context) {
 	session.Options.HttpOnly = true
 	session.Options.SameSite = http.SameSiteStrictMode
 	session.Values["authenticated"] = true
-	session.Save(c.Request(), c.Response())
+	session.Values["user"] =
+		session.Save(c.Request(), c.Response())
 }
 
 func RevokeAuthedSession(c echo.Context) {

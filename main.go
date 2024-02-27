@@ -1,12 +1,11 @@
 package main
 
 import (
-	"database/sql"
 	"flag"
 	"net/http"
 	"time"
 
-	"github.com/alexedwards/scs/sqlite3store"
+	"github.com/alexedwards/scs/gormstore"
 	"github.com/alexedwards/scs/v2"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
@@ -29,8 +28,7 @@ var (
 
 // services
 var (
-	authService    service.AuthService
-	sessionManager *scs.SessionManager
+	authService service.AuthService
 )
 
 func main() {
@@ -40,23 +38,19 @@ func main() {
 	flag.Parse()
 
 	conf := custommiddleware.NewConfig(*dev, *dsn)
-	db, err := sql.Open("sqlite3", *dsn)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer db.Close()
-	sessionManager = scs.New()
-	sessionManager.Store = sqlite3store.New(db)
-	sessionManager.Lifetime = (7 * 24) * time.Hour
 
 	app := echo.New()
 	setLogLevel(app, *dev)
+
+	db := initDB(app, *dsn)
+	sessionManager := initSessions(app, db)
+	initHandlers(app, db, sessionManager)
 	app.Static("/static", "view/static")
-	app.Use(conf.SetConfig)
+	app.Use(session.LoadAndSave(sessionManager))
 	app.Use(custommiddleware.ContextValue)
-	app.Use((custommiddleware.CtxFlash))
-	app.Use(custommiddleware.AuthContext)
-	initHandlers(app, *dsn, sessionManager)
+	app.Use(conf.SetConfig)
+	app.Use((custommiddleware.CtxFlash(sessionManager)))
+	app.Use(custommiddleware.AuthContext(sessionManager))
 
 	app.Logger.Fatal(app.Start(*addr))
 }
@@ -72,8 +66,7 @@ func setLogLevel(app *echo.Echo, dev bool) {
 	}
 }
 
-func initHandlers(app *echo.Echo, dsn string, sessionManager *scs.SessionManager) {
-	db := initDB(app, dsn)
+func initHandlers(app *echo.Echo, db *gorm.DB, sessionManager *scs.SessionManager) {
 
 	userRepo = repository.NewUserGormRepo(db)
 	subscriptionRepo = repository.NewSubscriptionGormRepo(db)
@@ -82,13 +75,12 @@ func initHandlers(app *echo.Echo, dsn string, sessionManager *scs.SessionManager
 	api := service.NewAPI(&http.Client{})
 	subscriptionService := service.NewSubscriptionService(subscriptionRepo)
 
-	homeHandler := handler.HomeHandler{}
-	authHandler := handler.NewAuthHandler(authService)
-	deskHandler := handler.NewDeskHandler(api, subscriptionService, authService)
+	homeHandler := handler.NewHomeHandler(sessionManager)
+	authHandler := handler.NewAuthHandler(authService, sessionManager)
+	deskHandler := handler.NewDeskHandler(api, subscriptionService, authService, sessionManager)
 
 	app.GET("/", homeHandler.Home)
 	authGroup := app.Group("/auth")
-	authGroup.Use(session.LoadAndSave(sessionManager))
 	authGroup.GET("/signup", authHandler.GetSignup)
 	authGroup.POST("/signup", authHandler.PostSignup)
 	authGroup.GET("/login", authHandler.GetLogin)
@@ -96,7 +88,6 @@ func initHandlers(app *echo.Echo, dsn string, sessionManager *scs.SessionManager
 	authGroup.POST("/logout", authHandler.PostLogout)
 
 	deskGroup := app.Group("/desk")
-	deskGroup.Use(session.LoadAndSave(sessionManager))
 	deskGroup.GET("/", deskHandler.GetDeskIndex)
 }
 
@@ -108,4 +99,16 @@ func initDB(app *echo.Echo, dsn string) *gorm.DB {
 
 	db.AutoMigrate(&dao.UserGorm{})
 	return db
+}
+
+func initSessions(app *echo.Echo, db *gorm.DB) *scs.SessionManager {
+	sessionManager := scs.New()
+	sessionManager.Lifetime = (7 * 24) * time.Hour
+
+	store, err := gormstore.New(db)
+	if err != nil {
+		app.Logger.Fatal(err)
+	}
+	sessionManager.Store = store
+	return sessionManager
 }

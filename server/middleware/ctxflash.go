@@ -1,21 +1,29 @@
 package middleware
 
 import (
+	"github.com/alexedwards/scs/v2"
 	"github.com/labstack/echo/v4"
-	"newser.app/server/handler"
 )
 
-func CtxFlash(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		_ = handler.GetFlash(c, "errorFlash")
-		_ = handler.GetFlash(c, "successFlash")
-		_ = handler.GetFlash(c, "notificationFlash")
-		_ = handler.GetFlash(c, "errorFlash")
-		_ = handler.GetFlash(c, "successFlash")
-		_ = handler.GetFlash(c, "notificationFlash")
-		_ = handler.GetFlash(c, "emailError")
-		_ = handler.GetFlash(c, "passwordError")
-		_ = handler.GetFlash(c, "confirmError")
-		return next(c)
+// CtxFlash pops flash messages from the session
+// store and adds them to context for easy display
+// in Templ components
+func CtxFlash(sm *scs.SessionManager) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			c.Set("errorFlash", getFlash(c, sm, "errorFlash"))
+			c.Set("successFlash", getFlash(c, sm, "successFlash"))
+			c.Set("notificationFlash", getFlash(c, sm, "notificationFlash"))
+			c.Set("emailError", getFlash(c, sm, "emailError"))
+			c.Set("passwordError", getFlash(c, sm, "passwordError"))
+			c.Set("confirmError", getFlash(c, sm, "confirmError"))
+			return next(c)
+		}
 	}
+}
+
+// getFlash is a convenience function which pops
+// a flash message with a given key and returns its value
+func getFlash(c echo.Context, sm *scs.SessionManager, key string) string {
+	return sm.PopString(c.Request().Context(), key)
 }

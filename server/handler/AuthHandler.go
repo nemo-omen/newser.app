@@ -8,6 +8,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
+	"github.com/alexedwards/scs/v2"
 	"github.com/labstack/echo/v4"
 	"newser.app/server/service"
 	"newser.app/view/pages/auth"
@@ -30,11 +31,13 @@ func isEmailValid(e string) bool {
 }
 
 type AuthHandler struct {
+	session     Session
 	AuthService service.AuthService
 }
 
-func NewAuthHandler(authService service.AuthService) AuthHandler {
+func NewAuthHandler(authService service.AuthService, sessionManager *scs.SessionManager) AuthHandler {
 	return AuthHandler{
+		session:     Session{Manager: sessionManager},
 		AuthService: authService,
 	}
 }
@@ -54,11 +57,11 @@ func (h AuthHandler) PostLogin(c echo.Context) error {
 	if err != nil {
 		// flash specific errors depending on err
 		// type
-		SetFlash(c, "error", err.Error())
+		h.session.SetFlash(c, "error", err.Error())
 		return render(c, auth.Login())
 	}
-	SetFlash(c, "successFlash", fmt.Sprintf("%v logged in successfully!", u.Email))
-	SetAuthedSession(c)
+	h.session.SetFlash(c, "successFlash", fmt.Sprintf("%v logged in successfully!", u.Email))
+	h.session.SetAuth(c, email)
 	return c.Redirect(http.StatusSeeOther, "/desk/")
 }
 
@@ -69,17 +72,17 @@ func (h AuthHandler) PostSignup(c echo.Context) error {
 	conf := c.Request().FormValue("confirm")
 
 	if !MinChars(pass, 6) {
-		SetFlash(c, "passwordError", "password must be at least 8 characters long")
+		h.session.SetFlash(c, "passwordError", "password must be at least 8 characters long")
 		return c.Redirect(http.StatusSeeOther, "/auth/signup")
 	}
 
 	if pass != conf {
-		SetFlash(c, "confirmError", "passwords do not match")
+		h.session.SetFlash(c, "confirmError", "passwords do not match")
 		return c.Redirect(http.StatusSeeOther, "/auth/signup")
 	}
 
 	if !isEmailValid(email) {
-		SetFlash(c, "emailError", "not a valid email")
+		h.session.SetFlash(c, "emailError", "not a valid email")
 		return c.Redirect(http.StatusSeeOther, "/auth/signup")
 	}
 
@@ -93,17 +96,17 @@ func (h AuthHandler) PostSignup(c echo.Context) error {
 		} else {
 			errmsg = err.Error()
 		}
-		SetFlash(c, "errorFlash", errmsg)
+		h.session.SetFlash(c, "errorFlash", errmsg)
 		return c.Redirect(http.StatusSeeOther, "/auth/signup")
 	}
 
-	SetFlash(c, "successFlash", fmt.Sprintf("%v signed up! Log in to get started.", u.Email))
+	h.session.SetFlash(c, "successFlash", fmt.Sprintf("%v signed up! Log in to get started.", u.Email))
 
 	return c.Redirect(http.StatusSeeOther, "/auth/login")
 }
 
 func (h AuthHandler) PostLogout(c echo.Context) error {
-	RevokeAuthedSession(c)
-	SetFlash(c, "successFlash", "You are logged out.")
+	h.session.RevokeAuth(c)
+	h.session.SetFlash(c, "successFlash", "You are logged out.")
 	return c.Redirect(http.StatusSeeOther, "/auth/login")
 }
