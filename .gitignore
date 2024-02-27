@@ -1,2 +1,2 @@
 .env
-# newser.data/sqlite
+data/newser.sqlite
