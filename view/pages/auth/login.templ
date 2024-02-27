@@ -1,0 +1,22 @@
+package auth
+
+import "newser.app/view/layout"
+
+templ Login() {
+	@layout.Base() {
+		<main>
+			<h2>Login</h2>
+			<form action="/auth/login" method="POST">
+				<fieldset>
+					<label for="email">Email</label>
+					<input type="email" name="email" id="email"/>
+				</fieldset>
+				<fieldset>
+					<label for="password">Password</label>
+					<input type="password" name="password" id="password"/>
+				</fieldset>
+				<button type="submit">Log In</button>
+			</form>
+		</main>
+	}
+}
