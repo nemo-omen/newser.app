@@ -10,10 +10,10 @@ import (
 )
 
 type DeskHandler struct {
-	session     Session
-	API         service.API         // remote RSS feeds
-	AuthService service.AuthService // auth logic (logout, etc)
-	// SubscriptionService service.SubscriptionService // subscription logic
+	session             Session
+	API                 service.API                 // remote RSS feeds
+	AuthService         service.AuthService         // auth logic (logout, etc)
+	SubscriptionService service.SubscriptionService // subscription logic
 	// NoteService										// notes logic
 }
 
@@ -24,10 +24,10 @@ func NewDeskHandler(
 	sessionManager *scs.SessionManager,
 ) DeskHandler {
 	return DeskHandler{
-		session:     Session{Manager: sessionManager},
-		API:         api,
-		AuthService: as,
-		// SubscriptionService: ss,
+		session:             Session{Manager: sessionManager},
+		API:                 api,
+		AuthService:         as,
+		SubscriptionService: ss,
 	}
 }
 
@@ -37,5 +37,7 @@ func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 		h.session.SetFlash(c, "error", "You need to log in.")
 		return c.Redirect(http.StatusSeeOther, "/auth/login")
 	}
+
+	// subscriptions
 	return render(c, desk.Index())
 }

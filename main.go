@@ -70,10 +70,11 @@ func initHandlers(app *echo.Echo, db *gorm.DB, sessionManager *scs.SessionManage
 
 	userRepo = repository.NewUserGormRepo(db)
 	subscriptionRepo = repository.NewSubscriptionGormRepo(db)
+	newsfeedRepo := repository.NewNewsfeedGormRepo(db)
 
 	authService = service.NewAuthService(userRepo)
 	api := service.NewAPI(&http.Client{})
-	subscriptionService := service.NewSubscriptionService(subscriptionRepo)
+	subscriptionService := service.NewSubscriptionService(subscriptionRepo, newsfeedRepo)
 
 	homeHandler := handler.NewHomeHandler(sessionManager)
 	authHandler := handler.NewAuthHandler(authService, sessionManager)
@@ -98,6 +99,9 @@ func initDB(app *echo.Echo, dsn string) *gorm.DB {
 	}
 
 	db.AutoMigrate(&dao.UserGorm{})
+	db.AutoMigrate(&dao.SubscriptionGorm{})
+	db.AutoMigrate(&dao.NewsfeedGorm{})
+	db.AutoMigrate(&dao.ArticleGorm{})
 	return db
 }
 

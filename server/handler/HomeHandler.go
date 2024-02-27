@@ -18,7 +18,6 @@ func NewHomeHandler(sessionManager *scs.SessionManager) HomeHandler {
 	}
 }
 
-// create route handlers here
 func (h HomeHandler) Home(c echo.Context) error {
 	authed := h.session.CheckAuth(c)
 	if authed {

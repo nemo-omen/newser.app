@@ -17,10 +17,18 @@ type UserRepository interface {
 }
 
 type NewsfeedRepository interface {
-	Get(interface{}) (interface{}, error)
-	Create(interface{}) (interface{}, error)
-	Update(interface{}) (interface{}, error)
+	Get(id uint) (model.Newsfeed, error)
+	Create(n model.Newsfeed) (model.Newsfeed, error)
+	Update(n model.Newsfeed) (model.Newsfeed, error)
 	Delete(id uint) error
+	FindBySlug(slug string) (model.Newsfeed, error)
 }
 
-type SubscriptionRepository interface{}
+type SubscriptionRepository interface {
+	Get(id uint) (model.Subscription, error)
+	Create(model.Subscription) (model.Subscription, error)
+	All(userId uint) ([]model.Subscription, error)
+	Update(model.Subscription) (model.Subscription, error)
+	Delete(id uint) error
+	FindBySlug(slug string) (model.Subscription, error)
+}

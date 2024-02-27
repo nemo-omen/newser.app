@@ -6,13 +6,15 @@ import (
 )
 
 type SubscriptionService struct {
-	Repo repository.SubscriptionRepository
+	subRepo  repository.SubscriptionRepository
+	feedRepo repository.NewsfeedRepository
 }
 
-func NewSubscriptionService(sr repository.SubscriptionRepository) SubscriptionService {
-	return SubscriptionService{
-		Repo: sr,
-	}
+func NewSubscriptionService(
+	sr repository.SubscriptionRepository,
+	fr repository.NewsfeedRepository,
+) SubscriptionService {
+	return SubscriptionService{subRepo: sr, feedRepo: fr}
 }
 
 func (s SubscriptionService) Subscribe(f *model.Subscription, userId int) (model.Subscription, error) {

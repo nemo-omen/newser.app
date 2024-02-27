@@ -9,16 +9,16 @@ import (
 
 type ArticleGorm struct {
 	gorm.Model
-	Title           string          `gorm:"not null"`
-	Description     string          `gorm:"not null"`
-	Content         string          `gorm:"not null"`
-	Links           []string        `gorm:"not null"`
-	Author          []*PersonGorm   `gorm:"many2many:article_people"`
-	Published       string          `gorm:"not null"`
-	PublishedParsed time.Time       `gorm:"not null"`
-	Image           *model.Image    `gorm:"type:json"`
-	Categories      []*CategoryGorm `gorm:"many2many:category_articles"`
-	Slug            string          `gorm:"not null"`
+	Title           string
+	Description     string
+	Content         string
+	Links           []string
+	Author          []PersonGorm `gorm:"many2many:article_people"`
+	Published       string
+	PublishedParsed time.Time
+	Image           *model.Image   `gorm:"type:json"`
+	Categories      []CategoryGorm `gorm:"many2many:category_articles"`
+	Slug            string
 	GUID            *string
 	Updated         *string
 	UpdatedParsed   *time.Time
