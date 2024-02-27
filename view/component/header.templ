@@ -8,6 +8,14 @@ func getCurrentPath(ctx context.Context) string {
 	return ""
 }
 
+func getIsAuthenticated(ctx context.Context) bool {
+	isAuthed := ctx.Value("authenticated")
+	if isAuthed == nil {
+		return false
+	}
+	return isAuthed.(bool)
+}
+
 templ Header() {
 	<header>
 		<div class="header-inner">
@@ -20,8 +28,16 @@ templ Header() {
 			// TODO: Different nav for auth vs !auth
 			<nav aria-label="Main">
 				<ul>
-					<li><a href="/auth/login">Log In</a></li>
-					<li><a href="/auth/signup">Sign Up</a></li>
+					if getIsAuthenticated(ctx) == false {
+						<li><a href="/auth/login">Log In</a></li>
+						<li><a href="/auth/signup">Sign Up</a></li>
+					} else {
+						<li>
+							<form action="/auth/logout" method="post">
+								<button type="submit">Log Out</button>
+							</form>
+						</li>
+					}
 				</ul>
 			</nav>
 		</div>

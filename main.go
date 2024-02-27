@@ -93,6 +93,7 @@ func initHandlers(app *echo.Echo, dsn string, sessionManager *scs.SessionManager
 	authGroup.POST("/signup", authHandler.PostSignup)
 	authGroup.GET("/login", authHandler.GetLogin)
 	authGroup.POST("/login", authHandler.PostLogin)
+	authGroup.POST("/logout", authHandler.PostLogout)
 
 	deskGroup := app.Group("/desk")
 	deskGroup.Use(session.LoadAndSave(sessionManager))

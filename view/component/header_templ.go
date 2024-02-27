@@ -18,6 +18,14 @@ func getCurrentPath(ctx context.Context) string {
 	return ""
 }
 
+func getIsAuthenticated(ctx context.Context) bool {
+	isAuthed := ctx.Value("authenticated")
+	if isAuthed == nil {
+		return false
+	}
+	return isAuthed.(bool)
+}
+
 func Header() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -39,7 +47,22 @@ func Header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav aria-label=\"Main\"><ul><li><a href=\"/auth/login\">Log In</a></li><li><a href=\"/auth/signup\">Sign Up</a></li></ul></nav></div></header>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav aria-label=\"Main\"><ul>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if getIsAuthenticated(ctx) == false {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><a href=\"/auth/login\">Log In</a></li><li><a href=\"/auth/signup\">Sign Up</a></li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><form action=\"/auth/logout\" method=\"post\"><button type=\"submit\">Log Out</button></form></li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul></nav></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
