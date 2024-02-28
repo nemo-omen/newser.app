@@ -26,11 +26,11 @@ type NewsfeedRepository interface {
 }
 
 type SubscriptionRepository interface {
-	Get(id uint) (model.Subscription, error)
+	Get(id int64) (model.Subscription, error)
 	Create(model.Subscription) (model.Subscription, error)
-	All(userId uint) ([]model.Subscription, error)
+	All(userId int64) ([]model.Subscription, error)
 	Update(model.Subscription) (model.Subscription, error)
-	Delete(id uint) error
+	Delete(id int64) error
 	FindBySlug(slug string) (model.Subscription, error)
 	Migrate() error
 }

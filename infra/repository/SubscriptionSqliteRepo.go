@@ -1,14 +1,14 @@
 package repository
 
 import (
-	"database/sql"
 	"fmt"
 
+	"github.com/jmoiron/sqlx"
 	"newser.app/model"
 )
 
 type SubscriptionSqliteRepo struct {
-	DB *sql.DB
+	DB *sqlx.DB
 }
 
 func (r SubscriptionSqliteRepo) Migrate() error {
@@ -37,11 +37,11 @@ func (r SubscriptionSqliteRepo) Migrate() error {
 	return err
 }
 
-func NewSubscriptionSqliteRepo(db *sql.DB) SubscriptionSqliteRepo {
+func NewSubscriptionSqliteRepo(db *sqlx.DB) SubscriptionSqliteRepo {
 	return SubscriptionSqliteRepo{DB: db}
 }
 
-func (r SubscriptionSqliteRepo) Get(id uint) (model.Subscription, error) {
+func (r SubscriptionSqliteRepo) Get(id int64) (model.Subscription, error) {
 	return model.Subscription{}, nil
 }
 
@@ -49,15 +49,20 @@ func (r SubscriptionSqliteRepo) Create(s model.Subscription) (model.Subscription
 	return model.Subscription{}, nil
 }
 
-func (r SubscriptionSqliteRepo) All(userId uint) ([]model.Subscription, error) {
-	return []model.Subscription{}, nil
+func (r SubscriptionSqliteRepo) All(userId int64) ([]model.Subscription, error) {
+	ss := []model.Subscription{}
+	err := r.DB.Select(&ss, "SELECT * FROM subscriptions WHERE user_id=?", userId)
+	if err != nil {
+		return ss, err
+	}
+	return ss, nil
 }
 
 func (r SubscriptionSqliteRepo) Update(s model.Subscription) (model.Subscription, error) {
 	return model.Subscription{}, nil
 }
 
-func (r SubscriptionSqliteRepo) Delete(id uint) error {
+func (r SubscriptionSqliteRepo) Delete(id int64) error {
 	return nil
 }
 

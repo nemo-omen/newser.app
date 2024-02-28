@@ -53,14 +53,14 @@ func (h AuthHandler) GetSignup(c echo.Context) error {
 func (h AuthHandler) PostLogin(c echo.Context) error {
 	email := c.Request().FormValue("email")
 	pass := c.Request().FormValue("password")
-	u, err := h.AuthService.Login(email, pass)
+	_, err := h.AuthService.Login(email, pass)
 	if err != nil {
 		// flash specific errors depending on err
 		// type
 		h.session.SetFlash(c, "error", err.Error())
 		return render(c, auth.Login())
 	}
-	h.session.SetFlash(c, "successFlash", fmt.Sprintf("%v logged in successfully!", u.Email))
+	h.session.SetFlash(c, "successFlash", fmt.Sprintf("%v logged in successfully!", email))
 	h.session.SetAuth(c, email)
 	return c.Redirect(http.StatusSeeOther, "/desk/")
 }

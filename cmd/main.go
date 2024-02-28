@@ -8,6 +8,8 @@ import (
 
 	"github.com/alexedwards/scs/sqlite3store"
 	"github.com/alexedwards/scs/v2"
+
+	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/gommon/log"
 	_ "github.com/mattn/go-sqlite3"
@@ -39,6 +41,10 @@ func main() {
 
 	app := echo.New()
 	setLogLevel(app, *dev)
+	sessionDb, err := openSessionDB(*dsn)
+	if err != nil {
+		app.Logger.Fatal(err.Error())
+	}
 
 	db, err := openDB(*dsn)
 	if err != nil {
@@ -46,7 +52,7 @@ func main() {
 	}
 	defer db.Close()
 
-	sessionManager := initSessions(app, db)
+	sessionManager := initSessions(app, sessionDb)
 	initHandlers(app, db, sessionManager, *dev)
 	app.Static("/static", "view/static")
 	app.Use(session.LoadAndSave(sessionManager))
@@ -69,7 +75,7 @@ func setLogLevel(app *echo.Echo, dev bool) {
 	}
 }
 
-func initHandlers(app *echo.Echo, db *sql.DB, sessionManager *scs.SessionManager, isDev bool) {
+func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManager, isDev bool) {
 
 	userRepo = repository.NewUserSqliteRepo(db)
 	newsfeedRepo := repository.NewNewsfeedGormRepo(db)
@@ -97,9 +103,24 @@ func initHandlers(app *echo.Echo, db *sql.DB, sessionManager *scs.SessionManager
 
 	deskGroup := app.Group("/desk")
 	deskGroup.GET("/", deskHandler.GetDeskIndex)
+	deskGroup.GET("/search", deskHandler.GetDeskSearch)
+	deskGroup.POST("/search", deskHandler.PostDeskSearch)
 }
 
-func openDB(dsn string) (*sql.DB, error) {
+func openDB(dsn string) (*sqlx.DB, error) {
+	db, err := sqlx.Open("sqlite3", dsn)
+	if err != nil {
+		return nil, err
+	}
+	err = db.Ping()
+	if err != nil {
+		db.Close()
+		return nil, err
+	}
+	return db, nil
+}
+
+func openSessionDB(dsn string) (*sql.DB, error) {
 	db, err := sql.Open("sqlite3", dsn)
 	if err != nil {
 		return nil, err

@@ -28,8 +28,12 @@ func (s SubscriptionService) Unsubscribe(feedId, userId uint) error {
 	return nil
 }
 
-func (s SubscriptionService) All() ([]model.Subscription, error) {
-	return []model.Subscription{}, nil
+func (s SubscriptionService) All(userId int64) ([]model.Subscription, error) {
+	ss, err := s.subRepo.All(userId)
+	if err != nil {
+		return ss, err
+	}
+	return ss, nil
 }
 
 func (s SubscriptionService) Get(subscriptionId uint) (model.Subscription, error) {

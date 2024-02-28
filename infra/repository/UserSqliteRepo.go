@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/mattn/go-sqlite3"
 	"newser.app/infra/dto"
 	"newser.app/model"
@@ -16,10 +17,10 @@ var (
 )
 
 type UserSqliteRepo struct {
-	DB *sql.DB
+	DB *sqlx.DB
 }
 
-func NewUserSqliteRepo(db *sql.DB) UserSqliteRepo {
+func NewUserSqliteRepo(db *sqlx.DB) UserSqliteRepo {
 	return UserSqliteRepo{DB: db}
 }
 
@@ -67,15 +68,16 @@ func (r UserSqliteRepo) FindByEmail(email string) (model.User, error) {
 }
 
 func (r UserSqliteRepo) GetHashedPasswordByEmail(email string) (string, error) {
-	row := r.DB.QueryRow("SELECT * FROM users WHERE email=?", email)
-	var u dto.UserDTO
-	if err := row.Scan(&u.Id, &u.Email, &u.HashedPassword); err != nil {
+	var hashed string
+	err := r.DB.Get(&hashed, "SELECT password FROM users WHERE email=?", email)
+	if err != nil {
+		fmt.Println("err: ", err.Error())
 		if errors.Is(err, sql.ErrNoRows) {
 			return "", ErrNotExists
 		}
-		return "", err
+		return "", nil
 	}
-	return u.HashedPassword, nil
+	return hashed, nil
 }
 
 func (r UserSqliteRepo) Create(udto dto.UserDTO) (model.User, error) {

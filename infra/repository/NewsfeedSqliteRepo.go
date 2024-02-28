@@ -1,17 +1,17 @@
 package repository
 
 import (
-	"database/sql"
 	"fmt"
 
+	"github.com/jmoiron/sqlx"
 	"newser.app/model"
 )
 
 type NewsfeedSqliteRepo struct {
-	DB *sql.DB
+	DB *sqlx.DB
 }
 
-func NewNewsfeedGormRepo(db *sql.DB) NewsfeedSqliteRepo {
+func NewNewsfeedGormRepo(db *sqlx.DB) NewsfeedSqliteRepo {
 	return NewsfeedSqliteRepo{DB: db}
 }
 

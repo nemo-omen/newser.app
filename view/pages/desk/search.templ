@@ -1,0 +1,16 @@
+package desk
+
+import "newser.app/view/layout"
+
+templ Search() {
+	@layout.Base() {
+		<h2>Add a Newsfeed</h2>
+		<form action="/desk/search" method="post">
+			<fieldset>
+				<label for="searchurl">Search</label>
+				<input type="search" name="searchurl" id="searchurl"/>
+			</fieldset>
+			<button type="submit">Search</button>
+		</form>
+	}
+}

@@ -10,8 +10,6 @@ import "context"
 import "io"
 import "bytes"
 
-import "fmt"
-
 func getErrorFlash(ctx context.Context) string {
 	errorFlash := ctx.Value("errorFlash")
 	if errorFlash != nil {
@@ -22,7 +20,6 @@ func getErrorFlash(ctx context.Context) string {
 
 func getSuccessFlash(ctx context.Context) string {
 	successFlash := ctx.Value("successFlash")
-	fmt.Println(successFlash)
 	if successFlash != nil {
 		return successFlash.(string)
 	}
@@ -62,7 +59,7 @@ func Flash() templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(getErrorFlash(ctx))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/flash.templ`, Line: 32, Col: 59}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/flash.templ`, Line: 29, Col: 59}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -81,7 +78,7 @@ func Flash() templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(getSuccessFlash(ctx))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/flash.templ`, Line: 35, Col: 63}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/flash.templ`, Line: 32, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -100,7 +97,7 @@ func Flash() templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(getNotificationFlash(ctx))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/flash.templ`, Line: 38, Col: 73}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/flash.templ`, Line: 35, Col: 73}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {

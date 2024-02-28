@@ -1,7 +1,5 @@
 package component
 
-import "fmt"
-
 func getErrorFlash(ctx context.Context) string {
 	errorFlash := ctx.Value("errorFlash")
 	if errorFlash != nil {
@@ -12,7 +10,6 @@ func getErrorFlash(ctx context.Context) string {
 
 func getSuccessFlash(ctx context.Context) string {
 	successFlash := ctx.Value("successFlash")
-	fmt.Println(successFlash)
 	if successFlash != nil {
 		return successFlash.(string)
 	}
