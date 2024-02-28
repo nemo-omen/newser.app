@@ -5,11 +5,11 @@ import (
 )
 
 type Article struct {
-	ID              uint
+	ID              int64
 	Title           string
 	Description     string
 	Content         string
-	Links           []string
+	ArticleLink     string
 	Authors         []*Person
 	Published       string
 	PublishedParsed time.Time
@@ -19,7 +19,7 @@ type Article struct {
 	Categories      []string
 	GUID            string
 	Slug            string
-	FeedId          uint
+	FeedId          int64
 	FeedTitle       string
 	FeedUrl         string
 }

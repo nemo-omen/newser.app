@@ -46,12 +46,12 @@ func (s AuthService) Signup(email, hashedPassword string) (model.User, error) {
 	return u, nil
 }
 
-func (s AuthService) Logout(userId uint) error {
+func (s AuthService) Logout(userId int64) error {
 	return nil
 }
 
-func (s AuthService) GetUserById(userId uint) (model.User, error) {
-	u, err := s.UserRepo.FindById(userId)
+func (s AuthService) GetUserById(userId int64) (model.User, error) {
+	u, err := s.UserRepo.Get(userId)
 	if err != nil {
 		return u, err
 	}

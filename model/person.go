@@ -1,8 +1,8 @@
 package model
 
 type Person struct {
-	ID       uint
+	ID       int64
 	Name     string
 	Email    string
-	Articles []uint
+	Articles []Article
 }

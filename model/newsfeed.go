@@ -6,7 +6,7 @@ import (
 )
 
 type Newsfeed struct {
-	ID              uint
+	ID              int64
 	Title           string
 	SiteUrl         string // site link
 	FeedUrl         string // feed link

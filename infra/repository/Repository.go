@@ -6,14 +6,14 @@ import (
 )
 
 type UserRepository interface {
-	Get(udto dto.UserDTO) (model.User, error)
+	Get(id int64) (model.User, error)
 	FindByEmail(email string) (model.User, error)
-	FindById(id uint) (model.User, error)
 	GetHashedPasswordByEmail(email string) (string, error)
 	All() []model.User
 	Create(udto dto.UserDTO) (model.User, error)
 	Update(udto dto.UserDTO) (model.User, error)
-	Delete(id uint) error
+	Delete(id int64) error
+	Migrate() error
 }
 
 type NewsfeedRepository interface {
@@ -22,6 +22,7 @@ type NewsfeedRepository interface {
 	Update(n model.Newsfeed) (model.Newsfeed, error)
 	Delete(id uint) error
 	FindBySlug(slug string) (model.Newsfeed, error)
+	Migrate() error
 }
 
 type SubscriptionRepository interface {
@@ -31,4 +32,5 @@ type SubscriptionRepository interface {
 	Update(model.Subscription) (model.Subscription, error)
 	Delete(id uint) error
 	FindBySlug(slug string) (model.Subscription, error)
+	Migrate() error
 }
