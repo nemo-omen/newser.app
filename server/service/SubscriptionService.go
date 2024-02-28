@@ -18,8 +18,10 @@ func NewSubscriptionService(
 }
 
 func (s SubscriptionService) Subscribe(f *model.Subscription, userId int) (model.Subscription, error) {
-	// persist feeds, create subscription
-	// return subscription id
+	// persist subscription
+	// persist feeds & items
+	// add items to user's unread collection
+	// return subscription model
 	return model.Subscription{}, nil
 }
 
