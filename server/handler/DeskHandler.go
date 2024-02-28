@@ -76,5 +76,6 @@ func (h DeskHandler) PostDeskSearch(c echo.Context) error {
 
 	searchurl := c.Request().FormValue("searchurl")
 	fmt.Println(searchurl)
+	// TODO: Try to reimplement main branch search logic
 	return render(c, desk.Search())
 }
