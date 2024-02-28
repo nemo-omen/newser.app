@@ -105,7 +105,7 @@ func (h DeskHandler) PostDeskSearch(c echo.Context) error {
 
 	feedsResult, err := h.API.GetFeedsConcurrent(searchLinks)
 	if err != nil {
-		h.session.SetFlash(c, "searchError", fmt.Sprintf("There was an error getting feeds at %v", searchInput))
+		h.session.SetFlash(c, "searchError", ErrorFeedNotFound(searchInput))
 		// TODO: isHx check => render partial
 		return render(c, desk.Search(feeds))
 	}
@@ -114,4 +114,12 @@ func (h DeskHandler) PostDeskSearch(c echo.Context) error {
 
 	// TODO: isHx => partial
 	return render(c, desk.Search(feeds))
+}
+
+func (h DeskHandler) PostDeskSubscribe(c echo.Context) error {
+	authed := h.session.CheckAuth(c)
+	if !authed {
+		h.session.SetFlash(c, "error", ErrorNotLoggedIn)
+		return c.Redirect(http.StatusSeeOther, "/auth/login")
+	}
 }
