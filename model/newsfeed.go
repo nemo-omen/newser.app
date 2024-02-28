@@ -3,6 +3,9 @@ package model
 import (
 	"encoding/json"
 	"time"
+
+	"github.com/mmcdole/gofeed"
+	"newser.app/shared/util"
 )
 
 type Newsfeed struct {
@@ -11,19 +14,19 @@ type Newsfeed struct {
 	SiteUrl         string // site link
 	FeedUrl         string // feed link
 	Description     string
-	Image           *Image
+	Image           string
 	Published       string
-	PublishedParsed time.Time
+	PublishedParsed *time.Time
 	Updated         string
-	UpdatedParsed   time.Time
+	UpdatedParsed   *time.Time
 	Copyright       string
-	Articles        []*Article
-	Author          *Person
-	Authors         []*Person
-	Language        string
-	Categories      []string
-	FeedType        string
-	Slug            string
+	Articles        []Article
+	Author          string
+	// Authors         []string
+	Language   string
+	Categories []string
+	FeedType   string
+	Slug       string
 }
 
 func (f Newsfeed) String() string {
@@ -43,4 +46,27 @@ func (f Newsfeed) Less(i, k int) bool {
 
 func (f Newsfeed) Swap(i, k int) {
 	f.Articles[i], f.Articles[k] = f.Articles[k], f.Articles[i]
+}
+
+func FeedFromRemote(rf gofeed.Feed) Newsfeed {
+	return Newsfeed{
+		Title:           rf.Title,
+		SiteUrl:         rf.Link,
+		FeedUrl:         rf.FeedLink,
+		Description:     rf.Description,
+		Image:           rf.Image.URL,
+		Published:       rf.Published,
+		PublishedParsed: rf.PublishedParsed,
+		Updated:         rf.Updated,
+		UpdatedParsed:   rf.UpdatedParsed,
+		Copyright:       rf.Copyright,
+		Author:          rf.Author.Name,
+		Language:        rf.Language,
+		Categories:      rf.Categories,
+		FeedType:        rf.FeedType,
+		Slug:            util.Slugify(rf.Title),
+		Articles: util.MapSlice(rf.Items, func(item *gofeed.Item) Article {
+			return ArticleFromRemote(item)
+		}),
+	}
 }

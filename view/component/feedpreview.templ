@@ -28,15 +28,22 @@ templ FeedPreview(feed *gofeed.Feed) {
 		<form
 			action="/desk/subscriptions/"
 			method="POST"
-			hx-post="/desk/subscriptions/"
-			hx-boost="true"
-			hx-target="closest main"
-			hx-select="main"
-			hx-swap="outerHTML"
 		>
 			<input type="hidden" name="subscriptionurl" id="subscriptionurl" value={ feed.FeedLink }/>
 			<button type="submit">Subscribe</button>
 		</form>
+		// <form
+		// 	action="/desk/subscriptions/"
+		// 	method="POST"
+		// 	hx-post="/desk/subscriptions/"
+		// 	hx-boost="true"
+		// 	hx-target="closest main"
+		// 	hx-select="main"
+		// 	hx-swap="outerHTML"
+		// >
+		// 	<input type="hidden" name="subscriptionurl" id="subscriptionurl" value={ feed.FeedLink }/>
+		// 	<button type="submit">Subscribe</button>
+		// </form>
 	</li>
 }
 

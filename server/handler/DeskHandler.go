@@ -106,20 +106,43 @@ func (h DeskHandler) PostDeskSearch(c echo.Context) error {
 	feedsResult, err := h.API.GetFeedsConcurrent(searchLinks)
 	if err != nil {
 		h.session.SetFlash(c, "searchError", ErrorFeedNotFound(searchInput))
-		// TODO: isHx check => render partial
+		// TODO: find a way to send search result partials
+		// and separate flash message partials
+		// maybe SSE? with a flash element connected?
+		// if isHx {
+		// 	return render(c, desk.Search(feeds))
+		// }
 		return render(c, desk.Search(feeds))
 	}
 	feeds = append(feeds, feedsResult...)
 	fmt.Println(feeds)
 
 	// TODO: isHx => partial
+	// if isHx {
+	// 	return render(c, component.FeedSearchResult(feeds))
+	// }
 	return render(c, desk.Search(feeds))
 }
 
 func (h DeskHandler) PostDeskSubscribe(c echo.Context) error {
 	authed := h.session.CheckAuth(c)
+	email := h.session.GetUser(c)
 	if !authed {
 		h.session.SetFlash(c, "error", ErrorNotLoggedIn)
 		return c.Redirect(http.StatusSeeOther, "/auth/login")
 	}
+	subscriptionUrl := c.Request().FormValue("subscriptionurl")
+	feed, err := h.API.GetFeed(subscriptionUrl)
+	if err != nil {
+		h.session.SetFlash(c, "error", ErrorFeedNotFound(subscriptionUrl))
+		// TODO: need a more suitable response here
+		return render(c, desk.Index())
+	}
+	u, _ := h.AuthService.GetUserByEmail(email)
+	sub, err := h.SubscriptionService.Subscribe(feed, int(u.Id))
+	if err != nil {
+		h.session.SetFlash(c, "error", fmt.Sprintf("Could not subscribe to %v", feed.Title))
+	}
+	fmt.Println(sub)
+	return render(c, desk.Index())
 }

@@ -2,6 +2,8 @@ package model
 
 import (
 	"time"
+
+	"github.com/mmcdole/gofeed"
 )
 
 type Article struct {
@@ -22,4 +24,8 @@ type Article struct {
 	FeedId          int64
 	FeedTitle       string
 	FeedUrl         string
+}
+
+func ArticleFromRemote(ri *gofeed.Item) Article {
+	return Article{}
 }

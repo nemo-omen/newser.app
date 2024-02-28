@@ -194,7 +194,7 @@ func FeedPreview(feed *gofeed.Feed) templ.Component {
 				}
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul><form action=\"/desk/subscriptions/\" method=\"POST\" hx-post=\"/desk/subscriptions/\" hx-boost=\"true\" hx-target=\"closest main\" hx-select=\"main\" hx-swap=\"outerHTML\"><input type=\"hidden\" name=\"subscriptionurl\" id=\"subscriptionurl\" value=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul><form action=\"/desk/subscriptions/\" method=\"POST\"><input type=\"hidden\" name=\"subscriptionurl\" id=\"subscriptionurl\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
