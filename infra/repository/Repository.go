@@ -34,3 +34,13 @@ type SubscriptionRepository interface {
 	FindBySlug(slug string) (model.Subscription, error)
 	Migrate() error
 }
+
+type CollectionRepository interface {
+	Get(id int64) (model.Collection, error)
+	Create(model.Collection) (model.Collection, error)
+	All(userId int64) ([]model.Collection, error)
+	Update(model.Collection) (model.Collection, error)
+	Delete(id int64) error
+	FindBySlug(slug string) (model.Collection, error)
+	Migrate() error
+}

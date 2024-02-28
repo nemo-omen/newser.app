@@ -9,13 +9,19 @@ import (
 	"newser.app/model"
 )
 
+var (
+	defaultUserCollections = []string{"read", "unread", "favorites"}
+)
+
 type AuthService struct {
-	UserRepo repository.UserRepository
+	UserRepo       repository.UserRepository
+	CollectionRepo repository.CollectionRepository
 }
 
-func NewAuthService(userRepo repository.UserRepository) AuthService {
+func NewAuthService(userRepo repository.UserRepository, collectionRepo repository.CollectionRepository) AuthService {
 	return AuthService{
-		UserRepo: userRepo,
+		UserRepo:       userRepo,
+		CollectionRepo: collectionRepo,
 	}
 }
 
@@ -42,6 +48,13 @@ func (s AuthService) Signup(email, hashedPassword string) (model.User, error) {
 	u, err := s.UserRepo.Create(udto)
 	if err != nil {
 		return model.User{}, err
+	}
+	for _, title := range defaultUserCollections {
+		collection := model.NewCollection(title, u.Id)
+		_, err := s.CollectionRepo.Create(collection)
+		if err != nil {
+			fmt.Printf("error creating %v collection: %v", collection, err.Error())
+		}
 	}
 	return u, nil
 }

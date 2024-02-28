@@ -6,7 +6,9 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/labstack/echo/v4"
+	"github.com/mmcdole/gofeed"
 	"newser.app/server/service"
+	"newser.app/shared/util"
 	"newser.app/view/pages/desk"
 )
 
@@ -62,7 +64,7 @@ func (h DeskHandler) GetDeskSearch(c echo.Context) error {
 		h.session.SetFlash(c, "error", "You need to log in.")
 		return c.Redirect(http.StatusSeeOther, "/auth/login")
 	}
-	return render(c, desk.Search())
+	return render(c, desk.Search([]*gofeed.Feed{}))
 }
 
 func (h DeskHandler) PostDeskSearch(c echo.Context) error {
@@ -74,8 +76,42 @@ func (h DeskHandler) PostDeskSearch(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, "/auth/login")
 	}
 
-	searchurl := c.Request().FormValue("searchurl")
-	fmt.Println(searchurl)
-	// TODO: Try to reimplement main branch search logic
-	return render(c, desk.Search())
+	feeds := []*gofeed.Feed{}
+	searchLinks := []string{}
+	// isHx := c.Get("isHx").(bool)
+	searchInput := c.Request().FormValue("searchurl")
+	validUrl, err := util.MakeUrl(searchInput)
+	if err != nil {
+		h.session.SetFlash(c, "searchError", fmt.Sprintf("No feeds found at %v, try using %v.com?", searchInput, searchInput))
+		return render(c, desk.Search(feeds))
+	}
+	isSite := h.API.CheckSite(validUrl.String())
+	if !isSite {
+		h.session.SetFlash(c, "searchError", fmt.Sprintf("Could not find a feed at %v", searchInput))
+		return render(c, desk.Search(feeds))
+	}
+
+	docFeedLinks, _ := h.API.FindFeedLinks(validUrl.String())
+	searchLinks = append(searchLinks, docFeedLinks...)
+
+	if len(searchLinks) < 1 {
+		guessedLinks, err := h.API.GuessFeedLinks(validUrl.String())
+		if err != nil {
+			h.session.SetFlash(c, "searchError", fmt.Sprintf("Could not fing a feed at %v", searchInput))
+			return render(c, desk.Search(feeds))
+		}
+		searchLinks = append(searchLinks, guessedLinks...)
+	}
+
+	feedsResult, err := h.API.GetFeedsConcurrent(searchLinks)
+	if err != nil {
+		h.session.SetFlash(c, "searchError", fmt.Sprintf("There was an error getting feeds at %v", searchInput))
+		// TODO: isHx check => render partial
+		return render(c, desk.Search(feeds))
+	}
+	feeds = append(feeds, feedsResult...)
+	fmt.Println(feeds)
+
+	// TODO: isHx => partial
+	return render(c, desk.Search(feeds))
 }

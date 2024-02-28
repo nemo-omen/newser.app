@@ -17,6 +17,7 @@ func CtxFlash(sm *scs.SessionManager) echo.MiddlewareFunc {
 			c.Set("emailError", getFlash(c, sm, "emailError"))
 			c.Set("passwordError", getFlash(c, sm, "passwordError"))
 			c.Set("confirmError", getFlash(c, sm, "confirmError"))
+			c.Set("searchError", getFlash(c, sm, "searchError"))
 			return next(c)
 		}
 	}

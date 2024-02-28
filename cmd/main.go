@@ -80,12 +80,14 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 	userRepo = repository.NewUserSqliteRepo(db)
 	newsfeedRepo := repository.NewNewsfeedGormRepo(db)
 	subscriptionRepo = repository.NewSubscriptionSqliteRepo(db)
+	collectionRepo := repository.NewCollectionSqliteRepo(db)
 
 	userRepo.Migrate()
 	newsfeedRepo.Migrate()
 	subscriptionRepo.Migrate()
+	collectionRepo.Migrate()
 
-	authService = service.NewAuthService(userRepo)
+	authService = service.NewAuthService(userRepo, collectionRepo)
 	api := service.NewAPI(&http.Client{})
 	subscriptionService := service.NewSubscriptionService(subscriptionRepo, newsfeedRepo)
 

@@ -1,0 +1,30 @@
+package component
+
+import (
+	"strconv"
+	"github.com/mmcdole/gofeed"
+)
+
+func getLen(feeds []*gofeed.Feed) string {
+	return strconv.Itoa(len(feeds))
+}
+
+templ FeedSearchResult(feeds []*gofeed.Feed) {
+	if len(feeds) > 0 {
+		<h3>We found { getLen(feeds) } feeds!</h3>
+		<ul class={ feedPreviewList() }>
+			for _, feed := range feeds {
+				@FeedPreview(feed)
+			}
+		</ul>
+	}
+}
+
+css feedPreviewList() {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
