@@ -16,7 +16,6 @@ func (r SubscriptionSqliteRepo) Migrate() error {
 	q := `
 	CREATE TABLE IF NOT EXISTS subscriptions(
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		slug TEXT NOT NULL,
 		user_id INT NOT NULL,
 		newsfeed_id INT NOT NULL,
 		CONSTRAINT fk_users
@@ -46,7 +45,20 @@ func (r SubscriptionSqliteRepo) Get(id int64) (model.Subscription, error) {
 }
 
 func (r SubscriptionSqliteRepo) Create(s model.Subscription) (model.Subscription, error) {
-	return model.Subscription{}, nil
+	q := `
+	INSERT INTO subscriptions(user_id, newsfeed_id)
+		VALUES(?, ?);
+	`
+	res, err := r.DB.Exec(q, s.UserId, s.NewsfeedId)
+	if err != nil {
+		return model.Subscription{}, err
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		return model.Subscription{}, err
+	}
+	s.Id = id
+	return s, nil
 }
 
 func (r SubscriptionSqliteRepo) All(userId int64) ([]model.Subscription, error) {

@@ -1,8 +1,7 @@
 package model
 
 type Subscription struct {
-	Id       int64
-	Newsfeed *Newsfeed
-	User     *User
-	Slug     string
+	Id         int64
+	NewsfeedId int64
+	UserId     int64
 }

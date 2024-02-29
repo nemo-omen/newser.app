@@ -78,18 +78,20 @@ func setLogLevel(app *echo.Echo, dev bool) {
 func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManager, isDev bool) {
 
 	userRepo = repository.NewUserSqliteRepo(db)
-	newsfeedRepo := repository.NewNewsfeedGormRepo(db)
+	newsfeedRepo := repository.NewNewsfeedSqliteRepo(db)
+	articleRepo := repository.NewArticleSqliteRepo(db)
 	subscriptionRepo = repository.NewSubscriptionSqliteRepo(db)
 	collectionRepo := repository.NewCollectionSqliteRepo(db)
 
 	userRepo.Migrate()
 	newsfeedRepo.Migrate()
+	articleRepo.Migrate()
 	subscriptionRepo.Migrate()
 	collectionRepo.Migrate()
 
 	authService = service.NewAuthService(userRepo, collectionRepo)
 	api := service.NewAPI(&http.Client{})
-	subscriptionService := service.NewSubscriptionService(subscriptionRepo, newsfeedRepo, collectionRepo)
+	subscriptionService := service.NewSubscriptionService(subscriptionRepo, newsfeedRepo, articleRepo, collectionRepo)
 
 	homeHandler := handler.NewHomeHandler(sessionManager)
 	authHandler := handler.NewAuthHandler(authService, sessionManager)
@@ -107,6 +109,7 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 	deskGroup.GET("/", deskHandler.GetDeskIndex)
 	deskGroup.GET("/search", deskHandler.GetDeskSearch)
 	deskGroup.POST("/search", deskHandler.PostDeskSearch)
+	deskGroup.POST("/subscribe", deskHandler.PostDeskSubscribe)
 }
 
 func openDB(dsn string) (*sqlx.DB, error) {

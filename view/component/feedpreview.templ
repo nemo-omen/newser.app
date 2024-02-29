@@ -26,7 +26,7 @@ templ FeedPreview(feed *gofeed.Feed) {
 			}
 		</ul>
 		<form
-			action="/desk/subscriptions/"
+			action="/desk/subscribe"
 			method="POST"
 		>
 			<input type="hidden" name="subscriptionurl" id="subscriptionurl" value={ feed.FeedLink }/>

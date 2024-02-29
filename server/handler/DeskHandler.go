@@ -115,7 +115,7 @@ func (h DeskHandler) PostDeskSearch(c echo.Context) error {
 		return render(c, desk.Search(feeds))
 	}
 	feeds = append(feeds, feedsResult...)
-	fmt.Println(feeds)
+	// fmt.Println(feeds)
 
 	// TODO: isHx => partial
 	// if isHx {
@@ -139,7 +139,7 @@ func (h DeskHandler) PostDeskSubscribe(c echo.Context) error {
 		return render(c, desk.Index())
 	}
 	u, _ := h.AuthService.GetUserByEmail(email)
-	sub, err := h.SubscriptionService.Subscribe(feed, int(u.Id))
+	sub, err := h.SubscriptionService.Subscribe(feed, u.Id)
 	if err != nil {
 		h.session.SetFlash(c, "error", fmt.Sprintf("Could not subscribe to %v", feed.Title))
 	}

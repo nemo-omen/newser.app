@@ -25,6 +25,17 @@ type NewsfeedRepository interface {
 	Migrate() error
 }
 
+type ArticleRepository interface {
+	Get(id uint) (model.Article, error)
+	Create(n model.Article) (model.Article, error)
+	Update(n model.Article) (model.Article, error)
+	Delete(id uint) error
+	FindBySlug(slug string) (model.Article, error)
+	ArticlesByCollection(collectionId int64) ([]model.Article, error)
+	ArticlesByNewsfeed(feedId int64) ([]model.Article, error)
+	Migrate() error
+}
+
 type SubscriptionRepository interface {
 	Get(id int64) (model.Subscription, error)
 	Create(model.Subscription) (model.Subscription, error)
@@ -42,5 +53,7 @@ type CollectionRepository interface {
 	Update(model.Collection) (model.Collection, error)
 	Delete(id int64) error
 	FindBySlug(slug string) (model.Collection, error)
+	FindByTitle(title string) (model.Collection, error)
+	InsertCollectionItem(itemId int64, collectionId int64) error
 	Migrate() error
 }

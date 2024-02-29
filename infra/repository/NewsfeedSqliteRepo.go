@@ -11,7 +11,7 @@ type NewsfeedSqliteRepo struct {
 	DB *sqlx.DB
 }
 
-func NewNewsfeedGormRepo(db *sqlx.DB) NewsfeedSqliteRepo {
+func NewNewsfeedSqliteRepo(db *sqlx.DB) NewsfeedSqliteRepo {
 	return NewsfeedSqliteRepo{DB: db}
 }
 
@@ -42,36 +42,6 @@ func (r NewsfeedSqliteRepo) Migrate() error {
 		return err
 	} else {
 		fmt.Println("completed migrating newsfeeds")
-	}
-
-	qb := `
-	CREATE TABLE IF NOT EXISTS articles(
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		title TEXT NOT NULL,
-		description TEXT,
-		content TEXT,
-		article_link TEXT NOT NULL,
-		published TEXT NOT NULL,
-		published_parsed DATETIME NOT NULL,
-		updated TEXT NOT NULL,
-		updated_parsed DATETIME NOT NULL,
-		image TEXT,
-		guid TEXT,
-		slug TEXT NOT NULL,
-		feed_id int NOT NULL,
-		feed_title TEXT NOT NULL,
-		feed_url TEXT NOT NULL,
-		CONSTRAINT fk_newsfeeds
-			FOREIGN KEY (feed_id)
-			REFERENCES newsfeeds(id)
-	);
-	`
-	_, err = r.DB.Exec(qb)
-	if err != nil {
-		fmt.Println("error migrating articles: ", err.Error())
-		return err
-	} else {
-		fmt.Println("completed migrating articles")
 	}
 	return err
 }

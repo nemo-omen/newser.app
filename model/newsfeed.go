@@ -65,8 +65,5 @@ func FeedFromRemote(rf gofeed.Feed) Newsfeed {
 		Categories:      rf.Categories,
 		FeedType:        rf.FeedType,
 		Slug:            util.Slugify(rf.Title),
-		Articles: util.MapSlice(rf.Items, func(item *gofeed.Item) Article {
-			return ArticleFromRemote(item)
-		}),
 	}
 }
