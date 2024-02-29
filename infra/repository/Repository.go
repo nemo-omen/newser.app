@@ -18,8 +18,8 @@ type UserRepository interface {
 
 type NewsfeedRepository interface {
 	Get(id uint) (model.Newsfeed, error)
-	Create(n model.Newsfeed) (model.Newsfeed, error)
-	Update(n model.Newsfeed) (model.Newsfeed, error)
+	Create(n *model.Newsfeed) (*model.Newsfeed, error)
+	Update(n *model.Newsfeed) (*model.Newsfeed, error)
 	Delete(id uint) error
 	FindBySlug(slug string) (model.Newsfeed, error)
 	Migrate() error
@@ -27,8 +27,8 @@ type NewsfeedRepository interface {
 
 type ArticleRepository interface {
 	Get(id uint) (model.Article, error)
-	Create(n model.Article) (model.Article, error)
-	Update(n model.Article) (model.Article, error)
+	Create(n *model.Article) (*model.Article, error)
+	Update(n *model.Article) (*model.Article, error)
 	Delete(id uint) error
 	FindBySlug(slug string) (model.Article, error)
 	ArticlesByCollection(collectionId int64) ([]model.Article, error)

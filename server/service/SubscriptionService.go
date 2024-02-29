@@ -1,6 +1,8 @@
 package service
 
 import (
+	"fmt"
+
 	"github.com/mmcdole/gofeed"
 	"newser.app/infra/repository"
 	"newser.app/model"
@@ -25,7 +27,8 @@ func NewSubscriptionService(
 func (s SubscriptionService) Subscribe(f *gofeed.Feed, userId int64) (model.Subscription, error) {
 	// transform gofeed.Feed into model.Newsfeed
 	nf := model.FeedFromRemote(*f)
-	nf, err := s.feedRepo.Create(nf)
+	persistednf, err := s.feedRepo.Create(&nf)
+	fmt.Println(nf)
 	if err != nil {
 		return model.Subscription{}, err
 	}
@@ -33,8 +36,8 @@ func (s SubscriptionService) Subscribe(f *gofeed.Feed, userId int64) (model.Subs
 	// transform Feed.Items into Newsfeed.Articles
 	articles := []model.Article{}
 	for _, item := range f.Items {
-		article := model.ArticleFromRemote(item, nf.ID, nf.Title, nf.FeedUrl)
-		article, err = s.articleRepo.Create(article)
+		article := model.ArticleFromRemote(item, persistednf.ID, persistednf.Title, persistednf.FeedUrl)
+		persistedArticle, err := s.articleRepo.Create(&article)
 		if err != nil {
 			return model.Subscription{}, err
 		}
@@ -42,11 +45,11 @@ func (s SubscriptionService) Subscribe(f *gofeed.Feed, userId int64) (model.Subs
 		if err != nil {
 			return model.Subscription{}, err
 		}
-		err = s.collectionRepo.InsertCollectionItem(article.ID, collection.Id)
+		err = s.collectionRepo.InsertCollectionItem(persistedArticle.ID, collection.Id)
 		if err != nil {
 			return model.Subscription{}, err
 		}
-		articles = append(articles, article)
+		articles = append(articles, *persistedArticle)
 	}
 	nf.Articles = articles
 

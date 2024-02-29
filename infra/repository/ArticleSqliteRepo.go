@@ -21,12 +21,12 @@ func (r ArticleSqliteRepo) Get(id uint) (model.Article, error) {
 	return model.Article{}, nil
 }
 
-func (r ArticleSqliteRepo) Create(n model.Article) (model.Article, error) {
-	return model.Article{}, nil
+func (r ArticleSqliteRepo) Create(n *model.Article) (*model.Article, error) {
+	return &model.Article{}, nil
 }
 
-func (r ArticleSqliteRepo) Update(n model.Article) (model.Article, error) {
-	return model.Article{}, nil
+func (r ArticleSqliteRepo) Update(n *model.Article) (*model.Article, error) {
+	return &model.Article{}, nil
 }
 
 func (r ArticleSqliteRepo) Delete(id uint) error {
