@@ -14,44 +14,44 @@ var (
 )
 
 type AuthService struct {
-	UserRepo       repository.UserRepository
-	CollectionRepo repository.CollectionRepository
+	userRepo       repository.UserRepository
+	collectionRepo repository.CollectionRepository
 }
 
 func NewAuthService(userRepo repository.UserRepository, collectionRepo repository.CollectionRepository) AuthService {
 	return AuthService{
-		UserRepo:       userRepo,
-		CollectionRepo: collectionRepo,
+		userRepo:       userRepo,
+		collectionRepo: collectionRepo,
 	}
 }
 
-func (s AuthService) Login(email, password string) (model.User, error) {
-	hashedPassword, err := s.UserRepo.GetHashedPasswordByEmail(email)
+func (s *AuthService) Login(email, password string) (*model.User, error) {
+	hashedPassword, err := s.userRepo.GetHashedPasswordByEmail(email)
 	if err != nil {
-		return model.User{}, fmt.Errorf("there was an error checking the password")
+		return nil, fmt.Errorf("there was an error checking the password")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 	if err != nil {
-		return model.User{}, fmt.Errorf("passwordError: does not match")
+		return nil, fmt.Errorf("passwordError: does not match")
 	}
 
-	u, _ := s.UserRepo.FindByEmail(email)
+	u, _ := s.userRepo.FindByEmail(email)
 	return u, nil
 }
 
-func (s AuthService) Signup(email, hashedPassword string) (model.User, error) {
-	udto := dto.UserDTO{
+func (s *AuthService) Signup(email, hashedPassword string) (*model.User, error) {
+	udto := &dto.UserDTO{
 		Email:          email,
 		HashedPassword: hashedPassword,
 	}
-	u, err := s.UserRepo.Create(udto)
+	u, err := s.userRepo.Create(udto)
 	if err != nil {
-		return model.User{}, err
+		return nil, err
 	}
 	for _, title := range defaultUserCollections {
 		collection := model.NewCollection(title, u.Id)
-		_, err := s.CollectionRepo.Create(collection)
+		_, err := s.collectionRepo.Create(collection)
 		if err != nil {
 			fmt.Printf("error creating %v collection: %v", collection, err.Error())
 		}
@@ -59,22 +59,22 @@ func (s AuthService) Signup(email, hashedPassword string) (model.User, error) {
 	return u, nil
 }
 
-func (s AuthService) Logout(userId int64) error {
+func (s *AuthService) Logout(userId int64) error {
 	return nil
 }
 
-func (s AuthService) GetUserById(userId int64) (model.User, error) {
-	u, err := s.UserRepo.Get(userId)
+func (s *AuthService) GetUserById(userId int64) (*model.User, error) {
+	u, err := s.userRepo.Get(userId)
 	if err != nil {
-		return u, err
+		return nil, err
 	}
 	return u, nil
 }
 
-func (s AuthService) GetUserByEmail(email string) (model.User, error) {
-	u, err := s.UserRepo.FindByEmail(email)
+func (s *AuthService) GetUserByEmail(email string) (*model.User, error) {
+	u, err := s.userRepo.FindByEmail(email)
 	if err != nil {
-		return u, err
+		return nil, err
 	}
 	return u, nil
 }

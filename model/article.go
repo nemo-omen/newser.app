@@ -8,23 +8,23 @@ import (
 )
 
 type Article struct {
-	ID              int64
-	Title           string
-	Description     string
-	Content         string
-	ArticleLink     string
-	Author          string
-	Published       string
-	PublishedParsed time.Time
-	Updated         string
-	UpdatedParsed   time.Time
-	Image           string
-	Categories      []string
-	GUID            string
-	Slug            string
-	FeedId          int64
-	FeedTitle       string
-	FeedUrl         string
+	ID              int64     `db:"id"`
+	Title           string    `db:"title"`
+	Description     string    `db:"description"`
+	Content         string    `db:"content"`
+	ArticleLink     string    `db:"article_link"`
+	Author          string    `db:"author"`
+	Published       string    `db:"published"`
+	PublishedParsed time.Time `db:"published_parsed"`
+	Updated         string    `db:"updated"`
+	UpdatedParsed   time.Time `db:"updated_parsed"`
+	Image           string    `db:"image"`
+	Categories      []string  `db:"categories"`
+	GUID            string    `db:"guid"`
+	Slug            string    `db:"slug"`
+	FeedId          int64     `db:"feed_id"`
+	FeedTitle       string    `db:"feed_title"`
+	FeedUrl         string    `db:"feed_url"`
 }
 
 func ArticleFromRemote(ri *gofeed.Item, feedId int64, feedTitle, feedUrl string) Article {

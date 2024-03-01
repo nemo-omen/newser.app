@@ -19,9 +19,3 @@ func PasswordMatches(p, h string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(p), []byte(h))
 	return err == nil
 }
-
-func getFlashes(c echo.Context) {
-	_ = GetFlash(c, "errorFlash")
-	_ = GetFlash(c, "successFlash")
-	_ = GetFlash(c, "notificationFlash")
-}

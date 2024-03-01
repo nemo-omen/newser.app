@@ -14,7 +14,7 @@ type HomeHandler struct {
 
 func NewHomeHandler(sessionManager *scs.SessionManager) HomeHandler {
 	return HomeHandler{
-		session: Session{Manager: sessionManager},
+		session: Session{manager: sessionManager},
 	}
 }
 

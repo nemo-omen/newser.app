@@ -9,24 +9,23 @@ import (
 )
 
 type Newsfeed struct {
-	ID              int64
-	Title           string
-	SiteUrl         string // site link
-	FeedUrl         string // feed link
-	Description     string
-	Image           string
-	Published       string
-	PublishedParsed *time.Time
-	Updated         string
-	UpdatedParsed   *time.Time
-	Copyright       string
-	Articles        []Article
-	Author          string
-	// Authors         []string
-	Language   string
-	Categories []string
-	FeedType   string
-	Slug       string
+	ID              int64      `db:"id"`
+	Title           string     `db:"title"`
+	SiteUrl         string     `db:"site_url"`
+	FeedUrl         string     `db:"feed_url"`
+	Description     string     `db:"description"`
+	Image           string     `db:"image"`
+	Published       string     `db:"published"`
+	PublishedParsed *time.Time `db:"published_parsed"`
+	Updated         string     `db:"updated"`
+	UpdatedParsed   *time.Time `db:"updated_parsed"`
+	Copyright       string     `db:"copyright"`
+	Articles        []*Article `db:"articles"`
+	Author          string     `db:"author"`
+	Language        string     `db:"language"`
+	Categories      []string   `db:"categories"`
+	FeedType        string     `db:"feed_type"`
+	Slug            string     `db:"slug"`
 }
 
 func (f Newsfeed) String() string {
@@ -48,8 +47,8 @@ func (f Newsfeed) Swap(i, k int) {
 	f.Articles[i], f.Articles[k] = f.Articles[k], f.Articles[i]
 }
 
-func FeedFromRemote(rf gofeed.Feed) Newsfeed {
-	return Newsfeed{
+func FeedFromRemote(rf *gofeed.Feed) *Newsfeed {
+	return &Newsfeed{
 		Title:           rf.Title,
 		SiteUrl:         rf.Link,
 		FeedUrl:         rf.FeedLink,

@@ -11,7 +11,7 @@ type SubscriptionSqliteRepo struct {
 	DB *sqlx.DB
 }
 
-func (r SubscriptionSqliteRepo) Migrate() error {
+func (r *SubscriptionSqliteRepo) Migrate() error {
 	fmt.Println("Migrating subscriptions table...")
 	q := `
 	CREATE TABLE IF NOT EXISTS subscriptions(
@@ -33,51 +33,51 @@ func (r SubscriptionSqliteRepo) Migrate() error {
 	} else {
 		fmt.Println("completed migrating subscriptions")
 	}
-	return err
+	return nil
 }
 
-func NewSubscriptionSqliteRepo(db *sqlx.DB) SubscriptionSqliteRepo {
-	return SubscriptionSqliteRepo{DB: db}
+func NewSubscriptionSqliteRepo(db *sqlx.DB) *SubscriptionSqliteRepo {
+	return &SubscriptionSqliteRepo{DB: db}
 }
 
-func (r SubscriptionSqliteRepo) Get(id int64) (model.Subscription, error) {
-	return model.Subscription{}, nil
+func (r *SubscriptionSqliteRepo) Get(id int64) (*model.Subscription, error) {
+	return nil, nil
 }
 
-func (r SubscriptionSqliteRepo) Create(s model.Subscription) (model.Subscription, error) {
+func (r *SubscriptionSqliteRepo) Create(s *model.Subscription) (*model.Subscription, error) {
 	q := `
 	INSERT INTO subscriptions(user_id, newsfeed_id)
 		VALUES(?, ?);
 	`
 	res, err := r.DB.Exec(q, s.UserId, s.NewsfeedId)
 	if err != nil {
-		return model.Subscription{}, err
+		return nil, err
 	}
 	id, err := res.LastInsertId()
 	if err != nil {
-		return model.Subscription{}, err
+		return nil, err
 	}
 	s.Id = id
 	return s, nil
 }
 
-func (r SubscriptionSqliteRepo) All(userId int64) ([]model.Subscription, error) {
+func (r *SubscriptionSqliteRepo) All(userId int64) ([]model.Subscription, error) {
 	ss := []model.Subscription{}
 	err := r.DB.Select(&ss, "SELECT * FROM subscriptions WHERE user_id=?", userId)
 	if err != nil {
-		return ss, err
+		return nil, err
 	}
 	return ss, nil
 }
 
-func (r SubscriptionSqliteRepo) Update(s model.Subscription) (model.Subscription, error) {
-	return model.Subscription{}, nil
+func (r *SubscriptionSqliteRepo) Update(s *model.Subscription) (*model.Subscription, error) {
+	return nil, nil
 }
 
-func (r SubscriptionSqliteRepo) Delete(id int64) error {
+func (r *SubscriptionSqliteRepo) Delete(id int64) error {
 	return nil
 }
 
-func (r SubscriptionSqliteRepo) FindBySlug(slug string) (model.Subscription, error) {
-	return model.Subscription{}, nil
+func (r *SubscriptionSqliteRepo) FindBySlug(slug string) (*model.Subscription, error) {
+	return nil, nil
 }

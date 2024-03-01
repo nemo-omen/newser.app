@@ -32,13 +32,13 @@ func isEmailValid(e string) bool {
 
 type AuthHandler struct {
 	session     Session
-	AuthService service.AuthService
+	authService service.AuthService
 }
 
 func NewAuthHandler(authService service.AuthService, sessionManager *scs.SessionManager) AuthHandler {
 	return AuthHandler{
-		session:     Session{Manager: sessionManager},
-		AuthService: authService,
+		session:     Session{manager: sessionManager},
+		authService: authService,
 	}
 }
 
@@ -53,7 +53,7 @@ func (h AuthHandler) GetSignup(c echo.Context) error {
 func (h AuthHandler) PostLogin(c echo.Context) error {
 	email := c.Request().FormValue("email")
 	pass := c.Request().FormValue("password")
-	_, err := h.AuthService.Login(email, pass)
+	_, err := h.authService.Login(email, pass)
 	if err != nil {
 		// flash specific errors depending on err
 		// type
@@ -88,7 +88,7 @@ func (h AuthHandler) PostSignup(c echo.Context) error {
 
 	pHash := HashPassword(pass)
 
-	u, err := h.AuthService.Signup(email, pHash)
+	u, err := h.authService.Signup(email, pHash)
 	if err != nil {
 		errmsg := ""
 		if strings.Contains(err.Error(), "UNIQUE") {

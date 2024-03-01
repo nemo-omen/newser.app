@@ -24,6 +24,9 @@ import (
 var (
 	userRepo         repository.UserRepository
 	subscriptionRepo repository.SubscriptionRepository
+	newsfeedRepo     repository.NewsfeedRepository
+	articleRepo      repository.ArticleRepository
+	collectionRepo   repository.CollectionRepository
 )
 
 // services
@@ -78,10 +81,10 @@ func setLogLevel(app *echo.Echo, dev bool) {
 func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManager, isDev bool) {
 
 	userRepo = repository.NewUserSqliteRepo(db)
-	newsfeedRepo := repository.NewNewsfeedSqliteRepo(db)
-	articleRepo := repository.NewArticleSqliteRepo(db)
+	newsfeedRepo = repository.NewNewsfeedSqliteRepo(db)
+	articleRepo = repository.NewArticleSqliteRepo(db)
 	subscriptionRepo = repository.NewSubscriptionSqliteRepo(db)
-	collectionRepo := repository.NewCollectionSqliteRepo(db)
+	collectionRepo = repository.NewCollectionSqliteRepo(db)
 
 	userRepo.Migrate()
 	newsfeedRepo.Migrate()

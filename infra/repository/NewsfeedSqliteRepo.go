@@ -11,11 +11,11 @@ type NewsfeedSqliteRepo struct {
 	DB *sqlx.DB
 }
 
-func NewNewsfeedSqliteRepo(db *sqlx.DB) NewsfeedSqliteRepo {
-	return NewsfeedSqliteRepo{DB: db}
+func NewNewsfeedSqliteRepo(db *sqlx.DB) *NewsfeedSqliteRepo {
+	return &NewsfeedSqliteRepo{DB: db}
 }
 
-func (r NewsfeedSqliteRepo) Migrate() error {
+func (r *NewsfeedSqliteRepo) Migrate() error {
 	fmt.Println("Starting newsfeed table migration...")
 	qa := `
 	CREATE TABLE IF NOT EXISTS newsfeeds(
@@ -46,11 +46,11 @@ func (r NewsfeedSqliteRepo) Migrate() error {
 	return err
 }
 
-func (r NewsfeedSqliteRepo) Get(id uint) (model.Newsfeed, error) {
-	return model.Newsfeed{}, nil
+func (r *NewsfeedSqliteRepo) Get(id uint) (*model.Newsfeed, error) {
+	return nil, nil
 }
 
-func (r NewsfeedSqliteRepo) Create(n *model.Newsfeed) (*model.Newsfeed, error) {
+func (r *NewsfeedSqliteRepo) Create(n *model.Newsfeed) (*model.Newsfeed, error) {
 	q := `
 	INSERT INTO newsfeeds(
 		title,
@@ -90,28 +90,28 @@ func (r NewsfeedSqliteRepo) Create(n *model.Newsfeed) (*model.Newsfeed, error) {
 	)
 
 	if err != nil {
-		return &model.Newsfeed{}, err
+		return nil, err
 	}
 	id, err := res.LastInsertId()
 	if err != nil {
-		return &model.Newsfeed{}, err
+		return nil, err
 	}
 	n.ID = id
 	return n, nil
 }
 
-func (r NewsfeedSqliteRepo) All() []model.Newsfeed {
-	return []model.Newsfeed{}
-}
-
-func (r NewsfeedSqliteRepo) Update(n *model.Newsfeed) (*model.Newsfeed, error) {
-	return &model.Newsfeed{}, nil
-}
-
-func (r NewsfeedSqliteRepo) Delete(id uint) error {
+func (r *NewsfeedSqliteRepo) All() []*model.Newsfeed {
 	return nil
 }
 
-func (r NewsfeedSqliteRepo) FindBySlug(slug string) (model.Newsfeed, error) {
-	return model.Newsfeed{}, nil
+func (r *NewsfeedSqliteRepo) Update(n *model.Newsfeed) (*model.Newsfeed, error) {
+	return nil, nil
+}
+
+func (r *NewsfeedSqliteRepo) Delete(id uint) error {
+	return nil
+}
+
+func (r *NewsfeedSqliteRepo) FindBySlug(slug string) (*model.Newsfeed, error) {
+	return nil, nil
 }

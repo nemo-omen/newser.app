@@ -17,14 +17,14 @@ var (
 )
 
 type UserSqliteRepo struct {
-	DB *sqlx.DB
+	db *sqlx.DB
 }
 
-func NewUserSqliteRepo(db *sqlx.DB) UserSqliteRepo {
-	return UserSqliteRepo{DB: db}
+func NewUserSqliteRepo(db *sqlx.DB) *UserSqliteRepo {
+	return &UserSqliteRepo{db: db}
 }
 
-func (r UserSqliteRepo) Migrate() error {
+func (r *UserSqliteRepo) Migrate() error {
 	fmt.Println("Starting users table migration...")
 	q := `
 	CREATE TABLE IF NOT EXISTS users(
@@ -34,42 +34,40 @@ func (r UserSqliteRepo) Migrate() error {
 	);
 	`
 
-	_, err := r.DB.Exec(q)
+	_, err := r.db.Exec(q)
 	if err != nil {
 		fmt.Println(err.Error())
 	} else {
 		fmt.Println("users migration complete.")
 	}
-	return err
+	return nil
 }
 
-func (r UserSqliteRepo) Get(id int64) (model.User, error) {
-	row := r.DB.QueryRow("SELECT * FROM users WHERE id=?", id)
+func (r *UserSqliteRepo) Get(id int64) (*model.User, error) {
+	row := r.db.QueryRow("SELECT * FROM users WHERE id=?", id)
 	var u model.User
 	if err := row.Scan(&u.Id, &u.Email); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return u, ErrNotExists
+			return nil, ErrNotExists
 		}
-		return u, err
+		return nil, err
 	}
-	return u, nil
+	return &u, nil
 }
 
-func (r UserSqliteRepo) FindByEmail(email string) (model.User, error) {
-	row := r.DB.QueryRow("SELECT * FROM users WHERE email=?", email)
-	var u model.User
-	if err := row.Scan(&u.Id, &u.Email); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return u, ErrNotExists
-		}
-		return u, err
+func (r *UserSqliteRepo) FindByEmail(email string) (*model.User, error) {
+	u := model.User{}
+	err := r.db.Get(&u, "SELECT id, email FROM users WHERE email=?", email)
+	if err != nil {
+		return nil, err
 	}
-	return u, nil
+
+	return &u, nil
 }
 
-func (r UserSqliteRepo) GetHashedPasswordByEmail(email string) (string, error) {
+func (r *UserSqliteRepo) GetHashedPasswordByEmail(email string) (string, error) {
 	var hashed string
-	err := r.DB.Get(&hashed, "SELECT password FROM users WHERE email=?", email)
+	err := r.db.Get(&hashed, "SELECT password FROM users WHERE email=?", email)
 	if err != nil {
 		fmt.Println("err: ", err.Error())
 		if errors.Is(err, sql.ErrNoRows) {
@@ -80,39 +78,39 @@ func (r UserSqliteRepo) GetHashedPasswordByEmail(email string) (string, error) {
 	return hashed, nil
 }
 
-func (r UserSqliteRepo) Create(udto dto.UserDTO) (model.User, error) {
+func (r *UserSqliteRepo) Create(udto *dto.UserDTO) (*model.User, error) {
 	var u model.User
 	q := `
 	INSERT INTO users(email, password)
 		VALUES(?, ?)
 	`
-	res, err := r.DB.Exec(q, udto.Email, udto.HashedPassword)
+	res, err := r.db.Exec(q, udto.Email, udto.HashedPassword)
 	if err != nil {
 		var sqliteError *sqlite3.Error
 		if errors.As(err, &sqliteError) {
 			if sqliteError.Code == 2067 {
-				return u, ErrDuplicateEmail
+				return nil, ErrDuplicateEmail
 			}
 		}
 	}
 
 	id, err := res.LastInsertId()
 	if err != nil {
-		return u, err
+		return nil, err
 	}
 	u.Email = udto.Email
 	u.Id = id
-	return u, nil
+	return &u, nil
 }
 
-func (r UserSqliteRepo) All() []model.User {
-	return []model.User{}
+func (r *UserSqliteRepo) All() []*model.User {
+	return nil
 }
 
-func (r UserSqliteRepo) Update(udto dto.UserDTO) (model.User, error) {
-	return model.User{}, nil
+func (r *UserSqliteRepo) Update(udto *dto.UserDTO) (*model.User, error) {
+	return nil, nil
 }
 
-func (r UserSqliteRepo) Delete(id int64) error {
+func (r *UserSqliteRepo) Delete(id int64) error {
 	return nil
 }

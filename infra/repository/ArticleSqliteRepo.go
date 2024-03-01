@@ -11,41 +11,41 @@ type ArticleSqliteRepo struct {
 	DB *sqlx.DB
 }
 
-func NewArticleSqliteRepo(db *sqlx.DB) ArticleSqliteRepo {
-	return ArticleSqliteRepo{
+func NewArticleSqliteRepo(db *sqlx.DB) *ArticleSqliteRepo {
+	return &ArticleSqliteRepo{
 		DB: db,
 	}
 }
 
-func (r ArticleSqliteRepo) Get(id uint) (model.Article, error) {
-	return model.Article{}, nil
+func (r *ArticleSqliteRepo) Get(id uint) (*model.Article, error) {
+	return nil, nil
 }
 
-func (r ArticleSqliteRepo) Create(n *model.Article) (*model.Article, error) {
-	return &model.Article{}, nil
+func (r *ArticleSqliteRepo) Create(n *model.Article) (*model.Article, error) {
+	return nil, nil
 }
 
-func (r ArticleSqliteRepo) Update(n *model.Article) (*model.Article, error) {
-	return &model.Article{}, nil
+func (r *ArticleSqliteRepo) Update(n *model.Article) (*model.Article, error) {
+	return nil, nil
 }
 
-func (r ArticleSqliteRepo) Delete(id uint) error {
+func (r *ArticleSqliteRepo) Delete(id uint) error {
 	return nil
 }
 
-func (r ArticleSqliteRepo) FindBySlug(slug string) (model.Article, error) {
-	return model.Article{}, nil
+func (r *ArticleSqliteRepo) FindBySlug(slug string) (*model.Article, error) {
+	return nil, nil
 }
 
-func (r ArticleSqliteRepo) ArticlesByCollection(collectionId int64) ([]model.Article, error) {
-	return []model.Article{}, nil
+func (r *ArticleSqliteRepo) ArticlesByCollection(collectionId int64) ([]*model.Article, error) {
+	return nil, nil
 }
 
-func (r ArticleSqliteRepo) ArticlesByNewsfeed(feedId int64) ([]model.Article, error) {
-	return []model.Article{}, nil
+func (r *ArticleSqliteRepo) ArticlesByNewsfeed(feedId int64) ([]*model.Article, error) {
+	return nil, nil
 }
 
-func (r ArticleSqliteRepo) Migrate() error {
+func (r *ArticleSqliteRepo) Migrate() error {
 	qb := `
 	CREATE TABLE IF NOT EXISTS articles(
 		id INTEGER PRIMARY KEY AUTOINCREMENT,

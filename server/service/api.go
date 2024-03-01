@@ -94,7 +94,7 @@ func (api API) GetFeedsConcurrent(feedUrls []string) ([]*gofeed.Feed, error) {
 			res, err := api.GetFeed(u)
 			if err != nil {
 				ch <- Result{
-					Res:   &gofeed.Feed{},
+					Res:   nil,
 					Error: err,
 				}
 			} else {
@@ -166,7 +166,7 @@ func (api API) GuessFeedLinks(siteUrl string) ([]string, error) {
 			res, err := api.Client.Get(u)
 			if err != nil {
 				ch <- Result{
-					Res:   &http.Response{},
+					Res:   nil,
 					Error: err,
 				}
 			}

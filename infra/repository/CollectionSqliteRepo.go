@@ -11,7 +11,7 @@ type CollectionSqliteRepo struct {
 	DB *sqlx.DB
 }
 
-func (r CollectionSqliteRepo) Migrate() error {
+func (r *CollectionSqliteRepo) Migrate() error {
 	q := `
 	CREATE TABLE IF NOT EXISTS collections(
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,15 +59,15 @@ func (r CollectionSqliteRepo) Migrate() error {
 	return err
 }
 
-func NewCollectionSqliteRepo(db *sqlx.DB) CollectionSqliteRepo {
-	return CollectionSqliteRepo{DB: db}
+func NewCollectionSqliteRepo(db *sqlx.DB) *CollectionSqliteRepo {
+	return &CollectionSqliteRepo{DB: db}
 }
 
-func (r CollectionSqliteRepo) Get(id int64) (model.Collection, error) {
-	return model.Collection{}, nil
+func (r *CollectionSqliteRepo) Get(id int64) (*model.Collection, error) {
+	return nil, nil
 }
 
-func (r CollectionSqliteRepo) Create(c model.Collection) (model.Collection, error) {
+func (r *CollectionSqliteRepo) Create(c *model.Collection) (*model.Collection, error) {
 	q := `
 	INSERT INTO collections(title, slug, user_id)
 		VALUES(?, ?, ?);
@@ -75,44 +75,44 @@ func (r CollectionSqliteRepo) Create(c model.Collection) (model.Collection, erro
 	res, err := r.DB.Exec(q, c.Title, c.Slug, c.UserId)
 
 	if err != nil {
-		return model.Collection{}, err
+		return nil, err
 	}
 	id, _ := res.LastInsertId()
 	c.Id = id
 	return c, nil
 }
 
-func (r CollectionSqliteRepo) All(userId int64) ([]model.Collection, error) {
-	ss := []model.Collection{}
+func (r *CollectionSqliteRepo) All(userId int64) ([]*model.Collection, error) {
+	ss := []*model.Collection{}
 	err := r.DB.Select(&ss, "SELECT * FROM collections WHERE user_id=?", userId)
 	if err != nil {
-		return ss, err
+		return nil, err
 	}
 	return ss, nil
 }
 
-func (r CollectionSqliteRepo) Update(s model.Collection) (model.Collection, error) {
-	return model.Collection{}, nil
+func (r *CollectionSqliteRepo) Update(s *model.Collection) (*model.Collection, error) {
+	return nil, nil
 }
 
-func (r CollectionSqliteRepo) Delete(id int64) error {
+func (r *CollectionSqliteRepo) Delete(id int64) error {
 	return nil
 }
 
-func (r CollectionSqliteRepo) FindByTitle(title string) (model.Collection, error) {
+func (r *CollectionSqliteRepo) FindByTitle(title string) (*model.Collection, error) {
 	coll := &model.Collection{}
 	err := r.DB.Get(coll, "SELECT * FROM collections WHERE title=?", title)
 	if err != nil {
-		return *coll, err
+		return nil, err
 	}
-	return *coll, nil
+	return coll, nil
 }
 
-func (r CollectionSqliteRepo) FindBySlug(slug string) (model.Collection, error) {
-	return model.Collection{}, nil
+func (r *CollectionSqliteRepo) FindBySlug(slug string) (*model.Collection, error) {
+	return nil, nil
 }
 
-func (r CollectionSqliteRepo) InsertCollectionItem(itemId int64, collectionId int64) error {
+func (r *CollectionSqliteRepo) InsertCollectionItem(itemId int64, collectionId int64) error {
 	q := `
 	INSERT INTO collection_entries(article_id, collection_id)
 		VALUES(?, ?)
@@ -124,10 +124,10 @@ func (r CollectionSqliteRepo) InsertCollectionItem(itemId int64, collectionId in
 	return nil
 }
 
-func (r CollectionSqliteRepo) GetArticlesByCollectionName(collectionName string) []model.Article {
+func (r *CollectionSqliteRepo) GetArticlesByCollectionName(collectionName string) []*model.Article {
 	// q := `
 	// SELECT * FROM articles
 	// 	INNER JOIN
 	// `
-	return []model.Article{}
+	return nil
 }
