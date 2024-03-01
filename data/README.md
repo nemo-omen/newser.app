@@ -1,0 +1,1 @@
+This app expects an sqlite database in this directory. Create a database named `newser.sqlite` in this directory, then run `infra/db/session.sql` to initialize the session store.

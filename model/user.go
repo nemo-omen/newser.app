@@ -1,15 +1,11 @@
 package model
 
 type User struct {
-	Id             uint
-	Email          string
-	HashedPassword []byte
-}
-
-func NewUser(email string) *User {
-	u := User{
-		Email: email,
-	}
-
-	return &u
+	Id    int64  `db:"id"`
+	Email string `db:"email"`
+	// CreatedAt time.Time
+	// UpdatedAt time.Time
+	// Notes
+	// Subscriptions
+	// Collections
 }

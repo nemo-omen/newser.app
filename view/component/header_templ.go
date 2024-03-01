@@ -13,9 +13,17 @@ import "bytes"
 func getCurrentPath(ctx context.Context) string {
 	currentPath := ctx.Value("currentPath")
 	if currentPath != nil {
-		return ctx.Value("currentPath").(string)
+		return currentPath.(string)
 	}
 	return ""
+}
+
+func getIsAuthenticated(ctx context.Context) bool {
+	isAuthed := ctx.Value("authenticated")
+	if isAuthed == nil {
+		return false
+	}
+	return isAuthed.(bool)
 }
 
 func Header() templ.Component {
@@ -31,20 +39,30 @@ func Header() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<header><a href=\"/\" id=\"main-site-link\">Current</a><nav><ul><li><a href=\"/\">Home</a></li><li><a href=\"/app/search\">Search</a></li><li><a href=\"/auth/login\">Log In</a></li><li><a href=\"/auth/signup\">Sign Up</a></li></ul></nav>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<header><div class=\"header-inner\"><a href=\"/\" id=\"main-site-link\"><h1>Newser</h1></a>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(getCurrentPath(ctx))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/header.templ`, Line: 23, Col: 23}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+		templ_7745c5c3_Err = Flash().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</header>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav aria-label=\"Main\"><ul>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if getIsAuthenticated(ctx) == false {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><a href=\"/auth/login\">Log In</a></li><li><a href=\"/auth/signup\">Sign Up</a></li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><form action=\"/auth/logout\" method=\"post\"><button type=\"submit\">Log Out</button></form></li>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul></nav></div></header>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

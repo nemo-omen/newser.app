@@ -1,6 +1,8 @@
 package component
 
-import "github.com/mmcdole/gofeed"
+import (
+	"github.com/mmcdole/gofeed"
+)
 
 templ FeedPreview(feed *gofeed.Feed) {
 	<li class={ "feed-preview", card() }>
@@ -24,17 +26,24 @@ templ FeedPreview(feed *gofeed.Feed) {
 			}
 		</ul>
 		<form
-			action="/app/subscriptions/"
+			action="/desk/subscribe"
 			method="POST"
-			hx-post="/app/subscriptions/"
-			hx-boost="true"
-			hx-target="closest main"
-			hx-select="main"
-			hx-swap="outerHTML"
 		>
 			<input type="hidden" name="subscriptionurl" id="subscriptionurl" value={ feed.FeedLink }/>
 			<button type="submit">Subscribe</button>
 		</form>
+		// <form
+		// 	action="/desk/subscriptions/"
+		// 	method="POST"
+		// 	hx-post="/desk/subscriptions/"
+		// 	hx-boost="true"
+		// 	hx-target="closest main"
+		// 	hx-select="main"
+		// 	hx-swap="outerHTML"
+		// >
+		// 	<input type="hidden" name="subscriptionurl" id="subscriptionurl" value={ feed.FeedLink }/>
+		// 	<button type="submit">Subscribe</button>
+		// </form>
 	</li>
 }
 
@@ -44,7 +53,7 @@ css card() {
 	gap: 0.5rem;
 	padding: 0.5rem;
 	width: min(30rem, 90vw);
-	border: 1px solid #000000;
+	border: 1px solid var(--foreground);
 }
 
 css header() {

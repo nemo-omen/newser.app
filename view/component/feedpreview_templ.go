@@ -11,7 +11,9 @@ import "io"
 import "bytes"
 import "strings"
 
-import "github.com/mmcdole/gofeed"
+import (
+	"github.com/mmcdole/gofeed"
+)
 
 func FeedPreview(feed *gofeed.Feed) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -80,7 +82,7 @@ func FeedPreview(feed *gofeed.Feed) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(feed.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/feedpreview.templ`, Line: 8, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/feedpreview.templ`, Line: 10, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -93,7 +95,7 @@ func FeedPreview(feed *gofeed.Feed) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(feed.FeedType)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/feedpreview.templ`, Line: 10, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/feedpreview.templ`, Line: 12, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -106,7 +108,7 @@ func FeedPreview(feed *gofeed.Feed) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(feed.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/feedpreview.templ`, Line: 13, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/feedpreview.templ`, Line: 15, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -172,7 +174,7 @@ func FeedPreview(feed *gofeed.Feed) templ.Component {
 				var templ_7745c5c3_Var11 string
 				templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(item.Title)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/feedpreview.templ`, Line: 19, Col: 42}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/feedpreview.templ`, Line: 21, Col: 42}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 				if templ_7745c5c3_Err != nil {
@@ -192,7 +194,7 @@ func FeedPreview(feed *gofeed.Feed) templ.Component {
 				}
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul><form action=\"/app/subscriptions/\" method=\"POST\" hx-post=\"/app/subscriptions/\" hx-boost=\"true\" hx-target=\"closest main\" hx-select=\"main\" hx-swap=\"outerHTML\"><input type=\"hidden\" name=\"subscriptionurl\" id=\"subscriptionurl\" value=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul><form action=\"/desk/subscribe\" method=\"POST\"><input type=\"hidden\" name=\"subscriptionurl\" id=\"subscriptionurl\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -218,7 +220,7 @@ func card() templ.CSSClass {
 	templ_7745c5c3_CSSBuilder.WriteString(`gap:0.5rem;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`padding:0.5rem;`)
 	templ_7745c5c3_CSSBuilder.WriteString(`width:min(30rem, 90vw);`)
-	templ_7745c5c3_CSSBuilder.WriteString(`border:1px solid #000000;`)
+	templ_7745c5c3_CSSBuilder.WriteString(`border:1px solid var(--foreground);`)
 	templ_7745c5c3_CSSID := templ.CSSID(`card`, templ_7745c5c3_CSSBuilder.String())
 	return templ.ComponentCSSClass{
 		ID:    templ_7745c5c3_CSSID,

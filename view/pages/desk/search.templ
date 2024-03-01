@@ -1,0 +1,34 @@
+package desk
+
+import (
+	"newser.app/view/component"
+	"newser.app/view/layout"
+	"github.com/mmcdole/gofeed"
+)
+
+func getSearchError(ctx context.Context) string {
+	searchError := ctx.Value("searchError")
+	if searchError != nil {
+		return searchError.(string)
+	}
+	return ""
+}
+
+templ Search(feeds []*gofeed.Feed) {
+	@layout.Base() {
+		<h2>Add a Newsfeed</h2>
+		<form action="/desk/search" method="post">
+			<fieldset>
+				<label for="searchurl">Search</label>
+				<input type="search" name="searchurl" id="searchurl"/>
+				if getSearchError(ctx) != "" {
+					<span class="error">{ getSearchError(ctx) }</span>
+				}
+			</fieldset>
+			<button type="submit">Search</button>
+		</form>
+		if len(feeds) > 0 {
+			@component.FeedSearchResult(feeds)
+		}
+	}
+}

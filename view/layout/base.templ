@@ -1,6 +1,14 @@
 package layout
 
-import "current/view/component"
+import "newser.app/view/component"
+
+func getTitle(ctx context.Context) string {
+	title := ctx.Value("title")
+	if title != nil {
+		return title.(string)
+	}
+	return ""
+}
 
 templ Base() {
 	<!DOCTYPE html>
@@ -8,12 +16,12 @@ templ Base() {
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			// <script src="/public/script/reload.js" type="module"></script>
-			<link rel="stylesheet" href="/public/style/main.css"/>
-			<script src="/public/script/vendor/htmx/htmx-min.js"></script>
-			<script src="/public/script/vendor/htmx/htmx-response-targets.js"></script>
-			// <script src="/public/script/pb.js" type="module"></script>
-			<title>Current</title>
+			<link rel="stylesheet" href="/static/style/main.css"/>
+			if getTitle(ctx) != "" {
+				<title>{ getTitle(ctx) }</title>
+			} else {
+				<title>Current</title>
+			}
 		</head>
 		<body>
 			@component.Header()
