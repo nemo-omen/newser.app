@@ -7,6 +7,7 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/labstack/echo/v4"
 	"github.com/mmcdole/gofeed"
+	"newser.app/model"
 	"newser.app/server/service"
 	"newser.app/shared/util"
 	"newser.app/view/pages/desk"
@@ -42,7 +43,6 @@ func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 		h.session.SetFlash(c, "error", "You need to log in.")
 		return c.Redirect(http.StatusSeeOther, "/auth/login")
 	}
-	fmt.Println("YOU ARE HERE")
 	u, _ := h.authService.GetUserByEmail(email)
 	subscriptions, err := h.subscriptionService.All(u.Id)
 	if err != nil {
@@ -54,6 +54,12 @@ func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 	if len(subscriptions) < 1 {
 		return c.Redirect(http.StatusSeeOther, "/desk/search")
 	}
+	feedIds := util.MapSlice(subscriptions, func(s model.Subscription) int {
+		return int(s.NewsfeedId)
+	})
+
+	// retrieve saved feed items
+	storedArticles := h.
 
 	return render(c, desk.Index())
 }
