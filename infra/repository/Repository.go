@@ -28,6 +28,7 @@ type NewsfeedRepository interface {
 type ArticleRepository interface {
 	Get(id uint) (*model.Article, error)
 	Create(n *model.Article) (*model.Article, error)
+	CreateMany(n []*model.Article) ([]*model.Article, error)
 	Update(n *model.Article) (*model.Article, error)
 	Delete(id uint) error
 	FindBySlug(slug string) (*model.Article, error)
@@ -55,5 +56,6 @@ type CollectionRepository interface {
 	FindBySlug(slug string) (*model.Collection, error)
 	FindByTitle(title string) (*model.Collection, error)
 	InsertCollectionItem(itemId int64, collectionId int64) error
+	InsertManyCollectionItems(aa []*model.Article, cId int64) error
 	Migrate() error
 }

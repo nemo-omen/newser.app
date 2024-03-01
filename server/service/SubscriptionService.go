@@ -28,7 +28,6 @@ func (s *SubscriptionService) Subscribe(f *gofeed.Feed, userId int64) (*model.Su
 	// transform gofeed.Feed into model.Newsfeed
 	nf := model.FeedFromRemote(f)
 	persistednf, err := s.feedRepo.Create(nf)
-	fmt.Println(nf)
 	if err != nil {
 		return nil, err
 	}
@@ -37,21 +36,26 @@ func (s *SubscriptionService) Subscribe(f *gofeed.Feed, userId int64) (*model.Su
 	articles := []*model.Article{}
 	for _, item := range f.Items {
 		article := model.ArticleFromRemote(item, persistednf.ID, persistednf.Title, persistednf.FeedUrl)
-		persistedArticle, err := s.articleRepo.Create(&article)
-		if err != nil {
-			return nil, err
-		}
-		collection, err := s.collectionRepo.FindByTitle("unread")
-		if err != nil {
-			return nil, err
-		}
-		err = s.collectionRepo.InsertCollectionItem(persistedArticle.ID, collection.Id)
-		if err != nil {
-			return nil, err
-		}
-		articles = append(articles, persistedArticle)
+		article.FeedId = nf.ID
+		article.FeedTitle = nf.Title
+		article.FeedUrl = nf.FeedUrl
+		articles = append(articles, &article)
 	}
-	nf.Articles = articles
+	persistedArticles, err := s.articleRepo.CreateMany(articles)
+	if err != nil {
+		return nil, err
+	}
+	nf.Articles = persistedArticles
+	unreadColl, err := s.collectionRepo.FindByTitle("unread")
+	if err != nil {
+		fmt.Println("No unread collection??: ", err)
+		return nil, err
+	}
+	err = s.collectionRepo.InsertManyCollectionItems(persistedArticles, unreadColl.Id)
+	if err != nil {
+		fmt.Println("error adding items to collection: ", err)
+		return nil, err
+	}
 
 	sub := &model.Subscription{
 		NewsfeedId: nf.ID,

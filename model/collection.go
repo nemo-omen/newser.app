@@ -5,7 +5,7 @@ import "newser.app/shared/util"
 type Collection struct {
 	Id     int64  `db:"id"`
 	Title  string `db:"title"`
-	UserId int64  `db:"user_ud"`
+	UserId int64  `db:"user_id"`
 	Slug   string `db:"slug"`
 }
 

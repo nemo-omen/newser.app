@@ -48,21 +48,20 @@ func (f Newsfeed) Swap(i, k int) {
 }
 
 func FeedFromRemote(rf *gofeed.Feed) *Newsfeed {
+	// fmt.Println(rf)
 	return &Newsfeed{
-		Title:           rf.Title,
-		SiteUrl:         rf.Link,
-		FeedUrl:         rf.FeedLink,
-		Description:     rf.Description,
-		Image:           rf.Image.URL,
-		Published:       rf.Published,
-		PublishedParsed: rf.PublishedParsed,
-		Updated:         rf.Updated,
-		UpdatedParsed:   rf.UpdatedParsed,
-		Copyright:       rf.Copyright,
-		Author:          rf.Author.Name,
-		Language:        rf.Language,
-		Categories:      rf.Categories,
-		FeedType:        rf.FeedType,
-		Slug:            util.Slugify(rf.Title),
+		Title:         rf.Title,
+		SiteUrl:       rf.Link,
+		FeedUrl:       rf.FeedLink,
+		Description:   rf.Description,
+		Image:         rf.Image.URL,
+		Updated:       rf.Updated,
+		UpdatedParsed: rf.UpdatedParsed,
+		Copyright:     rf.Copyright,
+		Author:        rf.Author.Name,
+		Language:      rf.Language,
+		Categories:    rf.Categories,
+		FeedType:      rf.FeedType,
+		Slug:          util.Slugify(rf.Title),
 	}
 }

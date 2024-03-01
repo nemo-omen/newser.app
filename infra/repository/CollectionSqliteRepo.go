@@ -114,12 +114,22 @@ func (r *CollectionSqliteRepo) FindBySlug(slug string) (*model.Collection, error
 
 func (r *CollectionSqliteRepo) InsertCollectionItem(itemId int64, collectionId int64) error {
 	q := `
-	INSERT INTO collection_entries(article_id, collection_id)
+	INSERT INTO collection_articles(article_id, collection_id)
 		VALUES(?, ?)
 	`
 	_, err := r.DB.Exec(q, itemId, collectionId)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (r *CollectionSqliteRepo) InsertManyCollectionItems(aa []*model.Article, cId int64) error {
+	for _, a := range aa {
+		err := r.InsertCollectionItem(a.ID, cId)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

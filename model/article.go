@@ -28,6 +28,11 @@ type Article struct {
 }
 
 func ArticleFromRemote(ri *gofeed.Item, feedId int64, feedTitle, feedUrl string) Article {
+	var imgUrl string
+	if ri.Image != nil {
+		imgUrl = ri.Image.URL
+	}
+
 	return Article{
 		Title:           ri.Title,
 		Description:     ri.Description,
@@ -38,7 +43,7 @@ func ArticleFromRemote(ri *gofeed.Item, feedId int64, feedTitle, feedUrl string)
 		PublishedParsed: *ri.PublishedParsed,
 		Updated:         ri.Updated,
 		UpdatedParsed:   *ri.UpdatedParsed,
-		Image:           ri.Image.URL,
+		Image:           imgUrl,
 		Categories:      ri.Categories,
 		GUID:            ri.GUID,
 		Slug:            util.Slugify(ri.Title),

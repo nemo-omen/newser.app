@@ -21,16 +21,14 @@ func (r *NewsfeedSqliteRepo) Migrate() error {
 	CREATE TABLE IF NOT EXISTS newsfeeds(
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		title TEXT NOT NULL,
-		site_url TEXT NOT NULL,
-		feed_url TEXT NOT NULL,
+		site_url NOT NULL,
+		feed_url TEXT UNIQUE NOT NULL,
 		description TEXT,
 		image JSON,
-		published TEXT NOT NULL,
-		published_parsed DATETIME NOT NULL,
 		updated TEXT NOT NULL,
 		updated_parsed DATETIME NOT NULL,
 		copyright TEXT,
-		author_id INT,
+		author TEXT,
 		language TEXT,
 		feed_type TEXT,
 		slug TEXT NOT NULL
@@ -58,8 +56,6 @@ func (r *NewsfeedSqliteRepo) Create(n *model.Newsfeed) (*model.Newsfeed, error) 
 		feed_url,
 		description,
 		image,
-		published,
-		published_parsed,
 		updated,
 		updated_parsed,
 		copyright,
@@ -68,7 +64,8 @@ func (r *NewsfeedSqliteRepo) Create(n *model.Newsfeed) (*model.Newsfeed, error) 
 		feed_type,
 		slug
 	)
-		VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+		VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+		ON CONFLICT(feed_url) do nothing;
 	`
 	res, err := r.DB.Exec(
 		q,
@@ -77,12 +74,10 @@ func (r *NewsfeedSqliteRepo) Create(n *model.Newsfeed) (*model.Newsfeed, error) 
 		n.FeedUrl,
 		n.Description,
 		n.Image,
-		n.Published,
-		n.PublishedParsed,
 		n.Updated,
 		n.UpdatedParsed,
 		n.Copyright,
-		n.Articles,
+		// n.Articles,
 		n.Author,
 		n.Language,
 		n.FeedType,
@@ -90,6 +85,7 @@ func (r *NewsfeedSqliteRepo) Create(n *model.Newsfeed) (*model.Newsfeed, error) 
 	)
 
 	if err != nil {
+		fmt.Println("article insert error: ", err.Error())
 		return nil, err
 	}
 	id, err := res.LastInsertId()
