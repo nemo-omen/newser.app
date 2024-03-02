@@ -24,51 +24,33 @@ func NewSubscriptionService(
 	return SubscriptionService{subRepo: sr, feedRepo: fr, articleRepo: ar, collectionRepo: cr}
 }
 
-func (s *SubscriptionService) Subscribe(f *gofeed.Feed, userId int64) (*model.Subscription, error) {
+func (s *SubscriptionService) Subscribe(f *gofeed.Feed, userId int64) error {
 	// transform gofeed.Feed into model.Newsfeed
-	nf := model.FeedFromRemote(f)
-	persistednf, err := s.feedRepo.Create(nf)
+	nf, err := model.FeedFromRemote(f)
 	if err != nil {
-		return nil, err
+		fmt.Println("error converting feed: ", err)
+		return ErrInternalFailure
 	}
 
 	// transform Feed.Items into Newsfeed.Articles
 	articles := []*model.Article{}
 	for _, item := range f.Items {
-		article := model.ArticleFromRemote(item, persistednf.ID, persistednf.Title, persistednf.FeedUrl)
-		article.FeedId = nf.ID
-		article.FeedTitle = nf.Title
-		article.FeedUrl = nf.FeedUrl
-		articles = append(articles, &article)
+		article, err := model.ArticleFromRemote(item)
+		if err != nil {
+			fmt.Println("error converting article: ", err)
+			return ErrInternalFailure
+		}
+		articles = append(articles, article)
 	}
-	persistedArticles, err := s.articleRepo.CreateMany(articles)
+	// add articles to Newsfeed
+	nf.Articles = articles
+	err = s.subRepo.AddAggregateSubscription(nf, userId)
 	if err != nil {
-		return nil, err
-	}
-	nf.Articles = persistedArticles
-	unreadColl, err := s.collectionRepo.FindByTitle("unread")
-	if err != nil {
-		fmt.Println("No unread collection??: ", err)
-		return nil, err
-	}
-	err = s.collectionRepo.InsertManyCollectionItems(persistedArticles, unreadColl.Id)
-	if err != nil {
-		fmt.Println("error adding items to collection: ", err)
-		return nil, err
-	}
-
-	sub := &model.Subscription{
-		NewsfeedId: nf.ID,
-		UserId:     userId,
-	}
-
-	sub, err = s.subRepo.Create(sub)
-	if err != nil {
-		return nil, err
+		fmt.Println("error committing transaction: ", err)
 	}
 
 	// return subscription model
-	return sub, nil
+	return nil
 }
 
 func (s *SubscriptionService) Unsubscribe(feedId, userId uint) error {

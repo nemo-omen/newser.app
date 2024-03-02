@@ -44,6 +44,7 @@ type SubscriptionRepository interface {
 	Update(*model.Subscription) (*model.Subscription, error)
 	Delete(id int64) error
 	FindBySlug(slug string) (*model.Subscription, error)
+	AddAggregateSubscription(feed *model.Newsfeed, userId int64) error
 	Migrate() error
 }
 

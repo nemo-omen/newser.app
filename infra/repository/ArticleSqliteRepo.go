@@ -8,12 +8,12 @@ import (
 )
 
 type ArticleSqliteRepo struct {
-	DB *sqlx.DB
+	db *sqlx.DB
 }
 
 func NewArticleSqliteRepo(db *sqlx.DB) *ArticleSqliteRepo {
 	return &ArticleSqliteRepo{
-		DB: db,
+		db: db,
 	}
 }
 
@@ -22,70 +22,18 @@ func (r *ArticleSqliteRepo) Get(id uint) (*model.Article, error) {
 }
 
 func (r *ArticleSqliteRepo) Create(a *model.Article) (*model.Article, error) {
-	q := `
-	INSERT INTO articles(
-		title,
-		description,
-		content,
-		article_link,
-		author,
-		published,
-		published_parsed,
-		updated,
-		updated_parsed,
-		image,
-		guid,
-		slug,
-		feed_id,
-		feed_title,
-		feed_url
-	) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
-	`
-
-	// cats := ""
-	// if len(a.Categories) > 0 {
-	// 	marshaledCats, err := json.Marshal(a.Categories)
-	// 	if err != nil {
-	// 		cats = ""
-	// 	} else {
-	// 		cats = string(marshaledCats)
-	// 	}
-	// }
-
-	res, err := r.DB.Exec(
-		q,
-		a.Title,
-		a.Description,
-		a.Content,
-		a.ArticleLink,
-		a.Author,
-		a.Published,
-		a.PublishedParsed,
-		a.Updated,
-		a.UpdatedParsed,
-		a.Image,
-		a.GUID,
-		a.Slug,
-		a.FeedId,
-		a.FeedTitle,
-		a.FeedUrl,
-	)
-	if err != nil {
-		fmt.Println("article insert err: ", err)
-		return nil, err
-	}
-	id, err := res.LastInsertId()
+	art, err := InsertArticle(r.db, a)
 	if err != nil {
 		return nil, err
 	}
-	a.ID = id
-	return a, nil
+	return art, nil
 }
 
 func (r *ArticleSqliteRepo) CreateMany(aa []*model.Article) ([]*model.Article, error) {
 	allPersisted := []*model.Article{}
 	for _, a := range aa {
 		persisted, err := r.Create(a)
+
 		if err != nil {
 			return nil, err
 		}
@@ -111,7 +59,13 @@ func (r *ArticleSqliteRepo) ArticlesByCollection(collectionId int64) ([]*model.A
 }
 
 func (r *ArticleSqliteRepo) ArticlesByNewsfeed(feedId int64) ([]*model.Article, error) {
-	return nil, nil
+	aa := []*model.Article{}
+	err := r.db.Select(&aa, "SELECT * FROM articles WHERE feed_id=?", feedId)
+	if err != nil {
+		fmt.Println("db err: ", err)
+		return nil, err
+	}
+	return aa, nil
 }
 
 func (r *ArticleSqliteRepo) Migrate() error {
@@ -122,23 +76,19 @@ func (r *ArticleSqliteRepo) Migrate() error {
 		description TEXT,
 		content TEXT,
 		article_link TEXT NOT NULL,
-		author TEXT,
 		published TEXT NOT NULL,
 		published_parsed DATETIME NOT NULL,
 		updated TEXT NOT NULL,
 		updated_parsed DATETIME NOT NULL,
-		image TEXT,
 		guid TEXT,
 		slug TEXT NOT NULL,
 		feed_id int NOT NULL,
-		feed_title TEXT NOT NULL,
-		feed_url TEXT NOT NULL,
 		CONSTRAINT fk_newsfeeds
 			FOREIGN KEY (feed_id)
 			REFERENCES newsfeeds(id)
 	);
 	`
-	_, err := r.DB.Exec(qb)
+	_, err := r.db.Exec(qb)
 	if err != nil {
 		fmt.Println("error migrating articles: ", err.Error())
 		return err

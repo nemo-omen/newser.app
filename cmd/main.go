@@ -27,11 +27,16 @@ var (
 	newsfeedRepo     repository.NewsfeedRepository
 	articleRepo      repository.ArticleRepository
 	collectionRepo   repository.CollectionRepository
+	personRepo       repository.PersonRepository
+	imageRepo        repository.ImageRepository
 )
 
 // services
 var (
-	authService service.AuthService
+	authService         service.AuthService
+	api                 service.API
+	newsfeedService     service.NewsfeedService
+	subscriptionService service.SubscriptionService
 )
 
 func main() {
@@ -85,20 +90,25 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 	articleRepo = repository.NewArticleSqliteRepo(db)
 	subscriptionRepo = repository.NewSubscriptionSqliteRepo(db)
 	collectionRepo = repository.NewCollectionSqliteRepo(db)
+	personRepo = repository.NewPersonSqliteRepository(db)
+	imageRepo = repository.NewImageSqliteRepo(db)
 
 	userRepo.Migrate()
 	newsfeedRepo.Migrate()
 	articleRepo.Migrate()
 	subscriptionRepo.Migrate()
 	collectionRepo.Migrate()
+	personRepo.Migrate()
+	imageRepo.Migrate()
 
 	authService = service.NewAuthService(userRepo, collectionRepo)
-	api := service.NewAPI(&http.Client{})
-	subscriptionService := service.NewSubscriptionService(subscriptionRepo, newsfeedRepo, articleRepo, collectionRepo)
+	api = service.NewAPI(&http.Client{})
+	subscriptionService = service.NewSubscriptionService(subscriptionRepo, newsfeedRepo, articleRepo, collectionRepo)
+	newsfeedService = service.NewNewsfeedService(articleRepo, imageRepo, personRepo)
 
 	homeHandler := handler.NewHomeHandler(sessionManager)
 	authHandler := handler.NewAuthHandler(authService, sessionManager)
-	deskHandler := handler.NewDeskHandler(api, subscriptionService, authService, sessionManager)
+	deskHandler := handler.NewDeskHandler(api, subscriptionService, authService, newsfeedService, sessionManager)
 
 	app.GET("/", homeHandler.Home)
 	authGroup := app.Group("/auth")

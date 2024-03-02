@@ -8,7 +8,7 @@ import (
 )
 
 type SubscriptionSqliteRepo struct {
-	DB *sqlx.DB
+	db *sqlx.DB
 }
 
 func (r *SubscriptionSqliteRepo) Migrate() error {
@@ -26,7 +26,7 @@ func (r *SubscriptionSqliteRepo) Migrate() error {
 				REFERENCES newsfeeds (id)
 	)
 	`
-	_, err := r.DB.Exec(q)
+	_, err := r.db.Exec(q)
 	if err != nil {
 		fmt.Println("error migrating subscriptions: ", err.Error())
 		return err
@@ -37,7 +37,7 @@ func (r *SubscriptionSqliteRepo) Migrate() error {
 }
 
 func NewSubscriptionSqliteRepo(db *sqlx.DB) *SubscriptionSqliteRepo {
-	return &SubscriptionSqliteRepo{DB: db}
+	return &SubscriptionSqliteRepo{db: db}
 }
 
 func (r *SubscriptionSqliteRepo) Get(id int64) (*model.Subscription, error) {
@@ -49,7 +49,7 @@ func (r *SubscriptionSqliteRepo) Create(s *model.Subscription) (*model.Subscript
 	INSERT INTO subscriptions(user_id, newsfeed_id)
 		VALUES(?, ?);
 	`
-	res, err := r.DB.Exec(q, s.UserId, s.NewsfeedId)
+	res, err := r.db.Exec(q, s.UserId, s.NewsfeedId)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (r *SubscriptionSqliteRepo) Create(s *model.Subscription) (*model.Subscript
 
 func (r *SubscriptionSqliteRepo) All(userId int64) ([]model.Subscription, error) {
 	ss := []model.Subscription{}
-	err := r.DB.Select(&ss, "SELECT * FROM subscriptions WHERE user_id=?", userId)
+	err := r.db.Select(&ss, "SELECT * FROM subscriptions WHERE user_id=?", userId)
 	if err != nil {
 		return nil, err
 	}
@@ -80,4 +80,9 @@ func (r *SubscriptionSqliteRepo) Delete(id int64) error {
 
 func (r *SubscriptionSqliteRepo) FindBySlug(slug string) (*model.Subscription, error) {
 	return nil, nil
+}
+
+func (r *SubscriptionSqliteRepo) AddAggregateSubscription(n *model.Newsfeed, userId int64) error {
+	err := InsertAggregateSubscriptionTx(r.db, n, userId)
+	return err
 }

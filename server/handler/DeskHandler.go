@@ -18,6 +18,7 @@ type DeskHandler struct {
 	api                 service.API                 // remote RSS feeds
 	authService         service.AuthService         // auth logic (logout, etc)
 	subscriptionService service.SubscriptionService // subscription logic
+	newsfeedService     service.NewsfeedService
 	// NoteService										// notes logic
 }
 
@@ -25,6 +26,7 @@ func NewDeskHandler(
 	api service.API,
 	ss service.SubscriptionService,
 	as service.AuthService,
+	ns service.NewsfeedService,
 	sessionManager *scs.SessionManager,
 ) DeskHandler {
 	return DeskHandler{
@@ -32,6 +34,7 @@ func NewDeskHandler(
 		api:                 api,
 		authService:         as,
 		subscriptionService: ss,
+		newsfeedService:     ns,
 	}
 }
 
@@ -54,14 +57,23 @@ func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 	if len(subscriptions) < 1 {
 		return c.Redirect(http.StatusSeeOther, "/desk/search")
 	}
-	feedIds := util.MapSlice(subscriptions, func(s model.Subscription) int {
-		return int(s.NewsfeedId)
+	feedIds := util.MapSlice(subscriptions, func(s model.Subscription) int64 {
+		return s.NewsfeedId
 	})
 
 	// retrieve saved feed items
-	storedArticles := h.
-
-	return render(c, desk.Index())
+	fmt.Println("feedIds: ", feedIds)
+	storedSubscriptionArticles := []*model.Article{}
+	for _, id := range feedIds {
+		// _, err := h.newsfeedService.GetArticlesByNewsfeedId(id)
+		feedArticles, err := h.newsfeedService.GetArticlesByNewsfeedId(id)
+		if err != nil {
+			fmt.Println("error getting stored subscription articles: ", err.Error())
+		}
+		storedSubscriptionArticles = append(storedSubscriptionArticles, feedArticles...)
+	}
+	fmt.Println("stored: ", storedSubscriptionArticles)
+	return render(c, desk.Index(storedSubscriptionArticles))
 }
 
 func (h DeskHandler) GetDeskSearch(c echo.Context) error {
@@ -144,13 +156,14 @@ func (h DeskHandler) PostDeskSubscribe(c echo.Context) error {
 	if err != nil {
 		h.session.SetFlash(c, "error", ErrorFeedNotFound(subscriptionUrl))
 		// TODO: need a more suitable response here
-		return render(c, desk.Index())
+		return c.Redirect(http.StatusAccepted, "/desk/")
 	}
 	u, _ := h.authService.GetUserByEmail(email)
-	sub, err := h.subscriptionService.Subscribe(feed, u.Id)
+	err = h.subscriptionService.Subscribe(feed, u.Id)
 	if err != nil {
 		h.session.SetFlash(c, "error", fmt.Sprintf("Could not subscribe to %v", feed.Title))
 	}
-	fmt.Println(sub)
-	return render(c, desk.Index())
+	// fmt.Println(sub)
+	// return render(c, desk.Index())
+	return c.Redirect(http.StatusSeeOther, "/desk/")
 }

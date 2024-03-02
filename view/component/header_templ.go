@@ -57,7 +57,7 @@ func Header() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><form action=\"/auth/logout\" method=\"post\"><button type=\"submit\">Log Out</button></form></li>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><a href=\"/desk/search\">Search</a></li><li><form action=\"/auth/logout\" method=\"post\"><button type=\"submit\">Log Out</button></form></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

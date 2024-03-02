@@ -1,9 +1,19 @@
 package desk
 
-import "newser.app/view/layout"
+import (
+	"newser.app/view/layout"
+	"newser.app/model"
+)
 
-templ Index() {
+templ Index(articles []*model.Article) {
 	@layout.Base() {
 		<h2>Desk</h2>
+		if len(articles) > 0 {
+			for _, article := range articles {
+				<div class="article-preview">
+					<h3>{ article.Title }</h3>
+				</div>
+			}
+		}
 	}
 }
