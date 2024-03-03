@@ -26,6 +26,12 @@ type Article struct {
 	Slug            string    `json:"-" db:"slug"`
 	FeedId          int64     `json:"-" db:"feed_id"`
 	Read            bool      `json:"-" db:"read"`
+	FeedTitle       string    `db:"feed_title" json:"-"`
+	FeedUrl         string    `db:"feed_url" json:"-"`
+	FeedSiteUrl     string    `db:"feed_site_url" json:"-"`
+	FeedSlug        string    `db:"feed_slug" json:"-"`
+	FeedImageUrl    string    `db:"feed_image_url" json:"-"`
+	FeedImageTitle  string    `db:"feed_image_title" json:"-"`
 }
 
 func ArticleFromRemote(ri *gofeed.Item) (*Article, error) {

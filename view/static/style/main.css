@@ -487,6 +487,22 @@ time {
   justify-content: space-between;
 }
 
+.flex-align-center {
+  align-items: center;
+}
+
+.gap-1 {
+  gap: var(--space-xs);
+}
+
+.gap-2 {
+  gap: var(--space-s);
+}
+
+.gap-3 {
+  gap: var(--space-m);
+}
+
 .text-center {
   text-align: center;
 }
@@ -796,6 +812,11 @@ button:hover,
 .icon-link:hover {
   background: transparent;
   color: var(--accent-alt) !important;
+}
+
+.feed-logo {
+  width: var(--step-2);
+  height: var(--step-2);
 }
 
 @media (prefers-color-scheme: light) {

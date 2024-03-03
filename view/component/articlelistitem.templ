@@ -3,15 +3,30 @@ package component
 import "newser.app/model"
 import "strconv"
 
+func getImgAlt(imgTitle, feedTitle string) string {
+	alt := ""
+	if imgTitle != "" {
+		alt = imgTitle
+	} else if feedTitle != "" {
+		alt = feedTitle
+	}
+	return alt
+}
+
 templ ArticleListItem(article *model.Article) {
 	<li class="article-list-item card">
 		<div class="card-header flex-column">
-			<div class="flex-row">
+			<div class="flex-row flex-align-center gap-1">
+				if article.FeedImageUrl != "" {
+					<image class="feed-logo" src={ article.FeedImageUrl } alt={ getImgAlt(article.FeedImageTitle, article.FeedTitle) }></image>
+				}
+				<a href={ templ.SafeURL("/desk/articles/" + article.Slug) } class="card-primary-action">
+					<h3>{ article.Title }</h3>
+				</a>
+			</div>
+			<div class="flex-row flex-between">
 				@FormattedDateTime(article.PublishedParsed)
 			</div>
-			<a href={ templ.SafeURL("/desk/articles/" + article.Slug) } class="card-primary-action">
-				<h3>{ article.Title }</h3>
-			</a>
 		</div>
 		<div class="card-body">
 			<p>{ article.Description }</p>

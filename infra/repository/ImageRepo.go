@@ -51,7 +51,7 @@ func (r *ImageSqliteRepository) Migrate() error {
 	q := `
 	CREATE TABLE IF NOT EXISTS images(
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		title TEXT,
+		title TEXT NOT NULL DEFAULT '',
 		url TEXT NOT NULL
 	);
 	`
