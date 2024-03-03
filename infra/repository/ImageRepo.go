@@ -40,7 +40,7 @@ func (r *ImageSqliteRepository) Create(i *model.Image) (*model.Image, error) {
 
 func (r *ImageSqliteRepository) Get(id int64) (*model.Image, error) {
 	i := model.Image{}
-	err := r.db.Get(&i, "SELECT * FROM images WHERE id=?", id)
+	err := r.db.Get(&i, "SELECT id, COALESCE(title, ''), COALESCE(url, '') FROM images WHERE id=?", id)
 	if err != nil {
 		return nil, ErrInsertError
 	}
@@ -52,7 +52,7 @@ func (r *ImageSqliteRepository) Migrate() error {
 	CREATE TABLE IF NOT EXISTS images(
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		title TEXT NOT NULL DEFAULT '',
-		url TEXT NOT NULL
+		url TEXT NOT NULL DEFAULT ''
 	);
 	`
 	_, err := r.db.Exec(q)

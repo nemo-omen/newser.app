@@ -75,15 +75,16 @@ func (r *ArticleSqliteRepo) ArticlesByNewsfeed(feedId int64) ([]*model.Article, 
 		newsfeeds.site_url as feed_site_url,
 		newsfeeds.slug as feed_slug,
 		articles.*,
-			images.title as feed_image_title,
-		images.url as feed_image_url
+		COALESCE(images.title, '') as feed_image_title,
+    	COALESCE(images.url, '') as feed_image_url
 	FROM
 		newsfeeds
 		LEFT JOIN articles ON newsfeeds.id = articles.feed_id
 		LEFT JOIN newsfeed_images ON newsfeeds.id = newsfeed_images.newsfeed_id
 		LEFT JOIN images ON newsfeed_images.image_id = images.id
 	WHERE
-		newsfeeds.id = ?;
+		newsfeeds.id = ?
+	LIMIT 10;
 	`
 	err := r.db.Select(&aa, q, feedId)
 	if err != nil {

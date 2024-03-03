@@ -51,13 +51,18 @@ func ArticleFromRemote(ri *gofeed.Item) (*Article, error) {
 	}
 	a.Content = p.Sanitize(a.Content)
 
-	if a.Description == "" {
-		d := strip.StripTags(a.Content)
-		a.Description = d
-	}
+	// rather than using default description,
+	// we strip the html from the content
+	// and grab a small substring.
+	// This is both for consistencyy and for
+	// the fact that the lede is usually
+	// more interesting than the blurb
+	// (in my experience/opinion)
+	d := strip.StripTags(a.Content)
+	a.Description = d
 
-	if len(a.Description) > 87 {
-		a.Description = a.Description[:87] + "..."
+	if len(a.Description) > 240 {
+		a.Description = a.Description[:240] + "..."
 	}
 
 	return a, nil
