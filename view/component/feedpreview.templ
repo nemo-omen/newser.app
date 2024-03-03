@@ -5,45 +5,37 @@ import (
 )
 
 templ FeedPreview(feed *gofeed.Feed) {
-	<li class={ "feed-preview", card() }>
-		<div class={ "card-header", header() }>
-			<h3 class={ heading() }>
+	<li class="card">
+		<div class="card-header flex-row flex-between">
+			<h3>
 				{ feed.Title }
 			</h3>
 			<span>{ feed.FeedType }</span>
 		</div>
-		<p>
-			{ feed.Description }
-		</p>
-		<ul class={ list() }>
-			if len(feed.Items) > 2 {
-				for _, item := range feed.Items[0:2] {
-					<li class={ listitem() }>
-						<h4 class={ heading() }>{ item.Title }</h4>
-						@templ.Raw(item.Description)
-					</li>
+		<div class="card-body">
+			<p>
+				{ feed.Description }
+			</p>
+			<ul class={ list() }>
+				if len(feed.Items) > 2 {
+					for _, item := range feed.Items[0:2] {
+						<li class={ listitem() }>
+							<h4>{ item.Title }</h4>
+							@templ.Raw(item.Description)
+						</li>
+					}
 				}
-			}
-		</ul>
-		<form
-			action="/desk/subscribe"
-			method="POST"
-		>
-			<input type="hidden" name="subscriptionurl" id="subscriptionurl" value={ feed.FeedLink }/>
-			<button type="submit">Subscribe</button>
-		</form>
-		// <form
-		// 	action="/desk/subscriptions/"
-		// 	method="POST"
-		// 	hx-post="/desk/subscriptions/"
-		// 	hx-boost="true"
-		// 	hx-target="closest main"
-		// 	hx-select="main"
-		// 	hx-swap="outerHTML"
-		// >
-		// 	<input type="hidden" name="subscriptionurl" id="subscriptionurl" value={ feed.FeedLink }/>
-		// 	<button type="submit">Subscribe</button>
-		// </form>
+			</ul>
+		</div>
+		<div class="card-footer">
+			<form
+				action="/desk/subscribe"
+				method="POST"
+			>
+				<input type="hidden" name="subscriptionurl" id="subscriptionurl" value={ feed.FeedLink }/>
+				<button type="submit">Subscribe</button>
+			</form>
+		</div>
 	</li>
 }
 
@@ -52,7 +44,6 @@ css card() {
 	flex-direction: column;
 	gap: 0.5rem;
 	padding: 0.5rem;
-	width: min(30rem, 90vw);
 	border: 1px solid var(--foreground);
 }
 
@@ -74,7 +65,7 @@ css list() {
 	padding: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
+	gap: var(--space-xs);
 }
 
 css listitem() {

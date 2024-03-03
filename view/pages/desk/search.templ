@@ -15,20 +15,22 @@ func getSearchError(ctx context.Context) string {
 }
 
 templ Search(feeds []*gofeed.Feed) {
-	@layout.Base() {
-		<h2>Add a Newsfeed</h2>
-		<form action="/desk/search" method="post">
-			<fieldset>
-				<label for="searchurl">Search</label>
-				<input type="search" name="searchurl" id="searchurl"/>
-				if getSearchError(ctx) != "" {
-					<span class="error">{ getSearchError(ctx) }</span>
-				}
-			</fieldset>
-			<button type="submit">Search</button>
-		</form>
-		if len(feeds) > 0 {
-			@component.FeedSearchResult(feeds)
-		}
+	@layout.Desk() {
+		<div class="container stack">
+			<h2>Add a Newsfeed</h2>
+			<form action="/desk/search" method="post" class="search-form">
+				<fieldset>
+					<label for="searchurl">Search</label>
+					<input type="search" name="searchurl" id="searchurl"/>
+					if getSearchError(ctx) != "" {
+						<span class="error">{ getSearchError(ctx) }</span>
+					}
+				</fieldset>
+				<button type="submit">Search</button>
+			</form>
+			if len(feeds) > 0 {
+				@component.FeedSearchResult(feeds)
+			}
+		</div>
 	}
 }

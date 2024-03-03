@@ -7,6 +7,14 @@ import (
 	"newser.app/model"
 )
 
+// InsertAggregateSubscriptionTx inserts all of the records associated
+// with a subscription. This is done within a transaction. All of the functions
+// in this file are for adding all of the aggregate types to the database.
+// The types persisted within are:
+// - Newsfeed, associated image & author
+// - Articles, associated image & author
+// - Collection, all new articles are added to the "unread" collection
+// - Subscription, a new subscription is created
 func InsertAggregateSubscriptionTx(db *sqlx.DB, n *model.Newsfeed, userId int64) error {
 	fmt.Println("STARTING TRANSACTION")
 	tx := db.MustBegin()

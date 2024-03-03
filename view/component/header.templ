@@ -19,10 +19,11 @@ func getIsAuthenticated(ctx context.Context) bool {
 templ Header() {
 	<header>
 		<div class="header-inner">
-			<a href="/" id="main-site-link">
-				<h1>
-					Newser
-				</h1>
+			<a href="/" id="main-link">
+				Newser
+				<span>
+					@Icon("logo")
+				</span>
 			</a>
 			@Flash()
 			// TODO: Different nav for auth vs !auth

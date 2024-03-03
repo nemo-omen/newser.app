@@ -1,0 +1,72 @@
+package component
+
+import "newser.app/model"
+import "strconv"
+
+templ ArticleListItem(article *model.Article) {
+	<li class="article-list-item card">
+		<a href={ templ.SafeURL("/desk/articles/" + article.Slug) }>
+			<div class="card-header flex-column">
+				<div class="flex-row">
+					@FormattedDateTime(article.PublishedParsed)
+				</div>
+				<h3>{ article.Title }</h3>
+			</div>
+		</a>
+		<div class="card-body">
+			<p>{ article.Description }</p>
+		</div>
+		<div class="card-footer">
+			@CardMenu(article)
+		</div>
+	</li>
+}
+
+func idToString(id int64) string {
+	return strconv.FormatInt(id, 10)
+}
+
+templ CardMenu(article *model.Article) {
+	<ul class="card-menu flex-menu">
+		// <li class="tooltip-container">
+		// 	<a class="icon-link" href={ templ.SafeURL("/items/tags/" + entry.id) } aria-label="Add Tags">
+		// 		// <Icon name="tag" />
+		// 		@Icon("tag")
+		// 	</a>
+		// 	<span role="status" class="tooltip">Add Tags</span>
+		// </li>
+		<li class="tooltip-container">
+			<form action="/desk/collections/add-article" method="post">
+				<input type="hidden" name="articleId" value={ idToString(article.ID) }/>
+				<input type="hidden" name="collectionName" value="Read Later"/>
+				<button class="icon-link-button" type="submit" aria-label="Bookmark Post">
+					@Icon("bookmark")
+				</button>
+				<span role="status" class="tooltip">Bookmark Post</span>
+			</form>
+		</li>
+		<li class="tooltip-container">
+			<form action="/desk/collections/add-article" method="post">
+				<input type="hidden" name="entryId" value={ idToString(article.ID) }/>
+				<input type="hidden" name="collectionName" value="Some New Collection"/>
+				<button class="icon-link-button" type="submit" aria-label="Add to Collection">
+					// <Icon name="folder_add" />
+					@Icon("folder_add")
+				</button>
+				<span role="status" class="tooltip">Add to Collection</span>
+			</form>
+		</li>
+		<li class="tooltip-container">
+			<form action="/desk/collections/add-entry" method="post">
+				<input type="hidden" name="entryId" value={ idToString(article.ID) }/>
+				// <input type="hidden" name="collectionName" value={ entry.read ? "Unread" : "Read" }/>
+				// <button class="icon-link-button" aria-label={ entry.read ? "Mark Unread" : "Mark Read" }>
+				// <Icon name={entry.read ? "checkbox_circle_outline" : "checkbox_circle_fill"} />
+				<button class="icon-link-button">
+					@Icon("checkbox_circle_outline")
+				</button>
+				// <span role="status" class="tooltip">{ entry.read ? "Mark Unread" : "Mark Read" }</span>
+			</form>
+		</li>
+	</ul>
+}

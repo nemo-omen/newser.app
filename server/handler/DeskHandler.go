@@ -3,6 +3,7 @@ package handler
 import (
 	"fmt"
 	"net/http"
+	"sort"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/labstack/echo/v4"
@@ -72,6 +73,10 @@ func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 		}
 		storedSubscriptionArticles = append(storedSubscriptionArticles, feedArticles...)
 	}
+	sort.SliceStable(storedSubscriptionArticles, func(i, j int) bool {
+		return storedSubscriptionArticles[i].PublishedParsed.After(storedSubscriptionArticles[j].PublishedParsed)
+	})
+
 	fmt.Println("stored: ", storedSubscriptionArticles)
 	return render(c, desk.Index(storedSubscriptionArticles))
 }
