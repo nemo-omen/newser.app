@@ -23,6 +23,10 @@ func getImgAlt(imgTitle, feedTitle string) string {
 	return alt
 }
 
+func idToString(id int64) string {
+	return strconv.FormatInt(id, 10)
+}
+
 func ArticleListItem(article *model.Article) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -66,7 +70,7 @@ func ArticleListItem(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var2 templ.SafeURL = templ.SafeURL("/desk/articles/" + article.Slug)
+		var templ_7745c5c3_Var2 templ.SafeURL = templ.SafeURL("/desk/articles/" + idToString(article.ID))
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var2)))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -78,7 +82,7 @@ func ArticleListItem(article *model.Article) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(article.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/articlelistitem.templ`, Line: 23, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/articlelistitem.templ`, Line: 27, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -99,7 +103,7 @@ func ArticleListItem(article *model.Article) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(article.Description)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/articlelistitem.templ`, Line: 31, Col: 27}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/articlelistitem.templ`, Line: 35, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -122,10 +126,6 @@ func ArticleListItem(article *model.Article) templ.Component {
 		}
 		return templ_7745c5c3_Err
 	})
-}
-
-func idToString(id int64) string {
-	return strconv.FormatInt(id, 10)
 }
 
 func CardMenu(article *model.Article) templ.Component {
@@ -157,7 +157,7 @@ func CardMenu(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button> <span role=\"status\" class=\"tooltip\">Bookmark Post</span></form></li><li class=\"tooltip-container\"><form action=\"/desk/collections/add-article\" method=\"post\"><input type=\"hidden\" name=\"entryId\" value=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"icon-link-label\">Bookmark</span></button></form></li><li class=\"tooltip-container\"><form action=\"/desk/collections/add-article\" method=\"post\"><input type=\"hidden\" name=\"entryId\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -173,7 +173,7 @@ func CardMenu(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button> <span role=\"status\" class=\"tooltip\">Add to Collection</span></form></li><li class=\"tooltip-container\"><form action=\"/desk/collections/add-entry\" method=\"post\"><input type=\"hidden\" name=\"entryId\" value=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span role=\"status\" class=\"icon-link-label\">Add to Collection</span></button></form></li><li class=\"tooltip-container\"><form action=\"/desk/collections/add-entry\" method=\"post\"><input type=\"hidden\" name=\"entryId\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -185,9 +185,24 @@ func CardMenu(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Icon("checkbox_circle_outline").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+		if article.Read == true {
+			templ_7745c5c3_Err = Icon("checkbox_circle_fill").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <span role=\"status\" class=\"icon-link-label\">Mark Unread</span>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = Icon("checkbox_circle_outline").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" <span role=\"status\" class=\"icon-link-label\">Mark Read</span>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></form></li></ul>")
 		if templ_7745c5c3_Err != nil {

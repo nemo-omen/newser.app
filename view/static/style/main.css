@@ -806,12 +806,30 @@ button:hover,
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 0.125em;
+}
+
+.icon-link-button-label {
+  flex-direction: row;
+  flex-wrap: nowrap;
 }
 
 .icon-link-button:hover,
-.icon-link:hover {
+.icon-link:hover,
+.icon-link-button-label:hover {
   background: transparent;
   color: var(--accent-alt) !important;
+}
+
+.icon-link,
+.icon-link-button,
+.icon-link-button-label {
+  padding: 1rem;
+  margin: -1rem;
+}
+
+.icon-link-label {
+  font-size: var(--step--1);
 }
 
 .feed-logo {
