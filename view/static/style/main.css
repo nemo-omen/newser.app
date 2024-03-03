@@ -367,6 +367,10 @@ a.link {
   color: var(--accent-alt);
 }
 
+a:not([class]) {
+  text-decoration: underline;
+}
+
 button {
   background-color: transparent;
   border: none;
@@ -477,6 +481,11 @@ time {
 .flex-row {
   display: flex;
   flex-direction: row;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
 }
 
 .flex-end {
@@ -609,7 +618,7 @@ time {
 .card-menu {
   list-style-type: none;
   display: flex;
-  gap: 1rem;
+  gap: var(--space-s-m);
   align-items: center;
   margin: 0;
   padding: 0;
@@ -806,6 +815,7 @@ button:hover,
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.125em;
 }
 
@@ -835,6 +845,26 @@ button:hover,
 .feed-logo {
   width: var(--step-2);
   height: var(--step-2);
+}
+
+.article {
+  --space-default: var(--space-xs);
+}
+
+.article-content {
+  font-size: var(--step-0);
+}
+
+pre:has(code),
+pre.shiki {
+  overflow-x: auto;
+  padding: var(--space-xs);
+  background-color: var(--dark);
+  font-size: var(--step-0);
+
+  & code {
+    margin-inline-end: var(--space-xs);
+  }
 }
 
 @media (prefers-color-scheme: light) {

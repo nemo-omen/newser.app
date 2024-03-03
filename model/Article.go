@@ -37,6 +37,9 @@ type Article struct {
 func ArticleFromRemote(ri *gofeed.Item) (*Article, error) {
 	a := new(Article)
 	p := bluemonday.UGCPolicy()
+	// p := bluemonday.NewPolicy()
+	p.AllowElements("code")
+	p.AllowAttrs("class").OnElements("code")
 	m, err := json.Marshal(ri)
 	if err != nil {
 		return nil, err

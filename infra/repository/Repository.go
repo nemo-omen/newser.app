@@ -26,11 +26,11 @@ type NewsfeedRepository interface {
 }
 
 type ArticleRepository interface {
-	Get(id uint) (*model.Article, error)
+	Get(id int64) (*model.Article, error)
 	Create(n *model.Article) (*model.Article, error)
 	CreateMany(n []*model.Article) ([]*model.Article, error)
 	Update(n *model.Article) (*model.Article, error)
-	Delete(id uint) error
+	Delete(id int64) error
 	FindBySlug(slug string) (*model.Article, error)
 	ArticlesByCollection(collectionId int64) ([]*model.Article, error)
 	ArticlesByNewsfeed(feedId int64) ([]*model.Article, error)

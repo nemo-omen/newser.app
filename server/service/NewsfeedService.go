@@ -30,3 +30,11 @@ func (s *NewsfeedService) GetArticlesByNewsfeedId(nId int64) ([]*model.Article, 
 	}
 	return aa, nil
 }
+
+func (s *NewsfeedService) GetArticleById(aId int64) (*model.Article, error) {
+	a, err := s.articleRepo.Get(aId)
+	if err != nil {
+		return nil, err
+	}
+	return a, nil
+}

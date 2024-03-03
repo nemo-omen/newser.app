@@ -17,8 +17,15 @@ func NewArticleSqliteRepo(db *sqlx.DB) *ArticleSqliteRepo {
 	}
 }
 
-func (r *ArticleSqliteRepo) Get(id uint) (*model.Article, error) {
-	return nil, nil
+func (r *ArticleSqliteRepo) Get(id int64) (*model.Article, error) {
+	a := &model.Article{}
+	// TODO: Nice join query so we can get more info about article
+	// like images, author, feed title, etc.
+	err := r.db.Get(a, "SELECT * FROM articles WHERE id=?", id)
+	if err != nil {
+		return nil, err
+	}
+	return a, nil
 }
 
 func (r *ArticleSqliteRepo) Create(a *model.Article) (*model.Article, error) {
@@ -46,7 +53,7 @@ func (r *ArticleSqliteRepo) Update(n *model.Article) (*model.Article, error) {
 	return nil, nil
 }
 
-func (r *ArticleSqliteRepo) Delete(id uint) error {
+func (r *ArticleSqliteRepo) Delete(id int64) error {
 	return nil
 }
 

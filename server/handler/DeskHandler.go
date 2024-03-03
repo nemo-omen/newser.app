@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"sort"
+	"strconv"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/labstack/echo/v4"
@@ -40,19 +41,12 @@ func NewDeskHandler(
 }
 
 func (h DeskHandler) GetDeskIndex(c echo.Context) error {
-	authed := h.session.CheckAuth(c)
 	email := h.session.GetUser(c)
-
-	if !authed {
-		h.session.SetFlash(c, "error", "You need to log in.")
-		return c.Redirect(http.StatusSeeOther, "/auth/login")
-	}
 	u, _ := h.authService.GetUserByEmail(email)
 	subscriptions, err := h.subscriptionService.All(u.Id)
 	if err != nil {
-		// TODO: Figure out what to do when an error
-		//  	 is thrown here.
-		fmt.Println(err.Error())
+		h.session.SetFlash(c, "error", "There was a problem getting your subscriptions.")
+		return c.Redirect(http.StatusSeeOther, "/desk/search")
 	}
 
 	if len(subscriptions) < 1 {
@@ -82,25 +76,10 @@ func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 }
 
 func (h DeskHandler) GetDeskSearch(c echo.Context) error {
-	authed := h.session.CheckAuth(c)
-	// email := h.session.GetUser(c)
-
-	if !authed {
-		h.session.SetFlash(c, "error", "You need to log in.")
-		return c.Redirect(http.StatusSeeOther, "/auth/login")
-	}
 	return render(c, desk.Search([]*gofeed.Feed{}))
 }
 
 func (h DeskHandler) PostDeskSearch(c echo.Context) error {
-	authed := h.session.CheckAuth(c)
-	// email := h.session.GetUser(c)
-
-	if !authed {
-		h.session.SetFlash(c, "error", "You need to log in.")
-		return c.Redirect(http.StatusSeeOther, "/auth/login")
-	}
-
 	feeds := []*gofeed.Feed{}
 	searchLinks := []string{}
 	// isHx := c.Get("isHx").(bool)
@@ -150,12 +129,7 @@ func (h DeskHandler) PostDeskSearch(c echo.Context) error {
 }
 
 func (h DeskHandler) PostDeskSubscribe(c echo.Context) error {
-	authed := h.session.CheckAuth(c)
 	email := h.session.GetUser(c)
-	if !authed {
-		h.session.SetFlash(c, "error", ErrorNotLoggedIn)
-		return c.Redirect(http.StatusSeeOther, "/auth/login")
-	}
 	subscriptionUrl := c.Request().FormValue("subscriptionurl")
 	feed, err := h.api.GetFeed(subscriptionUrl)
 	if err != nil {
@@ -171,4 +145,20 @@ func (h DeskHandler) PostDeskSubscribe(c echo.Context) error {
 	// fmt.Println(sub)
 	// return render(c, desk.Index())
 	return c.Redirect(http.StatusSeeOther, "/desk/")
+}
+
+func (h DeskHandler) HandleGetArticle(c echo.Context) error {
+	stringId := c.Param("articleid")
+	id, err := strconv.ParseInt(stringId, 10, 64)
+	if err != nil {
+		h.session.SetFlash(c, "error", "Error retrieving article.")
+		return render(c, desk.Article((&model.Article{Title: "Oops!"})))
+	}
+
+	article, err := h.newsfeedService.GetArticleById(id)
+	if err != nil {
+		h.session.SetFlash(c, "error", "Error retrieving article.")
+		return render(c, desk.Article((&model.Article{Title: "Oops!"})))
+	}
+	return render(c, desk.Article(article))
 }

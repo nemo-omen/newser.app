@@ -1,0 +1,22 @@
+package desk
+
+import (
+	"newser.app/model"
+	"newser.app/view/component"
+	"newser.app/view/layout"
+)
+
+templ Article(a *model.Article) {
+	@layout.Desk() {
+		<script src="/static/script/vendor/shiki/shiki.js" type="module"></script>
+		<article class="container article">
+			<div class="article-header flex-column gap-1">
+				<h2>{ a.Title }</h2>
+				@component.FormattedDateTime(a.PublishedParsed)
+			</div>
+			<section class="stack article-content">
+				@templ.Raw(a.Content)
+			</section>
+		</article>
+	}
+}

@@ -119,10 +119,12 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 	authGroup.POST("/logout", authHandler.PostLogout)
 
 	deskGroup := app.Group("/desk")
+	deskGroup.Use(custommiddleware.Auth(sessionManager))
 	deskGroup.GET("/", deskHandler.GetDeskIndex)
 	deskGroup.GET("/search", deskHandler.GetDeskSearch)
 	deskGroup.POST("/search", deskHandler.PostDeskSearch)
 	deskGroup.POST("/subscribe", deskHandler.PostDeskSubscribe)
+	deskGroup.GET("/articles/:articleid", deskHandler.HandleGetArticle)
 }
 
 func openDB(dsn string) (*sqlx.DB, error) {
