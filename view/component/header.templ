@@ -25,8 +25,9 @@ templ Header() {
 					@Icon("logo")
 				</span>
 			</a>
-			@Flash()
-			// TODO: Different nav for auth vs !auth
+			<div class="header-container">
+				@Flash()
+			</div>
 			<nav aria-label="Main">
 				<ul>
 					if getIsAuthenticated(ctx) == false {

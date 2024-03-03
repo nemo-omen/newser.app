@@ -245,12 +245,20 @@ header {
     flex: 1;
     display: flex;
     justify-content: center;
-    font-size: 1.25rem;
+    align-items: center;
+    height: 100%;
   }
 
-  & .flash p {
+  & .flash span {
+    font-size: 1.25rem;
     margin: 0;
     line-height: 1;
+    display: block;
+    animation: 0.33s ease-in-out 1 fadeIn, 0.33s ease-in-out 5s 1 forwards fadeOut;
+    /* border: 1px solid var(--accent-alt-3); */
+    background-color: var(--background-2);
+    padding: 0.75rem;
+    border-radius: 0.25rem;
   }
 
   & .header-container {
@@ -259,7 +267,8 @@ header {
     display: flex;
     justify-content: space-between;
     padding: 1rem 0;
-    border-bottom: 1px solid var(--accent-alt-3);
+    height: 1.25rem;
+    /* border-bottom: 1px solid var(--accent-alt-3); */
   }
 
   & .header-control {
@@ -352,6 +361,10 @@ a:hover,
   text-decoration: none;
   color: var(--accent-alt);
   background-color: transparent;
+}
+
+a.link {
+  color: var(--accent-alt);
 }
 
 button {
@@ -474,6 +487,30 @@ time {
   justify-content: space-between;
 }
 
+.text-center {
+  text-align: center;
+}
+
+.text-tiny {
+  font-size: var(--step--2);
+}
+
+.text-small {
+  font-size: var(--step--1);
+}
+
+.text-normal {
+  font-size: var(--step-0);
+}
+
+.text-med {
+  font-size: var(--step-1);
+}
+
+.text-large {
+  font-size: var(--step-2);
+}
+
 .card-list {
   list-style-type: none;
   margin: 0;
@@ -484,6 +521,7 @@ time {
 }
 
 .card {
+  position: relative;
   background-color: transparent;
   transition: background-color var(--transition);
   min-block-size: 8rem;
@@ -491,6 +529,29 @@ time {
   flex-direction: column;
   gap: var(--space-2xs);
   padding: var(--space-2xs);
+  border-radius: var(--space-2xs);
+}
+
+.card-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
+.card-primary-action::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* .card-body {
+  z-index: 2;
+} */
+
+.card-footer {
+  padding-block-start: 1rem;
+  z-index: 2;
 }
 
 .tooltip-container {
@@ -619,7 +680,7 @@ fieldset label {
   }
 }
 
-.auth-form {
+.auth-form-container {
   padding: 2rem;
   margin: 0 auto;
   margin-top: 8rem;
@@ -627,7 +688,7 @@ fieldset label {
   background-color: var(--background--1);
 }
 
-.auth-form form {
+.auth-form-container form {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -743,5 +804,31 @@ button:hover,
   html {
     --background: var(--light);
     --foreground: var(--dark);
+  }
+}
+
+/* ANIMATIONS */
+
+@keyframes fadeIn {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0%);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    transform: translateY(0%);
+    opacity: 100;
+  }
+
+  100% {
+    transform: translateY(-100%);
+    opacity: 0;
   }
 }

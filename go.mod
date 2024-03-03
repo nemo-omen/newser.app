@@ -20,7 +20,9 @@ require (
 	github.com/alexedwards/scs/sqlite3store v0.0.0-20240203174419-a38e822451b6 // indirect
 	github.com/alexedwards/scs/v2 v2.7.0 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect
+	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
+	github.com/gorilla/css v1.0.0 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gosimple/slug v1.14.0 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
@@ -32,6 +34,7 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	github.com/mfridman/interpolate v0.0.2 // indirect
+	github.com/microcosm-cc/bluemonday v1.0.26 // indirect
 	github.com/mmcdole/goxpp v1.1.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect

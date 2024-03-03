@@ -5,6 +5,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"newser.app/model"
+	"newser.app/shared/util"
 )
 
 type NewsfeedSqliteRepo struct {
@@ -60,7 +61,7 @@ func (r *NewsfeedSqliteRepo) Create(n *model.Newsfeed) (*model.Newsfeed, error) 
 		feed_type,
 		slug
 	)
-		VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+		VALUES(?,?,?,?,?,?,?,?,?,?)
 		ON CONFLICT(feed_url) do nothing;
 	`
 	res, err := r.DB.Exec(
@@ -74,7 +75,7 @@ func (r *NewsfeedSqliteRepo) Create(n *model.Newsfeed) (*model.Newsfeed, error) 
 		n.Copyright,
 		n.Language,
 		n.FeedType,
-		n.Slug,
+		util.Slugify(n.Title),
 	)
 
 	if err != nil {

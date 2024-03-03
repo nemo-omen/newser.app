@@ -5,6 +5,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"newser.app/model"
+	"newser.app/shared/util"
 )
 
 func InsertArticle(db *sqlx.DB, a *model.Article) (*model.Article, error) {
@@ -21,7 +22,8 @@ func InsertArticle(db *sqlx.DB, a *model.Article) (*model.Article, error) {
 		guid,
 		slug,
 		feed_id,
-	) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);
+		read
+	) VALUES(?,?,?,?,?,?,?,?,?,?,?,?);
 	`
 	res, err := db.Exec(
 		q,
@@ -34,8 +36,9 @@ func InsertArticle(db *sqlx.DB, a *model.Article) (*model.Article, error) {
 		a.Updated,
 		a.UpdatedParsed,
 		a.GUID,
-		a.Slug,
+		util.Slugify(a.Title),
 		a.FeedId,
+		false,
 	)
 	if err != nil {
 		fmt.Println("article insert err: ", err)

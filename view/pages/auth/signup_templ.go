@@ -57,7 +57,7 @@ func Signup() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h2>Sign Up</h2><form action=\"/auth/signup\" method=\"POST\"><fieldset><label for=\"email\">Email</label> <input type=\"email\" name=\"email\" id=\"email\"> ")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main><div class=\"auth-form-container stack\"><h2>Sign Up</h2><form action=\"/auth/signup\" method=\"POST\"><fieldset><label for=\"email\">Email</label> <input type=\"email\" name=\"email\" id=\"email\"> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -69,7 +69,7 @@ func Signup() templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(getEmailError(ctx))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/auth/signup.templ`, Line: 38, Col: 45}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/auth/signup.templ`, Line: 40, Col: 47}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -92,7 +92,7 @@ func Signup() templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(getPasswordError(ctx))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/auth/signup.templ`, Line: 45, Col: 48}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/auth/signup.templ`, Line: 47, Col: 50}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -115,7 +115,7 @@ func Signup() templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(getConfirmError(ctx))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/auth/signup.templ`, Line: 52, Col: 47}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/auth/signup.templ`, Line: 54, Col: 49}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -126,7 +126,7 @@ func Signup() templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</fieldset><button type=\"submit\">Sign Up</button></form>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</fieldset><button type=\"submit\">Sign Up</button></form><div><p class=\"text-center\">Already have an account?</p><p class=\"text-center text-normal\"><a href=\"/auth/login\" class=\"link\">Login instead</a></p></div></div></main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

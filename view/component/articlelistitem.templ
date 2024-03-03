@@ -5,14 +5,14 @@ import "strconv"
 
 templ ArticleListItem(article *model.Article) {
 	<li class="article-list-item card">
-		<a href={ templ.SafeURL("/desk/articles/" + article.Slug) }>
-			<div class="card-header flex-column">
-				<div class="flex-row">
-					@FormattedDateTime(article.PublishedParsed)
-				</div>
-				<h3>{ article.Title }</h3>
+		<div class="card-header flex-column">
+			<div class="flex-row">
+				@FormattedDateTime(article.PublishedParsed)
 			</div>
-		</a>
+			<a href={ templ.SafeURL("/desk/articles/" + article.Slug) } class="card-primary-action">
+				<h3>{ article.Title }</h3>
+			</a>
+		</div>
 		<div class="card-body">
 			<p>{ article.Description }</p>
 		</div>

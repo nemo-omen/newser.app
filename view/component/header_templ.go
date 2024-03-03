@@ -47,7 +47,7 @@ func Header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></a>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></a><div class=\"header-container\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -55,7 +55,7 @@ func Header() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav aria-label=\"Main\"><ul>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><nav aria-label=\"Main\"><ul>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

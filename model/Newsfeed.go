@@ -2,9 +2,11 @@ package model
 
 import (
 	"encoding/json"
+	"net/url"
 	"time"
 
 	"github.com/mmcdole/gofeed"
+	"newser.app/shared/util"
 )
 
 type Newsfeed struct {
@@ -53,6 +55,16 @@ func FeedFromRemote(rf *gofeed.Feed) (*Newsfeed, error) {
 	err = json.Unmarshal(m, nf)
 	if err != nil {
 		return nil, err
+	}
+	nf.Slug = util.Slugify(nf.Title)
+
+	if nf.SiteUrl == "" {
+		u, err := url.Parse(nf.FeedUrl)
+		if err == nil {
+			scheme := u.Scheme
+			host := u.Host
+			nf.SiteUrl = scheme + host
+		}
 	}
 
 	return nf, nil

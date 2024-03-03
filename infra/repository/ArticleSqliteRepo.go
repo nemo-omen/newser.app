@@ -83,6 +83,7 @@ func (r *ArticleSqliteRepo) Migrate() error {
 		guid TEXT,
 		slug TEXT NOT NULL,
 		feed_id int NOT NULL,
+		read BOOLEAN NOT NULL,
 		CONSTRAINT fk_newsfeeds
 			FOREIGN KEY (feed_id)
 			REFERENCES newsfeeds(id)

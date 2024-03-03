@@ -31,7 +31,7 @@ func Login() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main><h2>Login</h2><form action=\"/auth/login\" method=\"POST\"><fieldset><label for=\"email\">Email</label> <input type=\"email\" name=\"email\" id=\"email\"></fieldset><fieldset><label for=\"password\">Password</label> <input type=\"password\" name=\"password\" id=\"password\"></fieldset><button type=\"submit\">Log In</button></form></main>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main><div class=\"auth-form-container stack\"><h2>Login</h2><form action=\"/auth/login\" method=\"POST\"><fieldset><label for=\"email\">Email</label> <input type=\"email\" name=\"email\" id=\"email\"></fieldset><fieldset><label for=\"password\">Password</label> <input type=\"password\" name=\"password\" id=\"password\"></fieldset><button type=\"submit\">Log In</button></form><div><p class=\"text-center\">Don't have an account?</p><p class=\"text-center text-normal\"><a href=\"/auth/signup\" class=\"link\">Sign up instead</a></p></div></div></main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

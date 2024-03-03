@@ -30,30 +30,38 @@ func getConfirmError(ctx context.Context) string {
 
 templ Signup() {
 	@layout.Base() {
-		<h2>Sign Up</h2>
-		<form action="/auth/signup" method="POST">
-			<fieldset>
-				<label for="email">Email</label>
-				<input type="email" name="email" id="email"/>
-				if getEmailError(ctx) != "" {
-					<span class="error">{ getEmailError(ctx) }</span>
-				}
-			</fieldset>
-			<fieldset>
-				<label for="password">Password</label>
-				<input type="password" name="password" id="password"/>
-				if getPasswordError(ctx) != "" {
-					<span class="error">{ getPasswordError(ctx) }</span>
-				}
-			</fieldset>
-			<fieldset>
-				<label for="confirm">Confirm Password</label>
-				<input type="password" name="confirm" id="confirm"/>
-				if getConfirmError(ctx) != "" {
-					<span class="error">{ getConfirmError(ctx) }</span>
-				}
-			</fieldset>
-			<button type="submit">Sign Up</button>
-		</form>
+		<main>
+			<div class="auth-form-container stack">
+				<h2>Sign Up</h2>
+				<form action="/auth/signup" method="POST">
+					<fieldset>
+						<label for="email">Email</label>
+						<input type="email" name="email" id="email"/>
+						if getEmailError(ctx) != "" {
+							<span class="error">{ getEmailError(ctx) }</span>
+						}
+					</fieldset>
+					<fieldset>
+						<label for="password">Password</label>
+						<input type="password" name="password" id="password"/>
+						if getPasswordError(ctx) != "" {
+							<span class="error">{ getPasswordError(ctx) }</span>
+						}
+					</fieldset>
+					<fieldset>
+						<label for="confirm">Confirm Password</label>
+						<input type="password" name="confirm" id="confirm"/>
+						if getConfirmError(ctx) != "" {
+							<span class="error">{ getConfirmError(ctx) }</span>
+						}
+					</fieldset>
+					<button type="submit">Sign Up</button>
+				</form>
+				<div>
+					<p class="text-center">Already have an account?</p>
+					<p class="text-center text-normal"><a href="/auth/login" class="link">Login instead</a></p>
+				</div>
+			</div>
+		</main>
 	}
 }

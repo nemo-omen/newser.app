@@ -5,6 +5,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"newser.app/model"
+	"newser.app/shared/util"
 )
 
 // InsertAggregateSubscriptionTx inserts all of the records associated
@@ -27,6 +28,7 @@ func InsertAggregateSubscriptionTx(db *sqlx.DB, n *model.Newsfeed, userId int64)
 
 	for _, a := range n.Articles {
 		a.FeedId = persistedNf.ID
+
 		persistedArticle, err := InsertArticleWithTx(tx, a)
 		if err != nil {
 			return err
@@ -81,7 +83,7 @@ func InsertNewsfeedWithTx(tx *sqlx.Tx, n *model.Newsfeed) (*model.Newsfeed, erro
 		n.Copyright,
 		n.Language,
 		n.FeedType,
-		n.Slug,
+		util.Slugify(n.Title),
 	)
 	if err != nil {
 		fmt.Println("newsfeed insertion error: ", err)
@@ -117,8 +119,9 @@ func InsertArticleWithTx(tx *sqlx.Tx, a *model.Article) (*model.Article, error) 
 		updated_parsed,
 		guid,
 		slug,
-		feed_id
-	) VALUES(?,?,?,?,?,?,?,?,?,?,?);
+		feed_id,
+		read
+	) VALUES(?,?,?,?,?,?,?,?,?,?,?,?);
 	`
 	res, err := tx.Exec(
 		q,
@@ -131,8 +134,9 @@ func InsertArticleWithTx(tx *sqlx.Tx, a *model.Article) (*model.Article, error) 
 		a.Updated,
 		a.UpdatedParsed,
 		a.GUID,
-		a.Slug,
+		util.Slugify(a.Title),
 		a.FeedId,
+		false,
 	)
 	if err != nil {
 		fmt.Println("article insert err: ", err)
