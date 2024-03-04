@@ -122,9 +122,7 @@ func InsertArticleWithTx(tx *sqlx.Tx, a *model.Article) (*model.Article, error) 
 		_ = InsertArticleImageWithTx(tx, a.Image, a.ID)
 	}
 
-	if a.Author != nil {
-		_ = InsertArticlePersonWithTx(tx, a.Author, a.ID)
-	}
+	_ = InsertArticlePersonWithTx(tx, &a.Person, a.ID)
 	return a, nil
 }
 

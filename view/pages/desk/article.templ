@@ -9,10 +9,11 @@ import (
 templ Article(a *model.Article) {
 	@layout.Desk() {
 		<script src="/static/script/vendor/shiki/shiki.js" type="module"></script>
-		<article class="container article">
-			<div class="article-header flex-column gap-1">
-				<h2>{ a.Title }</h2>
+		<article class="container article stack">
+			<div class="article-header flex-row gap-1">
 				@component.FormattedDateTime(a.PublishedParsed)
+				<a href={ templ.SafeURL(a.FeedSiteUrl) }>{ a.FeedTitle }</a>
+				<a href={ templ.SafeURL(a.FeedSiteUrl) }>{ a.Person.Name }</a>
 			</div>
 			<section class="stack article-content">
 				@templ.Raw(a.Content)

@@ -11,17 +11,18 @@ import (
 )
 
 type Article struct {
-	ID              int64     `db:"id"`
-	Title           string    `json:"title,omitempty" db:"title"`
-	Description     string    `json:"description,omitempty" db:"description"`
-	Content         string    `json:"content,omitempty" db:"content"`
-	ArticleLink     string    `json:"link,omitempty" db:"article_link"`
-	Author          *Person   `json:"author,omitempty" db:"-"`
+	ID          int64  `db:"id"`
+	Title       string `json:"title,omitempty" db:"title"`
+	Description string `json:"description,omitempty" db:"description"`
+	Content     string `json:"content,omitempty" db:"content"`
+	ArticleLink string `json:"link,omitempty" db:"article_link"`
+	// Author          *Person   `json:"author,omitempty"`
+	Person
 	Published       string    `json:"published,omitempty" db:"published"`
 	PublishedParsed time.Time `json:"publishedParsed,omitempty" db:"published_parsed"`
 	Updated         string    `json:"updated,omitempty" db:"updated"`
 	UpdatedParsed   time.Time `json:"updatedParsed,omitempty" db:"updated_parsed"`
-	Image           *Image    `json:"image,omitempty" db:"-"`
+	Image           *Image    `json:"image,omitempty"`
 	Categories      []string  `json:"categories,omitempty" db:"categories"`
 	GUID            string    `json:"guid,omitempty" db:"guid"`
 	Slug            string    `json:"-" db:"slug"`

@@ -124,7 +124,7 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 	deskGroup.GET("/search", deskHandler.GetDeskSearch)
 	deskGroup.POST("/search", deskHandler.PostDeskSearch)
 	deskGroup.POST("/subscribe", deskHandler.PostDeskSubscribe)
-	deskGroup.GET("/articles/:articleid", deskHandler.HandleGetArticle)
+	deskGroup.GET("/articles/:articleid", deskHandler.GetDeskArticle)
 }
 
 func openDB(dsn string) (*sqlx.DB, error) {

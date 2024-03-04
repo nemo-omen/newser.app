@@ -57,7 +57,6 @@ func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 	})
 
 	// retrieve saved feed items
-	fmt.Println("feedIds: ", feedIds)
 	storedSubscriptionArticles := []*model.Article{}
 	for _, id := range feedIds {
 		// _, err := h.newsfeedService.GetArticlesByNewsfeedId(id)
@@ -70,12 +69,12 @@ func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 	sort.SliceStable(storedSubscriptionArticles, func(i, j int) bool {
 		return storedSubscriptionArticles[i].PublishedParsed.After(storedSubscriptionArticles[j].PublishedParsed)
 	})
-
-	fmt.Println("stored: ", storedSubscriptionArticles)
+	c.Set("title", "Latest Articles")
 	return render(c, desk.Index(storedSubscriptionArticles))
 }
 
 func (h DeskHandler) GetDeskSearch(c echo.Context) error {
+	c.Set("title", "Add a Newsfeed")
 	return render(c, desk.Search([]*gofeed.Feed{}))
 }
 
@@ -147,7 +146,7 @@ func (h DeskHandler) PostDeskSubscribe(c echo.Context) error {
 	return c.Redirect(http.StatusSeeOther, "/desk/")
 }
 
-func (h DeskHandler) HandleGetArticle(c echo.Context) error {
+func (h DeskHandler) GetDeskArticle(c echo.Context) error {
 	stringId := c.Param("articleid")
 	id, err := strconv.ParseInt(stringId, 10, 64)
 	if err != nil {
@@ -160,5 +159,6 @@ func (h DeskHandler) HandleGetArticle(c echo.Context) error {
 		h.session.SetFlash(c, "error", "Error retrieving article.")
 		return render(c, desk.Article((&model.Article{Title: "Oops!"})))
 	}
+	c.Set("title", article.Title)
 	return render(c, desk.Article(article))
 }

@@ -10,15 +10,10 @@ import "context"
 import "io"
 import "bytes"
 
-import "newser.app/view/component"
-
-func getTitle(ctx context.Context) string {
-	title := ctx.Value("title")
-	if title != nil {
-		return title.(string)
-	}
-	return ""
-}
+import (
+	"newser.app/view/component"
+	"newser.app/view/util"
+)
 
 func Base() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -37,15 +32,15 @@ func Base() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if getTitle(ctx) != "" {
+		if util.GetPageTitle(ctx) != "" {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<title>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(getTitle(ctx))
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(util.GetPageTitle(ctx))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/layout/base.templ`, Line: 20, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/layout/base.templ`, Line: 15, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {

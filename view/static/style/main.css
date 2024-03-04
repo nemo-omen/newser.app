@@ -1,3 +1,6 @@
+@import url("/static/style/reset.css") layer(reset);
+@import url("/static/style/content.css") layer(content);
+
 :root {
   --sans: 'Noto Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   --light-step: 5%;
@@ -196,10 +199,10 @@ html {
   --foreground: var(--light);
   background: var(--background);
   color: var(--foreground);
-  margin: 0;
   padding: 0;
   font-family: var(--sans);
-  font-size: 1rem;
+  font-size: var(--step--1);
+  /* font-size: 1rem; */
 }
 
 body {
@@ -273,7 +276,6 @@ header {
     align-items: center;
     padding: 0.5rem 0;
     block-size: 2rem;
-    /* border-bottom: 1px solid var(--accent-alt-3); */
   }
 
   & .header-control {
@@ -352,6 +354,7 @@ header {
     transform-origin: top center;
     opacity: 0.3;
     transition: all 280ms 120ms ease-out;
+    z-index: 10;
 
     a {
       display: block;
@@ -375,7 +378,9 @@ header {
   }
 }
 
+/* .dropdown:has(a:hover, button:hover) */
 .dropdown:hover,
+/* .dropdown>ul:hover, */
 .dropdown:focus-within {
   .dropdown__menu {
     opacity: 1;

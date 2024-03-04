@@ -1,6 +1,7 @@
 package component
 
 import "strings"
+import "newser.app/view/util"
 
 func getCurrentPath(ctx context.Context) string {
 	currentPath := ctx.Value("currentPath")
@@ -40,6 +41,9 @@ templ Header() {
 				</span>
 			</a>
 			<div class="header-container">
+				if getIsAuthenticated(ctx) {
+					<h1>{ util.GetPageTitle(ctx) }</h1>
+				}
 				@Flash()
 			</div>
 			<nav aria-label="Main">

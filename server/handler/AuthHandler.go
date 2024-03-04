@@ -43,10 +43,12 @@ func NewAuthHandler(authService service.AuthService, sessionManager *scs.Session
 }
 
 func (h AuthHandler) GetLogin(c echo.Context) error {
+	c.Set("title", "Login")
 	return render(c, auth.Login())
 }
 
 func (h AuthHandler) GetSignup(c echo.Context) error {
+	c.Set("title", "Sign Up")
 	return render(c, auth.Signup())
 }
 

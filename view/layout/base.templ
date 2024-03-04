@@ -1,14 +1,9 @@
 package layout
 
-import "newser.app/view/component"
-
-func getTitle(ctx context.Context) string {
-	title := ctx.Value("title")
-	if title != nil {
-		return title.(string)
-	}
-	return ""
-}
+import (
+	"newser.app/view/component"
+	"newser.app/view/util"
+)
 
 templ Base() {
 	<!DOCTYPE html>
@@ -17,8 +12,8 @@ templ Base() {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<link rel="stylesheet" href="/static/style/main.css"/>
-			if getTitle(ctx) != "" {
-				<title>{ getTitle(ctx) }</title>
+			if util.GetPageTitle(ctx) != "" {
+				<title>{ util.GetPageTitle(ctx) }</title>
 			} else {
 				<title>Current</title>
 			}

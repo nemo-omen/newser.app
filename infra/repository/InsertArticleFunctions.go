@@ -54,9 +54,7 @@ func InsertArticle(db *sqlx.DB, a *model.Article) (*model.Article, error) {
 		_ = InsertArticleImageTx(db, a.Image, a.ID)
 	}
 
-	if a.Author != nil {
-		_ = InsertArticlePersonTx(db, a.Author, a.ID)
-	}
+	_ = InsertArticlePersonTx(db, &a.Person, a.ID)
 	return a, nil
 }
 
