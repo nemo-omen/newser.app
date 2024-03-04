@@ -2,15 +2,20 @@ package layout
 
 templ Desk() {
 	@Base() {
-		<aside class="sidebar" id="sidebar-main">
-			<ul>
-				<li>
-					<a href="/desk/search">Search</a>
-				</li>
-			</ul>
-		</aside>
-		<main>
-			{ children... }
-		</main>
+		<div class="grid-container">
+			<aside class="sidebar" id="sidebar-main">
+				<ul>
+					<li>
+						<a href="/desk/search">Search</a>
+					</li>
+				</ul>
+			</aside>
+			<main>
+				{ children... }
+			</main>
+			<aside class="sidebar" id="sidebar-secondary">
+				Sidebar 2
+			</aside>
+		</div>
 	}
 }

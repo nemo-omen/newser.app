@@ -17,7 +17,6 @@ func getSearchError(ctx context.Context) string {
 templ Search(feeds []*gofeed.Feed) {
 	@layout.Desk() {
 		<div class="container stack">
-			<h2>Add a Newsfeed</h2>
 			<form action="/desk/search" method="post" class="search-form">
 				<fieldset>
 					<label for="searchurl">Search</label>

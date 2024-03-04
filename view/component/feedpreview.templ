@@ -34,6 +34,7 @@ templ FeedPreview(feed *gofeed.Feed) {
 			>
 				<input type="hidden" name="subscriptionurl" id="subscriptionurl" value={ feed.FeedLink }/>
 				<button type="submit">Subscribe</button>
+				// <span>{ feed.FeedLink }</span>
 			</form>
 		</div>
 	</li>

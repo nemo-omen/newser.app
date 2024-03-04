@@ -130,11 +130,13 @@ func (h DeskHandler) PostDeskSearch(c echo.Context) error {
 func (h DeskHandler) PostDeskSubscribe(c echo.Context) error {
 	email := h.session.GetUser(c)
 	subscriptionUrl := c.Request().FormValue("subscriptionurl")
+	fmt.Println("subscriptionurl: ", subscriptionUrl)
 	feed, err := h.api.GetFeed(subscriptionUrl)
 	if err != nil {
+		fmt.Println("feed error: ", err.Error())
 		h.session.SetFlash(c, "error", ErrorFeedNotFound(subscriptionUrl))
 		// TODO: need a more suitable response here
-		return c.Redirect(http.StatusAccepted, "/desk/")
+		return c.Redirect(http.StatusSeeOther, "/desk/")
 	}
 	u, _ := h.authService.GetUserByEmail(email)
 	err = h.subscriptionService.Subscribe(feed, u.Id)
