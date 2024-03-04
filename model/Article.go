@@ -7,6 +7,7 @@ import (
 	strip "github.com/grokify/html-strip-tags-go"
 	"github.com/microcosm-cc/bluemonday"
 	"github.com/mmcdole/gofeed"
+	"newser.app/shared/util"
 )
 
 type Article struct {
@@ -60,6 +61,7 @@ func ArticleFromRemote(ri *gofeed.Item) (*Article, error) {
 	// (in my experience/opinion)
 	d := strip.StripTags(a.Content)
 	a.Description = d
+	a.Slug = util.Slugify(a.Title)
 
 	if len(a.Description) > 240 {
 		a.Description = a.Description[:240] + "..."

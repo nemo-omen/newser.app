@@ -5,7 +5,6 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"newser.app/model"
-	"newser.app/shared/util"
 )
 
 // InsertAggregateSubscriptionTx inserts all of the records associated
@@ -56,43 +55,29 @@ func InsertAggregateSubscriptionTx(db *sqlx.DB, n *model.Newsfeed, userId int64)
 }
 
 func InsertNewsfeedWithTx(tx *sqlx.Tx, n *model.Newsfeed) (*model.Newsfeed, error) {
-	q1 := `
+	stmt, err := tx.PrepareNamed(`
 	INSERT INTO newsfeeds(
-		title,
-		site_url,
-		feed_url,
-		description,
-		updated,
-		updated_parsed,
-		copyright,
-		language,
-		feed_type,
-		slug
+		title,site_url,feed_url,
+		description,updated,updated_parsed,
+		copyright,language,feed_type,slug
 	)
-		VALUES(?,?,?,?,?,?,?,?,?,?)
-		ON CONFLICT(feed_url) do nothing;
-	`
-	res, err := tx.Exec(
-		q1,
-		n.Title,
-		n.SiteUrl,
-		n.FeedUrl,
-		n.Description,
-		n.Updated,
-		n.UpdatedParsed,
-		n.Copyright,
-		n.Language,
-		n.FeedType,
-		util.Slugify(n.Title),
-	)
+		VALUES(
+			:title,:site_url,:feed_url,
+			:description,:updated,:updated_parsed,
+			:copyright,:language,:feed_type,:slug
+		)
+		ON CONFLICT(feed_url) do nothing RETURNING id;
+	`)
 	if err != nil {
 		fmt.Println("newsfeed insertion error: ", err)
 		return nil, ErrInsertError
 	}
-	feedId, err := res.LastInsertId()
+
+	var feedId int64
+	err = stmt.Get(&feedId, n)
 	if err != nil {
-		fmt.Println("lastInserted err: ", err)
-		return nil, ErrNotFound
+		fmt.Println("newsfeed insertion error: ", err)
+		return nil, ErrInsertError
 	}
 	n.ID = feedId
 
@@ -107,42 +92,26 @@ func InsertNewsfeedWithTx(tx *sqlx.Tx, n *model.Newsfeed) (*model.Newsfeed, erro
 }
 
 func InsertArticleWithTx(tx *sqlx.Tx, a *model.Article) (*model.Article, error) {
-	q := `
+	stmt, err := tx.PrepareNamed(`
 	INSERT INTO articles(
-		title,
-		description,
-		content,
-		article_link,
-		published,
-		published_parsed,
-		updated,
-		updated_parsed,
-		guid,
-		slug,
-		feed_id,
-		read
-	) VALUES(?,?,?,?,?,?,?,?,?,?,?,?);
-	`
-	res, err := tx.Exec(
-		q,
-		a.Title,
-		a.Description,
-		a.Content,
-		a.ArticleLink,
-		a.Published,
-		a.PublishedParsed,
-		a.Updated,
-		a.UpdatedParsed,
-		a.GUID,
-		util.Slugify(a.Title),
-		a.FeedId,
-		false,
-	)
+		title,description,content,
+		article_link,published,published_parsed,
+		updated,updated_parsed,guid,
+		slug,feed_id,read
+	) VALUES(
+		:title,:description,:content,
+		:article_link,:published,:published_parsed,
+		:updated,:updated_parsed,:guid,
+		:slug,:feed_id,:read
+	) RETURNING id;
+	`)
 	if err != nil {
 		fmt.Println("article insert err: ", err)
 		return nil, ErrInsertError
 	}
-	id, err := res.LastInsertId()
+
+	var id int64
+	err = stmt.Get(&id, a)
 	if err != nil {
 		fmt.Println("error getting article id: ", err.Error())
 		return nil, ErrNotFound
@@ -162,9 +131,9 @@ func InsertArticleWithTx(tx *sqlx.Tx, a *model.Article) (*model.Article, error) 
 func InsertArticleImageWithTx(tx *sqlx.Tx, i *model.Image, aId int64) error {
 	qi := `
 	INSERT INTO images(title, url)
-		VALUES(?,?);
+		VALUES(:title, :url);
 	`
-	res, err := tx.Exec(qi, i.Title, i.URL)
+	res, err := tx.NamedExec(qi, i)
 	if err != nil {
 		return err
 	}

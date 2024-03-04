@@ -230,7 +230,11 @@ body {
 }
 
 header {
-  padding: 1rem 2rem;
+  height: 4.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2rem;
   grid-area: header;
   background-color: transparent;
 }
@@ -266,8 +270,9 @@ header {
     margin-inline: auto;
     display: flex;
     justify-content: space-between;
-    padding: 1rem 0;
-    height: 1.25rem;
+    align-items: center;
+    padding: 0.5rem 0;
+    block-size: 2rem;
     /* border-bottom: 1px solid var(--accent-alt-3); */
   }
 
@@ -298,18 +303,95 @@ header {
     }
   }
 
-  & nav ul {
-    display: flex;
-    gap: 1rem;
-    list-style-type: none;
-    margin: 0;
-    align-items: center;
-  }
-
   & h1 {
     font-size: 1.5rem;
   }
+
+  & nav ul:not([class]) {
+    display: flex;
+    gap: var(--space-s);
+    justify-content: center;
+    list-style-type: none;
+  }
 }
+
+/* DROPDOWN MENU */
+.dropdown {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  ul li {
+    margin: 0.5rem;
+  }
+
+  ul li form {
+    display: flex;
+    justify-content: center;
+  }
+
+  .dropdown__menu {
+    background-color: var(--dark-1);
+    border-radius: 0.25rem;
+    box-shadow: 0 0.15em 0.25em rgba(black, 0.25);
+    min-width: 15ch;
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    left: 50%;
+    transform: rotateX(-90deg) translateX(-50%);
+    transform-origin: top center;
+    opacity: 0.3;
+    transition: all 280ms 120ms ease-out;
+
+    a {
+      display: block;
+      padding: 0.5em;
+    }
+
+    button {
+      background: transparent;
+      color: var(--foreground);
+      font-weight: normal;
+      text-decoration: underline;
+      cursor: pointer;
+      display: block;
+      padding: 0.5em;
+      width: 100%;
+    }
+
+    button:hover {
+      color: var(--accent-alt);
+    }
+  }
+}
+
+.dropdown:hover,
+.dropdown:focus-within {
+  .dropdown__menu {
+    opacity: 1;
+    transform: rotateX(0) translateX(-50%);
+    visibility: visible;
+  }
+}
+
+.avatar {
+  font-size: var(--step-1);
+  font-weight: 800;
+  border-radius: 50%;
+  aspect-ratio: 1;
+  /* padding: 0.75rem; */
+}
+
 
 #main-link {
   font-size: var(--step-1);
@@ -317,7 +399,9 @@ header {
   text-decoration: none;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
+  padding: 1rem;
 
   & span {
     color: var(--complement);

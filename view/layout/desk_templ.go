@@ -29,7 +29,7 @@ func Desk() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside class=\"sidebar\" id=\"sidebar-main\">Sidebar</aside><main>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside class=\"sidebar\" id=\"sidebar-main\"><ul><li><a href=\"/desk/search\">Search</a></li></ul></aside><main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
