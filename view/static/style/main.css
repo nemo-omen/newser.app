@@ -938,6 +938,11 @@ button:hover,
 
 }
 
+li:has(.icon-link) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .icon-link-button {
   /* background: var(--background-3); */
   /* background-color: var(--accent-alt-1); */
@@ -950,6 +955,9 @@ button:hover,
   flex-wrap: wrap;
   gap: 0.25em;
   font-size: var(--step-1) !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .icon-link-label {
