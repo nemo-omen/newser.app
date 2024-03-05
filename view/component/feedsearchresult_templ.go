@@ -12,12 +12,18 @@ import "bytes"
 import "strings"
 
 import (
+	"fmt"
 	"github.com/mmcdole/gofeed"
-	"strconv"
 )
 
-func getLen(feeds []*gofeed.Feed) string {
-	return strconv.Itoa(len(feeds))
+func getFeedsFoundMessage(feeds []*gofeed.Feed) string {
+	if len(feeds) < 1 {
+		return "No feeds found."
+	}
+	if len(feeds) == 1 {
+		return fmt.Sprintf("We found %v feed", len(feeds))
+	}
+	return fmt.Sprintf("We found %v feeds", len(feeds))
 }
 
 func FeedSearchResult(feeds []*gofeed.Feed) templ.Component {
@@ -33,21 +39,21 @@ func FeedSearchResult(feeds []*gofeed.Feed) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		if len(feeds) > 0 {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"stack\"><h3>We found ")
+		if feeds != nil {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"stack\"><h3>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var2 string
-			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(getLen(feeds))
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(getFeedsFoundMessage(feeds))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/feedsearchresult.templ`, Line: 14, Col: 31}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/feedsearchresult.templ`, Line: 20, Col: 36}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" feeds!</h3><ul class=\"stack card-list\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h3><ul class=\"stack card-list\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

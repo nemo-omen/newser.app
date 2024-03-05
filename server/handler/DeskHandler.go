@@ -138,7 +138,7 @@ func (h DeskHandler) PostDeskSearch(c echo.Context) error {
 	if len(searchLinks) < 1 {
 		guessedLinks, err := h.api.GuessFeedLinks(validUrl.String())
 		if err != nil {
-			h.session.SetFlash(c, "searchError", fmt.Sprintf("Could not fing a feed at %v", searchInput))
+			h.session.SetFlash(c, "searchError", fmt.Sprintf("Could not find a feed at %v", searchInput))
 			return render(c, desk.Search(feeds))
 		}
 		searchLinks = append(searchLinks, guessedLinks...)
