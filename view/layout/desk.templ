@@ -1,7 +1,10 @@
 package layout
 
-import "newser.app/model"
-import "strconv"
+import (
+	"newser.app/model"
+	"newser.app/view/component"
+	"strconv"
+)
 
 func getSidebarFeedLinks(ctx context.Context) []*model.NewsfeedLink {
 	feedlinks := ctx.Value("feedlinks")
@@ -19,18 +22,36 @@ templ Desk() {
 	@Base() {
 		<div class="grid-container">
 			<aside class="sidebar" id="sidebar-main">
-				<ul>
-					<li>
-						<a href="/desk/search">Search</a>
-					</li>
-					for _, feedlink := range getSidebarFeedLinks(ctx) {
+				<nav aria-label="Secondary Navigation">
+					<ul>
 						<li>
-							<a href={ templ.SafeURL("/desk/feeds/" + idToString(feedlink.Id)) }>
-								{ feedlink.Title }
-							</a>
+							@component.IconLink("/desk/", "list", "All Posts")
 						</li>
-					}
-				</ul>
+						<li>
+							@component.IconLink("/desk/articles/unread", "inbox", "Unread")
+						</li>
+						<li>
+							@component.IconLink("/desk/articles/saved", "bookmark", "Saved")
+						</li>
+						<li>
+							@component.IconLink("/desk/notes", "note", "Notes")
+						</li>
+						<li>
+							@component.IconLink("/desk/search", "folder_add", "Add Feed")
+						</li>
+					</ul>
+				</nav>
+				<nav class="nav-vertical" aria-label="Subscriptions">
+					<ul>
+						for _, feedlink := range getSidebarFeedLinks(ctx) {
+							<li>
+								<a class="icon-link" href={ templ.SafeURL("/desk/feeds/" + idToString(feedlink.Id)) }>
+									{ feedlink.Title }
+								</a>
+							</li>
+						}
+					</ul>
+				</nav>
 			</aside>
 			<main>
 				{ children... }

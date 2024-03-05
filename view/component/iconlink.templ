@@ -1,0 +1,8 @@
+package component
+
+templ IconLink(href, iconName, text string) {
+	<a href={ templ.SafeURL(href) } class="icon-link">
+		@Icon(iconName)
+		{ text }
+	</a>
+}

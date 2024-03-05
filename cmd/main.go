@@ -120,7 +120,7 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 
 	deskGroup := app.Group("/desk")
 	deskGroup.Use(custommiddleware.Auth(sessionManager))
-	deskGroup.Use(custommiddleware.NewsfeedSidebarLinks(
+	deskGroup.Use(custommiddleware.SidebarLinks(
 		sessionManager,
 		&subscriptionService,
 		&authService,

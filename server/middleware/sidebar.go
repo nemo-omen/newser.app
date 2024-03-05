@@ -8,7 +8,7 @@ import (
 	"newser.app/server/service"
 )
 
-func NewsfeedSidebarLinks(
+func SidebarLinks(
 	sess *scs.SessionManager,
 	subService *service.SubscriptionService,
 	authService *service.AuthService,
