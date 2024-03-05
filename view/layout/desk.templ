@@ -1,5 +1,20 @@
 package layout
 
+import "newser.app/model"
+import "strconv"
+
+func getSidebarFeedLinks(ctx context.Context) []*model.NewsfeedLink {
+	feedlinks := ctx.Value("feedlinks")
+	if feedlinks != nil {
+		return feedlinks.([]*model.NewsfeedLink)
+	}
+	return []*model.NewsfeedLink{}
+}
+
+func idToString(id int64) string {
+	return strconv.FormatInt(id, 10)
+}
+
 templ Desk() {
 	@Base() {
 		<div class="grid-container">
@@ -8,6 +23,13 @@ templ Desk() {
 					<li>
 						<a href="/desk/search">Search</a>
 					</li>
+					for _, feedlink := range getSidebarFeedLinks(ctx) {
+						<li>
+							<a href={ templ.SafeURL("/desk/feeds/" + idToString(feedlink.Id)) }>
+								{ feedlink.Title }
+							</a>
+						</li>
+					}
 				</ul>
 			</aside>
 			<main>

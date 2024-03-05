@@ -104,7 +104,7 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 	authService = service.NewAuthService(userRepo, collectionRepo)
 	api = service.NewAPI(&http.Client{})
 	subscriptionService = service.NewSubscriptionService(subscriptionRepo, newsfeedRepo, articleRepo, collectionRepo)
-	newsfeedService = service.NewNewsfeedService(articleRepo, imageRepo, personRepo)
+	newsfeedService = service.NewNewsfeedService(articleRepo, imageRepo, personRepo, newsfeedRepo)
 
 	homeHandler := handler.NewHomeHandler(sessionManager)
 	authHandler := handler.NewAuthHandler(authService, sessionManager)
@@ -120,11 +120,17 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 
 	deskGroup := app.Group("/desk")
 	deskGroup.Use(custommiddleware.Auth(sessionManager))
+	deskGroup.Use(custommiddleware.NewsfeedSidebarLinks(
+		sessionManager,
+		&subscriptionService,
+		&authService,
+	))
 	deskGroup.GET("/", deskHandler.GetDeskIndex)
 	deskGroup.GET("/search", deskHandler.GetDeskSearch)
 	deskGroup.POST("/search", deskHandler.PostDeskSearch)
 	deskGroup.POST("/subscribe", deskHandler.PostDeskSubscribe)
 	deskGroup.GET("/articles/:articleid", deskHandler.GetDeskArticle)
+	deskGroup.GET("/feeds/:feedid", deskHandler.GetDeskNewsfeed)
 }
 
 func openDB(dsn string) (*sqlx.DB, error) {

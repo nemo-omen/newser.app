@@ -15,14 +15,14 @@ import (
 // - Articles, associated image & author
 // - Collection, all new articles are added to the "unread" collection
 // - Subscription, a new subscription is created
-func InsertAggregateSubscriptionTx(db *sqlx.DB, n *model.Newsfeed, userId int64) error {
+func InsertAggregateSubscriptionTx(db *sqlx.DB, n *model.Newsfeed, userId int64) (*model.Newsfeed, error) {
 	fmt.Println("STARTING TRANSACTION")
 	tx := db.MustBegin()
 	defer tx.Rollback()
 
 	persistedNf, err := InsertNewsfeedWithTx(tx, n)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for _, a := range n.Articles {
@@ -30,28 +30,28 @@ func InsertAggregateSubscriptionTx(db *sqlx.DB, n *model.Newsfeed, userId int64)
 
 		persistedArticle, err := InsertArticleWithTx(tx, a)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		err = InsertUnreadWithTx(tx, persistedArticle.ID)
 		if err != nil {
-			return err
+			return nil, err
 		}
 	}
 
 	err = InsertSubscriptionWithTx(tx, userId, persistedNf.ID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	fmt.Println("COMMITTING TX")
 	err = tx.Commit()
 	if err != nil {
 		fmt.Println("commit error: ", err)
-		return ErrTransactionError
+		return nil, ErrTransactionError
 	}
 
-	return nil
+	return persistedNf, nil
 }
 
 func InsertNewsfeedWithTx(tx *sqlx.Tx, n *model.Newsfeed) (*model.Newsfeed, error) {

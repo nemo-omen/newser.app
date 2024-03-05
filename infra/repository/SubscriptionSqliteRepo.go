@@ -82,7 +82,32 @@ func (r *SubscriptionSqliteRepo) FindBySlug(slug string) (*model.Subscription, e
 	return nil, nil
 }
 
-func (r *SubscriptionSqliteRepo) AddAggregateSubscription(n *model.Newsfeed, userId int64) error {
-	err := InsertAggregateSubscriptionTx(r.db, n, userId)
-	return err
+func (r *SubscriptionSqliteRepo) AddAggregateSubscription(n *model.Newsfeed, userId int64) (*model.Newsfeed, error) {
+	feed, err := InsertAggregateSubscriptionTx(r.db, n, userId)
+	if err != nil {
+		return nil, err
+	}
+	return feed, err
+}
+
+func (r *SubscriptionSqliteRepo) GetSubscribedFeedLinks(userId int64) ([]*model.NewsfeedLink, error) {
+	feedLinks := []*model.NewsfeedLink{}
+	err := r.db.Select(&feedLinks, `
+	SELECT
+		subscriptions.id as subscription_id,
+		newsfeeds.id as feed_id,
+		newsfeeds.title as feed_title
+	FROM
+		subscriptions
+	LEFT JOIN newsfeeds ON subscriptions.newsfeed_id = newsfeeds.id
+	WHERE
+		subscriptions.user_id = ?
+	`, userId)
+
+	if err != nil {
+		fmt.Println("err getting feedstuff: ", err)
+		return nil, err
+	}
+
+	return feedLinks, nil
 }

@@ -24,12 +24,12 @@ func NewSubscriptionService(
 	return SubscriptionService{subRepo: sr, feedRepo: fr, articleRepo: ar, collectionRepo: cr}
 }
 
-func (s *SubscriptionService) Subscribe(f *gofeed.Feed, userId int64) error {
+func (s *SubscriptionService) Subscribe(f *gofeed.Feed, userId int64) (*model.Newsfeed, error) {
 	// transform gofeed.Feed into model.Newsfeed
 	nf, err := model.FeedFromRemote(f)
 	if err != nil {
 		fmt.Println("error converting feed: ", err)
-		return ErrInternalFailure
+		return nil, ErrInternalFailure
 	}
 
 	// transform Feed.Items into Newsfeed.Articles
@@ -38,19 +38,20 @@ func (s *SubscriptionService) Subscribe(f *gofeed.Feed, userId int64) error {
 		article, err := model.ArticleFromRemote(item)
 		if err != nil {
 			fmt.Println("error converting article: ", err)
-			return ErrInternalFailure
+			return nil, ErrInternalFailure
 		}
 		articles = append(articles, article)
 	}
 	// add articles to Newsfeed
 	nf.Articles = articles
-	err = s.subRepo.AddAggregateSubscription(nf, userId)
+	feed, err := s.subRepo.AddAggregateSubscription(nf, userId)
 	if err != nil {
 		fmt.Println("error committing transaction: ", err)
+		return nil, err
 	}
 
 	// return subscription model
-	return nil
+	return feed, nil
 }
 
 func (s *SubscriptionService) Unsubscribe(feedId, userId uint) error {
@@ -68,4 +69,12 @@ func (s *SubscriptionService) All(userId int64) ([]model.Subscription, error) {
 
 func (s *SubscriptionService) Get(subscriptionId uint) (*model.Subscription, error) {
 	return nil, nil
+}
+
+func (s *SubscriptionService) GetSubscribedFeedsWithLinks(userId int64) ([]*model.NewsfeedLink, error) {
+	feedLinks, err := s.subRepo.GetSubscribedFeedLinks(userId)
+	if err != nil {
+		return nil, err
+	}
+	return feedLinks, nil
 }

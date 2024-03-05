@@ -9,11 +9,11 @@ import (
 )
 
 type NewsfeedSqliteRepo struct {
-	DB *sqlx.DB
+	db *sqlx.DB
 }
 
 func NewNewsfeedSqliteRepo(db *sqlx.DB) *NewsfeedSqliteRepo {
-	return &NewsfeedSqliteRepo{DB: db}
+	return &NewsfeedSqliteRepo{db: db}
 }
 
 func (r *NewsfeedSqliteRepo) Migrate() error {
@@ -33,7 +33,7 @@ func (r *NewsfeedSqliteRepo) Migrate() error {
 		slug TEXT NOT NULL
 	);
 	`
-	_, err := r.DB.Exec(qa)
+	_, err := r.db.Exec(qa)
 	if err != nil {
 		fmt.Println("error migrating newsfeeds: ", err.Error())
 		return err
@@ -43,8 +43,14 @@ func (r *NewsfeedSqliteRepo) Migrate() error {
 	return err
 }
 
-func (r *NewsfeedSqliteRepo) Get(id uint) (*model.Newsfeed, error) {
-	return nil, nil
+func (r *NewsfeedSqliteRepo) Get(id int64) (*model.Newsfeed, error) {
+	nf := model.Newsfeed{}
+	err := r.db.Get(&nf, `SELECT * FROM newsfeeds WHERE id=?`, id)
+	if err != nil {
+		fmt.Println("error getting feed: ", err.Error())
+		return nil, err
+	}
+	return &nf, nil
 }
 
 func (r *NewsfeedSqliteRepo) Create(n *model.Newsfeed) (*model.Newsfeed, error) {
@@ -64,7 +70,7 @@ func (r *NewsfeedSqliteRepo) Create(n *model.Newsfeed) (*model.Newsfeed, error) 
 		VALUES(?,?,?,?,?,?,?,?,?,?)
 		ON CONFLICT(feed_url) do nothing;
 	`
-	res, err := r.DB.Exec(
+	res, err := r.db.Exec(
 		q,
 		n.Title,
 		n.SiteUrl,
@@ -98,7 +104,7 @@ func (r *NewsfeedSqliteRepo) Update(n *model.Newsfeed) (*model.Newsfeed, error) 
 	return nil, nil
 }
 
-func (r *NewsfeedSqliteRepo) Delete(id uint) error {
+func (r *NewsfeedSqliteRepo) Delete(id int64) error {
 	return nil
 }
 

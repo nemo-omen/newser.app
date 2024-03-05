@@ -6,21 +6,37 @@ import (
 )
 
 type NewsfeedService struct {
-	articleRepo repository.ArticleRepository
-	imageRepo   repository.ImageRepository
-	personRepo  repository.PersonRepository
+	articleRepo  repository.ArticleRepository
+	imageRepo    repository.ImageRepository
+	personRepo   repository.PersonRepository
+	newsfeedRepo repository.NewsfeedRepository
 }
 
 func NewNewsfeedService(
 	ar repository.ArticleRepository,
 	ir repository.ImageRepository,
 	pr repository.PersonRepository,
+	nr repository.NewsfeedRepository,
 ) NewsfeedService {
 	return NewsfeedService{
-		articleRepo: ar,
-		imageRepo:   ir,
-		personRepo:  pr,
+		articleRepo:  ar,
+		imageRepo:    ir,
+		personRepo:   pr,
+		newsfeedRepo: nr,
 	}
+}
+
+func (s NewsfeedService) GetNewsfeed(id int64) (*model.Newsfeed, error) {
+	feed, err := s.newsfeedRepo.Get(id)
+	if err != nil {
+		return nil, err
+	}
+	articles, err := s.GetArticlesByNewsfeedId(feed.ID)
+	if err != nil {
+		return nil, err
+	}
+	feed.Articles = articles
+	return feed, nil
 }
 
 func (s *NewsfeedService) GetArticlesByNewsfeedId(nId int64) ([]*model.Article, error) {

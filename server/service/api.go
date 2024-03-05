@@ -102,7 +102,9 @@ func (api API) GetFeedsConcurrent(feedUrls []string) ([]*gofeed.Feed, error) {
 				// link for valid url we just got
 				// the feed from. Why? Because
 				// sometimes people forget to update
-				// the url in their RSS feeds.
+				// the url in their RSS feeds. If we've
+				// found a valid feed at this URL, it
+				// obviously works, so we may as well use it.
 				res.FeedLink = u
 				ch <- Result{
 					Res:   res,

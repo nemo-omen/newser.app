@@ -107,6 +107,7 @@ func (r *ArticleSqliteRepo) ArticlesByNewsfeed(feedId int64) ([]*model.Article, 
 		LEFT JOIN images ON newsfeed_images.image_id = images.id
 	WHERE
 		newsfeeds.id = ?
+	ORDER BY articles.published_parsed DESC
 	LIMIT 10;
 	`
 	err := r.db.Select(&aa, q, feedId)

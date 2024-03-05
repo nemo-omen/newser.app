@@ -17,10 +17,10 @@ type UserRepository interface {
 }
 
 type NewsfeedRepository interface {
-	Get(id uint) (*model.Newsfeed, error)
+	Get(id int64) (*model.Newsfeed, error)
 	Create(n *model.Newsfeed) (*model.Newsfeed, error)
 	Update(n *model.Newsfeed) (*model.Newsfeed, error)
-	Delete(id uint) error
+	Delete(id int64) error
 	FindBySlug(slug string) (*model.Newsfeed, error)
 	Migrate() error
 }
@@ -44,7 +44,8 @@ type SubscriptionRepository interface {
 	Update(*model.Subscription) (*model.Subscription, error)
 	Delete(id int64) error
 	FindBySlug(slug string) (*model.Subscription, error)
-	AddAggregateSubscription(feed *model.Newsfeed, userId int64) error
+	AddAggregateSubscription(feed *model.Newsfeed, userId int64) (*model.Newsfeed, error)
+	GetSubscribedFeedLinks(userId int64) ([]*model.NewsfeedLink, error)
 	Migrate() error
 }
 

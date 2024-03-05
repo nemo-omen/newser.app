@@ -41,9 +41,12 @@ func NewDeskHandler(
 }
 
 func (h DeskHandler) GetDeskIndex(c echo.Context) error {
-	email := h.session.GetUser(c)
-	u, _ := h.authService.GetUserByEmail(email)
-	subscriptions, err := h.subscriptionService.All(u.Id)
+	eml := h.session.GetUser(c)
+	user, err := h.authService.GetUserByEmail(eml)
+	if err != nil {
+		return c.Redirect(http.StatusSeeOther, "/auth/login")
+	}
+	subscriptions, err := h.subscriptionService.All(user.Id)
 	if err != nil {
 		h.session.SetFlash(c, "error", "There was a problem getting your subscriptions.")
 		return c.Redirect(http.StatusSeeOther, "/desk/search")
@@ -76,6 +79,41 @@ func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 func (h DeskHandler) GetDeskSearch(c echo.Context) error {
 	c.Set("title", "Add a Newsfeed")
 	return render(c, desk.Search([]*gofeed.Feed{}))
+}
+
+func (h DeskHandler) GetDeskArticle(c echo.Context) error {
+	stringId := c.Param("articleid")
+	id, err := strconv.ParseInt(stringId, 10, 64)
+
+	if err != nil {
+		h.session.SetFlash(c, "error", "Error retrieving article.")
+		return render(c, desk.Article((&model.Article{Title: "Oops!"})))
+	}
+
+	article, err := h.newsfeedService.GetArticleById(id)
+	if err != nil {
+		h.session.SetFlash(c, "error", "Error retrieving article.")
+		return render(c, desk.Article((&model.Article{Title: "Oops!"})))
+	}
+	c.Set("title", article.Title)
+	return render(c, desk.Article(article))
+}
+
+func (h DeskHandler) GetDeskNewsfeed(c echo.Context) error {
+	idStr := c.Param("feedid")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		h.session.SetFlash(c, "error", "Error getting newsfeed")
+		return render(c, desk.Newsfeed(&model.Newsfeed{}))
+	}
+
+	feed, err := h.newsfeedService.GetNewsfeed(id)
+	if err != nil {
+		h.session.SetFlash(c, "error", "Error getting newsfeed.")
+		return render(c, desk.Newsfeed(&model.Newsfeed{}))
+	}
+	c.Set("title", feed.Title)
+	return render(c, desk.Newsfeed(feed))
 }
 
 func (h DeskHandler) PostDeskSearch(c echo.Context) error {
@@ -139,28 +177,12 @@ func (h DeskHandler) PostDeskSubscribe(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, "/desk/")
 	}
 	u, _ := h.authService.GetUserByEmail(email)
-	err = h.subscriptionService.Subscribe(feed, u.Id)
+	newsfeed, err := h.subscriptionService.Subscribe(feed, u.Id)
 	if err != nil {
 		h.session.SetFlash(c, "error", fmt.Sprintf("Could not subscribe to %v", feed.Title))
 	}
 	// fmt.Println(sub)
 	// return render(c, desk.Index())
-	return c.Redirect(http.StatusSeeOther, "/desk/")
-}
-
-func (h DeskHandler) GetDeskArticle(c echo.Context) error {
-	stringId := c.Param("articleid")
-	id, err := strconv.ParseInt(stringId, 10, 64)
-	if err != nil {
-		h.session.SetFlash(c, "error", "Error retrieving article.")
-		return render(c, desk.Article((&model.Article{Title: "Oops!"})))
-	}
-
-	article, err := h.newsfeedService.GetArticleById(id)
-	if err != nil {
-		h.session.SetFlash(c, "error", "Error retrieving article.")
-		return render(c, desk.Article((&model.Article{Title: "Oops!"})))
-	}
-	c.Set("title", article.Title)
-	return render(c, desk.Article(article))
+	h.session.SetFlash(c, "success", fmt.Sprintf("success subscribing to %v", newsfeed.Title))
+	return c.Redirect(http.StatusSeeOther, "/desk/feeds/"+strconv.FormatInt(newsfeed.ID, 10))
 }
