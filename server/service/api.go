@@ -71,10 +71,26 @@ func (api API) GetFeed(feedUrl string) (*gofeed.Feed, error) {
 	if feed.Image == nil {
 		u, _ := url.Parse(feedUrl)
 		if u != nil {
-			link := u.Scheme + u.Host
+			if u.Path != "" {
+				u.Path = "/"
+			}
+
+			link := u.String()
 			src := api.GetFaviconSrc(link)
 
 			if src != "" {
+				srcUrl, _ := url.Parse(src)
+				if srcUrl != nil {
+					if srcUrl.Scheme == "" {
+						srcUrl.Scheme = u.Scheme
+					}
+
+					if srcUrl.Host == "" {
+						srcUrl.Host = u.Host
+					}
+					src = srcUrl.String()
+				}
+
 				feed.Image = &gofeed.Image{
 					URL:   src,
 					Title: feed.Title,
@@ -82,6 +98,8 @@ func (api API) GetFeed(feedUrl string) (*gofeed.Feed, error) {
 			}
 		}
 	}
+
+	fmt.Printf("image: %+v\n", feed.Image)
 
 	for _, item := range feed.Items {
 		// strip and truncate item description
