@@ -8,6 +8,9 @@ import (
 
 templ Index(articles []*model.Article) {
 	@layout.Desk() {
+		<div class="stack-header flex-row flex-align-center gap-2 text-med">
+			@component.Icon("checkbox_circle_outline")
+		</div>
 		<div class="container stack">
 			if len(articles) > 0 {
 				<ul class="card-list">

@@ -236,6 +236,7 @@ body {
 header {
   height: 4.5rem;
   grid-area: header;
+  border-bottom: 1px solid var(--background-3);
 }
 
 .header-inner {
@@ -494,15 +495,16 @@ main {
 }
 
 .sidebar>*+* {
-  padding-top: var(--space-s);
+  padding-block-start: var(--space-xs);
 }
 
 #sidebar-main {
+  border-inline-end: 1px solid var(--background-3);
 
   & nav {
     display: flex;
     flex-direction: column;
-    gap: var(--space-m);
+    /* gap: var(--space-xs); */
   }
 
   & nav ul {
@@ -511,9 +513,9 @@ main {
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: var(--space-s);
+    /* gap: var(--space-s); */
     border-bottom: 1px solid var(--background-3);
-    padding-bottom: var(--space-s);
+    padding-bottom: var(--space-xs);
   }
 
   & nav ul li {
@@ -641,6 +643,11 @@ time {
 
 .text-large {
   font-size: var(--step-2);
+}
+
+.stack-header {
+  color: var(--background-4);
+  margin-block-end: var(--space-2xs);
 }
 
 .card-list {
