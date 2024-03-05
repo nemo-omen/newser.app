@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -77,6 +78,7 @@ func (api API) GetFeed(feedUrl string) (*gofeed.Feed, error) {
 
 			link := u.String()
 			src := api.GetFaviconSrc(link)
+			fmt.Println("src: ", src)
 
 			if src != "" {
 				srcUrl, _ := url.Parse(src)
@@ -97,10 +99,10 @@ func (api API) GetFeed(feedUrl string) (*gofeed.Feed, error) {
 				}
 			}
 		}
-	}
-
-	if feed.Image.Title == "" {
-		feed.Image.Title = feed.Title
+	} else {
+		if feed.Image.Title == "" {
+			feed.Image.Title = feed.Title
+		}
 	}
 
 	fmt.Printf("image: %+v\n", feed.Image)
@@ -271,7 +273,7 @@ func (api *API) GetFaviconSrc(siteUrl string) string {
 		if !exists {
 			return
 		}
-		if rel != "shortcut icon" {
+		if !strings.Contains(rel, "icon") {
 			return
 		}
 
