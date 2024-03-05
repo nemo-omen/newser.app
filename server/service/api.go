@@ -66,6 +66,23 @@ func (api API) GetFeed(feedUrl string) (*gofeed.Feed, error) {
 	feed.Description = strip.StripTags(feed.Description)
 	// fmt.Println("description: ", feed.Description)
 
+	// double-check for site favicon if feed.Image
+	// is not present
+	if feed.Image == nil {
+		u, _ := url.Parse(feedUrl)
+		if u != nil {
+			link := u.Scheme + u.Host
+			src := api.GetFaviconSrc(link)
+
+			if src != "" {
+				feed.Image = &gofeed.Image{
+					URL:   src,
+					Title: feed.Title,
+				}
+			}
+		}
+	}
+
 	for _, item := range feed.Items {
 		// strip and truncate item description
 		item.Description = strip.StripTags(item.Description)
@@ -208,6 +225,43 @@ func (api API) GuessFeedLinks(siteUrl string) ([]string, error) {
 		}
 	}
 	return confirmed, nil
+}
+
+func (api *API) GetFaviconSrc(siteUrl string) string {
+	src := ""
+	res, err := api.Client.Get(siteUrl)
+	if err != nil {
+		return src
+	}
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		return src
+	}
+
+	document, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return src
+	}
+
+	document.Find("link").Each(func(i int, el *goquery.Selection) {
+		rel, exists := el.Attr("rel")
+		if !exists {
+			return
+		}
+		if rel != "shortcut icon" {
+			return
+		}
+
+		href, exists := el.Attr("href")
+
+		if !exists {
+			return
+		}
+
+		src = href
+	})
+	return src
 }
 
 // FindFeedLinks searches the document at a given URL for

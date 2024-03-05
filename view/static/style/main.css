@@ -268,14 +268,12 @@ header {
   }
 
   & .header-container {
-    /* width: 100%; */
     width: min(var(--content-width), 100%);
-    /* width: var(--content-width); */
     margin-inline: auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 0;
+    padding: 0.5rem var(--space-s);
     block-size: 2rem;
   }
 
@@ -298,7 +296,6 @@ header {
 
     & form button {
       font-size: var(--step-0);
-      /* color: var(--accent-3); */
     }
 
     & form button:hover {
@@ -379,9 +376,7 @@ header {
   }
 }
 
-/* .dropdown:has(a:hover, button:hover) */
 .dropdown:hover,
-/* .dropdown>ul:hover, */
 .dropdown:focus-within {
   .dropdown__menu {
     opacity: 1;
@@ -395,7 +390,6 @@ header {
   font-weight: 800;
   border-radius: 50%;
   aspect-ratio: 1;
-  /* padding: 0.75rem; */
 }
 
 
@@ -405,9 +399,7 @@ header {
   text-decoration: none;
   display: flex;
   align-items: center;
-  /* justify-content: center; */
   gap: 0.5rem;
-  /* padding: 1rem; */
 
   & span {
     color: var(--complement);
@@ -437,7 +429,6 @@ a,
   color: var(--foreground);
   background-color: transparent;
   border: none;
-  /* font-size: 1rem; */
   text-decoration: none;
   cursor: pointer;
   transition: color var(--transition);
@@ -484,7 +475,6 @@ button {
   display: grid;
   grid-area: container;
   grid-template-columns: 12vw auto 12vw;
-  /* grid-template-areas: "sidebar-main main main sidebar-secondary"; */
   overflow-y: auto;
   width: var(--container-width);
   margin: 0 auto;
@@ -494,16 +484,12 @@ button {
 main {
   container-name: main;
   container-type: inline-size;
-  /* grid-area: main; */
   overflow-y: auto;
-  padding: var(--space-m) 0;
+  padding: var(--space-m) var(--space-s);
 }
 
 .sidebar {
-  /* padding: 0 0 0 var(--space-m); */
   padding: var(--space-m) 0 0 0;
-  /* width: min(16rem, 90vw); */
-  /* padding: var(--space-m); */
   overflow-y: auto;
 }
 
@@ -512,7 +498,6 @@ main {
 }
 
 #sidebar-main {
-  /* grid-area: sidebar-main; */
 
   & nav {
     display: flex;
@@ -551,7 +536,21 @@ main {
 }
 
 #sidebar-secondary {
-  /* grid-area: sidebar-secondary; */
+  /* background-color: var(--dark--1); */
+
+  .sidebar-section {
+    background-color: var(--background--1);
+    border-radius: 0.5rem;
+
+    &>* {
+      padding: var(--space-xs);
+    }
+
+    h3 {
+      border-bottom: 1px solid var(--background-3);
+      font-size: var(--step-0);
+    }
+  }
 }
 
 footer {
