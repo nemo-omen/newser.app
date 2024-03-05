@@ -7,9 +7,14 @@ import (
 templ FeedPreview(feed *gofeed.Feed) {
 	<li class="card">
 		<div class="card-header flex-row flex-between">
-			<h3>
-				{ feed.Title }
-			</h3>
+			<div class="flex-row flex-align-center gap-1">
+				if feed.Image != nil {
+					<img src={ feed.Image.URL } alt={ feed.Image.Title } class="feed-logo"/>
+				}
+				<h3>
+					{ feed.Title }
+				</h3>
+			</div>
 			<span>{ feed.FeedType }</span>
 		</div>
 		<div class="card-body">

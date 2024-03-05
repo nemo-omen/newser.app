@@ -96,12 +96,16 @@ func (r *SubscriptionSqliteRepo) GetSubscribedFeedLinks(userId int64) ([]*model.
 	SELECT
 		subscriptions.id as subscription_id,
 		newsfeeds.id as feed_id,
-		newsfeeds.title as feed_title
+		newsfeeds.title as feed_title,
+    COALESCE(images.title, '') as feed_image_title,
+    COALESCE(images.url, '') as feed_image_url
 	FROM
 		subscriptions
 	LEFT JOIN newsfeeds ON subscriptions.newsfeed_id = newsfeeds.id
-	WHERE
-		subscriptions.user_id = ?
+	LEFT JOIN newsfeed_images ON newsfeeds.id = newsfeed_images.newsfeed_id
+	LEFT JOIN images ON newsfeed_images.image_id = images.id
+		WHERE
+			subscriptions.user_id = ?
 	`, userId)
 
 	if err != nil {

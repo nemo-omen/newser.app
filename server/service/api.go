@@ -99,6 +99,10 @@ func (api API) GetFeed(feedUrl string) (*gofeed.Feed, error) {
 		}
 	}
 
+	if feed.Image.Title == "" {
+		feed.Image.Title = feed.Title
+	}
+
 	fmt.Printf("image: %+v\n", feed.Image)
 
 	for _, item := range feed.Items {

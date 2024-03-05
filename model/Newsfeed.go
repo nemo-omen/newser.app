@@ -13,6 +13,8 @@ type NewsfeedLink struct {
 	Id             int64  `db:"feed_id"`
 	Title          string `db:"feed_title"`
 	SubscriptionId int64  `db:"subscription_id"`
+	ImageUrl       string `db:"feed_image_url"`
+	ImageTitle     string `db:"feed_image_title"`
 }
 
 type Newsfeed struct {

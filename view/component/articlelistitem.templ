@@ -32,7 +32,7 @@ templ ArticleListItem(article *model.Article) {
 					</div>
 					<div class="flex-row gap-3">
 						@FormattedDateTime(article.PublishedParsed)
-						<span class="card-feed-link"><a href={ templ.SafeURL(article.FeedSiteUrl) }>{ article.FeedTitle }</a></span>
+						<span class="card-feed-link"><a href={ templ.SafeURL(article.FeedSiteUrl) } target="_blank">{ article.FeedTitle }</a></span>
 					</div>
 				</div>
 			</div>
