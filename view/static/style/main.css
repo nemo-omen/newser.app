@@ -486,11 +486,11 @@ main {
   container-name: main;
   container-type: inline-size;
   overflow-y: auto;
-  padding: var(--space-m) var(--space-s);
+  padding: var(--space-2xs) var(--space-s);
 }
 
 .sidebar {
-  padding: var(--space-m) 0 0 0;
+  padding: var(--space-2xs) 0 0 0;
   overflow-y: auto;
 }
 
@@ -923,17 +923,19 @@ button:hover,
   font-size: var(--step--1);
   font-weight: 600;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
   transition: all var(--transition);
+  padding: 0.25em 0.5em;
 
   & .image-icon {
-    width: 1em;
-    height: 1em;
+    width: var(--step-1);
+    height: var(--step-1);
     border-radius: 50%;
     background-color: var(--foreground);
     object-fit: cover;
     aspect-ratio: 1;
+    background-color: var(--background);
   }
 
 }
@@ -944,11 +946,11 @@ li:has(.icon-link) {
 }
 
 .icon-link-button {
+  padding: 0.25em 0.5em;
   /* background: var(--background-3); */
   /* background-color: var(--accent-alt-1); */
   color: currentColor;
   /* padding: 0; */
-  padding: 0.25em 0.5em;
   display: flex;
   justify-content: center;
   align-items: center;

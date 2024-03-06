@@ -46,7 +46,7 @@ templ Desk() {
 						for _, feedlink := range getSidebarFeedLinks(ctx) {
 							<li>
 								<a class="icon-link" href={ templ.SafeURL("/desk/feeds/" + idToString(feedlink.Id)) }>
-									<img src={ feedlink.ImageUrl } alt="feedLink.ImageTitle" class="feed-logo-menu"/>
+									<img src={ feedlink.ImageUrl } alt="feedLink.ImageTitle" class="image-icon"/>
 									{ feedlink.Title }
 								</a>
 							</li>
