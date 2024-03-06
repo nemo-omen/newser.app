@@ -134,10 +134,18 @@ func (r *CollectionSqliteRepo) InsertManyCollectionItems(aa []*model.Article, cI
 	return nil
 }
 
-func (r *CollectionSqliteRepo) GetArticlesByCollectionName(collectionName string) []*model.Article {
-	// q := `
-	// SELECT * FROM articles
-	// 	INNER JOIN
-	// `
-	return nil
+func (r *CollectionSqliteRepo) GetArticles(userId, collectionId int64) ([]*model.Article, error) {
+	return nil, nil
+}
+
+func (r *CollectionSqliteRepo) GetArticlesByCollectionName(userId int64, collectionName string) ([]*model.Article, error) {
+	return nil, nil
+}
+
+func (r *CollectionSqliteRepo) GetFeeds(userId, collectionId int64) ([]*model.NewsfeedExtended, error) {
+	return nil, nil
+}
+
+func (r *CollectionSqliteRepo) GetFeedsByCollectionName(userId int64, collectionName string) ([]*model.NewsfeedExtended, error) {
+	return nil, nil
 }

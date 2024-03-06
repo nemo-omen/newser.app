@@ -324,7 +324,7 @@ header {
 .dropdown {
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  padding: 0 1rem;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -352,7 +352,7 @@ header {
     min-width: 15ch;
     position: absolute;
     top: calc(100% + 1rem);
-    right: 0;
+    right: 0.5rem;
     /* left: 50%; */
     transform: rotateX(-90deg);
     /* transform: rotateX(-90deg) translateX(-50%); */

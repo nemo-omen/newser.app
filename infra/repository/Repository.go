@@ -60,5 +60,9 @@ type CollectionRepository interface {
 	FindByTitle(title string) (*model.Collection, error)
 	InsertCollectionItem(itemId int64, collectionId int64) error
 	InsertManyCollectionItems(aa []*model.Article, cId int64) error
+	GetArticles(userId, collectionId int64) ([]*model.Article, error)
+	GetArticlesByCollectionName(userId int64, collectionName string) ([]*model.Article, error)
+	GetFeeds(userId, collectionId int64) ([]*model.NewsfeedExtended, error)
+	GetFeedsByCollectionName(userId int64, collectionName string) ([]*model.NewsfeedExtended, error)
 	Migrate() error
 }
