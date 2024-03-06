@@ -135,11 +135,63 @@ func (r *CollectionSqliteRepo) InsertManyCollectionItems(aa []*model.Article, cI
 }
 
 func (r *CollectionSqliteRepo) GetArticles(userId, collectionId int64) ([]*model.Article, error) {
-	return nil, nil
+	collectionArticles := []*model.Article{}
+	err := r.DB.Select(&collectionArticles, `
+	SELECT
+		articles.*,
+		newsfeeds.title as feed_title,
+		newsfeeds.feed_url as feed_url,
+		newsfeeds.site_url as feed_site_url,
+		newsfeeds.slug as feed_slug,
+		COALESCE(images.url, '') as feed_image_url,
+		COALESCE(images.title, '') as feed_image_title
+		FROM
+			collections
+		LEFT JOIN collection_articles ON collections.id = collection_articles.collection_id
+		LEFT JOIN articles ON collection_articles.article_id = articles.id
+		LEFT JOIN newsfeeds ON articles.feed_id = newsfeeds.id
+		LEFT JOIN newsfeed_images ON newsfeeds.id = newsfeed_images.newsfeed_id
+		LEFT JOIN images ON newsfeed_images.image_id = images.id
+		WHERE
+			collections.id = ?
+		AND
+			collections.user_id = ?
+		ORDER BY articles.published_parsed DESC;
+	`, collectionId, userId)
+	if err != nil {
+		return nil, err
+	}
+	return collectionArticles, nil
 }
 
 func (r *CollectionSqliteRepo) GetArticlesByCollectionName(userId int64, collectionName string) ([]*model.Article, error) {
-	return nil, nil
+	collectionArticles := []*model.Article{}
+	err := r.DB.Select(&collectionArticles, `
+	SELECT
+		articles.*,
+		newsfeeds.title as feed_title,
+		newsfeeds.feed_url as feed_url,
+		newsfeeds.site_url as feed_site_url,
+		newsfeeds.slug as feed_slug,
+		COALESCE(images.url, '') as feed_image_url,
+		COALESCE(images.title, '') as feed_image_title
+		FROM
+			collections
+		LEFT JOIN collection_articles ON collections.id = collection_articles.collection_id
+		LEFT JOIN articles ON collection_articles.article_id = articles.id
+		LEFT JOIN newsfeeds ON articles.feed_id = newsfeeds.id
+		LEFT JOIN newsfeed_images ON newsfeeds.id = newsfeed_images.newsfeed_id
+		LEFT JOIN images ON newsfeed_images.image_id = images.id
+		WHERE
+			collections.title = ?
+		AND
+			collections.user_id = ?
+		ORDER BY articles.published_parsed DESC;
+	`, collectionName, userId)
+	if err != nil {
+		return nil, err
+	}
+	return collectionArticles, nil
 }
 
 func (r *CollectionSqliteRepo) GetFeeds(userId, collectionId int64) ([]*model.NewsfeedExtended, error) {
