@@ -16,12 +16,12 @@ import (
 	"strconv"
 )
 
-func getSidebarFeedLinks(ctx context.Context) []*model.NewsfeedLink {
+func getSidebarFeedLinks(ctx context.Context) []*model.NewsfeedExtended {
 	feedlinks := ctx.Value("feedlinks")
 	if feedlinks != nil {
-		return feedlinks.([]*model.NewsfeedLink)
+		return feedlinks.([]*model.NewsfeedExtended)
 	}
-	return []*model.NewsfeedLink{}
+	return []*model.NewsfeedExtended{}
 }
 
 func idToString(id int64) string {
@@ -96,7 +96,7 @@ func Desk() templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				var templ_7745c5c3_Var3 templ.SafeURL = templ.SafeURL("/desk/feeds/" + idToString(feedlink.Id))
+				var templ_7745c5c3_Var3 templ.SafeURL = templ.SafeURL("/desk/feeds/" + idToString(feedlink.ID))
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var3)))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err

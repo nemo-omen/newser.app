@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/jmoiron/sqlx"
 	"newser.app/model"
@@ -90,13 +91,53 @@ func (r *SubscriptionSqliteRepo) AddAggregateSubscription(n *model.Newsfeed, use
 	return feed, err
 }
 
-func (r *SubscriptionSqliteRepo) GetSubscribedFeedLinks(userId int64) ([]*model.NewsfeedLink, error) {
-	feedLinks := []*model.NewsfeedLink{}
+func (r *SubscriptionSqliteRepo) FindArticles(userId int64) ([]*model.Article, error) {
+	feeds, err := r.FindNewsfeeds(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	articles := []*model.Article{}
+	for _, feed := range feeds {
+		feedArticles := []*model.Article{}
+		err := r.db.Select(&feedArticles, `
+			SELECT
+				newsfeeds.id as feed_id,
+				newsfeeds.title as feed_title,
+				newsfeeds.feed_url as feed_url,
+				newsfeeds.site_url as feed_site_url,
+				newsfeeds.slug as feed_slug,
+				articles.*,
+				COALESCE(images.title, '') as feed_image_title,
+				COALESCE(images.url, '') as feed_image_url
+			FROM
+				newsfeeds
+				LEFT JOIN articles ON newsfeeds.id = articles.feed_id
+				LEFT JOIN newsfeed_images ON newsfeeds.id = newsfeed_images.newsfeed_id
+				LEFT JOIN images ON newsfeed_images.image_id = images.id
+			WHERE
+				newsfeeds.id = ?
+			ORDER BY articles.published_parsed DESC
+			LIMIT 10;
+		`, feed.ID)
+
+		if err != nil {
+			return nil, err
+		}
+		articles = append(articles, feedArticles...)
+	}
+	sort.SliceStable(articles, func(i, j int) bool {
+		return articles[i].PublishedParsed.After(articles[j].PublishedParsed)
+	})
+	return articles, nil
+}
+
+func (r *SubscriptionSqliteRepo) FindNewsfeeds(userId int64) ([]*model.NewsfeedExtended, error) {
+	feedLinks := []*model.NewsfeedExtended{}
 	err := r.db.Select(&feedLinks, `
 	SELECT
 		subscriptions.id as subscription_id,
-		newsfeeds.id as feed_id,
-		newsfeeds.title as feed_title,
+		newsfeeds.*,
     COALESCE(images.title, '') as feed_image_title,
     COALESCE(images.url, '') as feed_image_url
 	FROM

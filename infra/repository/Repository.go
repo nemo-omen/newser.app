@@ -45,7 +45,8 @@ type SubscriptionRepository interface {
 	Delete(id int64) error
 	FindBySlug(slug string) (*model.Subscription, error)
 	AddAggregateSubscription(feed *model.Newsfeed, userId int64) (*model.Newsfeed, error)
-	GetSubscribedFeedLinks(userId int64) ([]*model.NewsfeedLink, error)
+	FindNewsfeeds(userId int64) ([]*model.NewsfeedExtended, error)
+	FindArticles(userId int64) ([]*model.Article, error)
 	Migrate() error
 }
 

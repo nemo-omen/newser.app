@@ -71,10 +71,19 @@ func (s *SubscriptionService) Get(subscriptionId uint) (*model.Subscription, err
 	return nil, nil
 }
 
-func (s *SubscriptionService) GetSubscribedFeedsWithLinks(userId int64) ([]*model.NewsfeedLink, error) {
-	feedLinks, err := s.subRepo.GetSubscribedFeedLinks(userId)
+func (s *SubscriptionService) GetArticles(userId int64) ([]*model.Article, error) {
+	articles, err := s.subRepo.FindArticles(userId)
 	if err != nil {
 		return nil, err
 	}
-	return feedLinks, nil
+
+	return articles, nil
+}
+
+func (s *SubscriptionService) GetNewsfeeds(userId int64) ([]*model.NewsfeedExtended, error) {
+	feeds, err := s.subRepo.FindNewsfeeds(userId)
+	if err != nil {
+		return nil, err
+	}
+	return feeds, nil
 }

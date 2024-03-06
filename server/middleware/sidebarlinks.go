@@ -25,7 +25,7 @@ func SidebarLinks(
 				return next(c)
 			}
 
-			feedLinks, err := subService.GetSubscribedFeedsWithLinks(user.Id)
+			feedLinks, err := subService.GetNewsfeeds(user.Id)
 			if err != nil {
 				fmt.Println("error getting user for middleware: ", err.Error())
 				return next(c)

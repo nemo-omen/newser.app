@@ -6,12 +6,12 @@ import (
 	"strconv"
 )
 
-func getSidebarFeedLinks(ctx context.Context) []*model.NewsfeedLink {
+func getSidebarFeedLinks(ctx context.Context) []*model.NewsfeedExtended {
 	feedlinks := ctx.Value("feedlinks")
 	if feedlinks != nil {
-		return feedlinks.([]*model.NewsfeedLink)
+		return feedlinks.([]*model.NewsfeedExtended)
 	}
-	return []*model.NewsfeedLink{}
+	return []*model.NewsfeedExtended{}
 }
 
 func idToString(id int64) string {
@@ -45,7 +45,7 @@ templ Desk() {
 					<ul>
 						for _, feedlink := range getSidebarFeedLinks(ctx) {
 							<li>
-								<a class="icon-link" href={ templ.SafeURL("/desk/feeds/" + idToString(feedlink.Id)) }>
+								<a class="icon-link" href={ templ.SafeURL("/desk/feeds/" + idToString(feedlink.ID)) }>
 									<img src={ feedlink.ImageUrl } alt="feedLink.ImageTitle" class="image-icon"/>
 									{ feedlink.Title }
 								</a>

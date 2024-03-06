@@ -3,7 +3,6 @@ package handler
 import (
 	"fmt"
 	"net/http"
-	"sort"
 	"strconv"
 
 	"github.com/alexedwards/scs/v2"
@@ -46,32 +45,13 @@ func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 	if err != nil {
 		return c.Redirect(http.StatusSeeOther, "/auth/login")
 	}
-	subscriptions, err := h.subscriptionService.All(user.Id)
+	storedSubscriptionArticles, err := h.subscriptionService.GetArticles(user.Id)
+
 	if err != nil {
-		h.session.SetFlash(c, "error", "There was a problem getting your subscriptions.")
-		return c.Redirect(http.StatusSeeOther, "/desk/search")
+		h.session.SetFlash(c, "error", "Error getting your feeds")
+		fmt.Println("error getting stored subscription articles: ", err.Error())
 	}
 
-	if len(subscriptions) < 1 {
-		return c.Redirect(http.StatusSeeOther, "/desk/search")
-	}
-	feedIds := util.MapSlice(subscriptions, func(s model.Subscription) int64 {
-		return s.NewsfeedId
-	})
-
-	// retrieve saved feed items
-	storedSubscriptionArticles := []*model.Article{}
-	for _, id := range feedIds {
-		// _, err := h.newsfeedService.GetArticlesByNewsfeedId(id)
-		feedArticles, err := h.newsfeedService.GetArticlesByNewsfeedId(id)
-		if err != nil {
-			fmt.Println("error getting stored subscription articles: ", err.Error())
-		}
-		storedSubscriptionArticles = append(storedSubscriptionArticles, feedArticles...)
-	}
-	sort.SliceStable(storedSubscriptionArticles, func(i, j int) bool {
-		return storedSubscriptionArticles[i].PublishedParsed.After(storedSubscriptionArticles[j].PublishedParsed)
-	})
 	c.Set("title", "Latest Articles")
 	return render(c, desk.Index(storedSubscriptionArticles))
 }

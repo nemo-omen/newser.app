@@ -9,9 +9,8 @@ import (
 	"newser.app/shared/util"
 )
 
-type NewsfeedLink struct {
-	Id             int64  `db:"feed_id"`
-	Title          string `db:"feed_title"`
+type NewsfeedExtended struct {
+	Newsfeed
 	SubscriptionId int64  `db:"subscription_id"`
 	ImageUrl       string `db:"feed_image_url"`
 	ImageTitle     string `db:"feed_image_title"`
