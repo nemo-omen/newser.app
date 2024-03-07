@@ -25,8 +25,6 @@ func (r *NewsfeedSqliteRepo) Migrate() error {
 		site_url NOT NULL,
 		feed_url TEXT UNIQUE NOT NULL,
 		description TEXT,
-		updated TEXT NOT NULL,
-		updated_parsed DATETIME NOT NULL,
 		copyright TEXT,
 		language TEXT,
 		feed_type TEXT,
@@ -60,14 +58,12 @@ func (r *NewsfeedSqliteRepo) Create(n *model.Newsfeed) (*model.Newsfeed, error) 
 		site_url,
 		feed_url,
 		description,
-		updated,
-		updated_parsed,
 		copyright,
 		language,
 		feed_type,
 		slug
 	)
-		VALUES(?,?,?,?,?,?,?,?,?,?)
+		VALUES(?,?,?,?,?,?,?,?)
 		ON CONFLICT(feed_url) do nothing;
 	`
 	res, err := r.db.Exec(
@@ -76,8 +72,6 @@ func (r *NewsfeedSqliteRepo) Create(n *model.Newsfeed) (*model.Newsfeed, error) 
 		n.SiteUrl,
 		n.FeedUrl,
 		n.Description,
-		n.Updated,
-		n.UpdatedParsed,
 		n.Copyright,
 		n.Language,
 		n.FeedType,

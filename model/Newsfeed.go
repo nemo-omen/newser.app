@@ -3,7 +3,6 @@ package model
 import (
 	"encoding/json"
 	"net/url"
-	"time"
 
 	"github.com/mmcdole/gofeed"
 	"newser.app/shared/util"
@@ -17,21 +16,19 @@ type NewsfeedExtended struct {
 }
 
 type Newsfeed struct {
-	ID            int64      `db:"id"`
-	Title         string     `json:"title,omitempty" db:"title"`
-	SiteUrl       string     `json:"link,omitempty" db:"site_url"`
-	FeedUrl       string     `json:"feedLink,omitempty" db:"feed_url"`
-	Description   string     `json:"description,omitempty" db:"description"`
-	Image         *Image     `json:"image"`
-	Updated       string     `json:"updated,omitempty" db:"updated"`
-	UpdatedParsed *time.Time `json:"updatedParsed,omitempty" db:"updated_parsed"`
-	Copyright     string     `json:"copyright,omitempty" db:"copyright"`
-	Articles      []*Article `json:"articles"`
-	Author        *Person    `json:"author"`
-	Language      string     `json:"language,omitempty" db:"language"`
-	Categories    []string   `json:"categories,omitempty" db:"categories"`
-	FeedType      string     `json:"feedType,omitempty" db:"feed_type"`
-	Slug          string     `json:"slug" db:"slug"`
+	ID          int64      `db:"id"`
+	Title       string     `json:"title,omitempty" db:"title"`
+	SiteUrl     string     `json:"link,omitempty" db:"site_url"`
+	FeedUrl     string     `json:"feedLink,omitempty" db:"feed_url"`
+	Description string     `json:"description,omitempty" db:"description"`
+	Image       *Image     `json:"image"`
+	Copyright   string     `json:"copyright,omitempty" db:"copyright"`
+	Articles    []*Article `json:"articles"`
+	Author      *Person    `json:"author"`
+	Language    string     `json:"language,omitempty" db:"language"`
+	Categories  []string   `json:"categories,omitempty" db:"categories"`
+	FeedType    string     `json:"feedType,omitempty" db:"feed_type"`
+	Slug        string     `json:"slug" db:"slug"`
 }
 
 func (f Newsfeed) String() string {

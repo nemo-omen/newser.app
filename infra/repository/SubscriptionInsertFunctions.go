@@ -58,13 +58,11 @@ func InsertNewsfeedWithTx(tx *sqlx.Tx, n *model.Newsfeed) (*model.Newsfeed, erro
 	stmt, err := tx.PrepareNamed(`
 	INSERT INTO newsfeeds(
 		title,site_url,feed_url,
-		description,updated,updated_parsed,
-		copyright,language,feed_type,slug
+		description,copyright,language,feed_type,slug
 	)
 		VALUES(
 			:title,:site_url,:feed_url,
-			:description,:updated,:updated_parsed,
-			:copyright,:language,:feed_type,:slug
+			:description,:copyright,:language,:feed_type,:slug
 		)
 		ON CONFLICT(feed_url) do nothing RETURNING id;
 	`)
