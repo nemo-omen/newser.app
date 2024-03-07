@@ -11,6 +11,9 @@ templ Article(a *model.Article) {
 		<script src="/static/script/vendor/shiki/shiki.js" type="module"></script>
 		<article class="container article stack">
 			<div class="article-header flex-row gap-1">
+				<h2>{ a.Title }</h2>
+			</div>
+			<div class="article-header flex-row gap-1">
 				@component.FormattedDateTime(a.PublishedParsed)
 				<a href={ templ.SafeURL(a.FeedSiteUrl) } target="_blank">{ a.FeedTitle }</a>
 				<a href={ templ.SafeURL(a.FeedSiteUrl) } target="_blank">{ a.Person.Name }</a>

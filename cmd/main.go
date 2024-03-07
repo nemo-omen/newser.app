@@ -37,6 +37,7 @@ var (
 	api                 service.API
 	newsfeedService     service.NewsfeedService
 	subscriptionService service.SubscriptionService
+	collectionService   service.CollectionService
 )
 
 func main() {
@@ -105,10 +106,11 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 	api = service.NewAPI(&http.Client{})
 	subscriptionService = service.NewSubscriptionService(subscriptionRepo, newsfeedRepo, articleRepo, collectionRepo)
 	newsfeedService = service.NewNewsfeedService(articleRepo, imageRepo, personRepo, newsfeedRepo)
+	collectionService = service.NewCollectionService(collectionRepo, articleRepo)
 
 	homeHandler := handler.NewHomeHandler(sessionManager)
 	authHandler := handler.NewAuthHandler(authService, sessionManager)
-	deskHandler := handler.NewDeskHandler(api, subscriptionService, authService, newsfeedService, sessionManager)
+	deskHandler := handler.NewDeskHandler(api, subscriptionService, authService, newsfeedService, collectionService, sessionManager)
 
 	app.GET("/", homeHandler.Home)
 	authGroup := app.Group("/auth")
@@ -132,6 +134,8 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 	deskGroup.GET("/articles/:articleid", deskHandler.GetDeskArticle)
 	deskGroup.GET("/feeds/:feedid", deskHandler.GetDeskNewsfeed)
 	deskGroup.GET("/collections/:collectionname", deskHandler.GetDeskCollection)
+	deskGroup.POST("/collections/read", deskHandler.PostDeskAddToRead)
+	deskGroup.POST("/collections/unread", deskHandler.PostDeskAddToUnread)
 }
 
 func openDB(dsn string) (*sqlx.DB, error) {

@@ -42,7 +42,7 @@ templ Header() {
 			</a>
 			<div class="header-container">
 				if getIsAuthenticated(ctx) {
-					<h1>{ util.GetPageTitle(ctx) }</h1>
+					<h1 class="header-title">{ util.GetPageTitle(ctx) }</h1>
 				}
 				@Flash()
 			</div>

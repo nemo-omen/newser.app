@@ -309,7 +309,8 @@ header {
   }
 
   & h1 {
-    font-size: 1.5rem;
+    font-size: var(--step-1);
+    font-weight: 600;
   }
 
   & nav ul:not([class]) {

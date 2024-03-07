@@ -112,11 +112,20 @@ func (r *CollectionSqliteRepo) FindBySlug(slug string) (*model.Collection, error
 	return nil, nil
 }
 
-func (r *CollectionSqliteRepo) InsertCollectionItem(itemId int64, collectionId int64) error {
+func (r *CollectionSqliteRepo) InsertCollectionItem(articleId int64, collectionId int64) error {
 	q := `
 	INSERT INTO collection_articles(article_id, collection_id)
 		VALUES(?, ?)
 	`
+	_, err := r.DB.Exec(q, articleId, collectionId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *CollectionSqliteRepo) DeleteCollectionItem(itemId, collectionId int64) error {
+	q := `DELETE FROM collection_articles WHERE article_id=? AND collection_id=?`
 	_, err := r.DB.Exec(q, itemId, collectionId)
 	if err != nil {
 		return err
@@ -134,7 +143,7 @@ func (r *CollectionSqliteRepo) InsertManyCollectionItems(aa []*model.Article, cI
 	return nil
 }
 
-func (r *CollectionSqliteRepo) GetArticles(userId, collectionId int64) ([]*model.Article, error) {
+func (r *CollectionSqliteRepo) GetArticles(collectionId, userId int64) ([]*model.Article, error) {
 	collectionArticles := []*model.Article{}
 	err := r.DB.Select(&collectionArticles, `
 	SELECT
@@ -164,7 +173,7 @@ func (r *CollectionSqliteRepo) GetArticles(userId, collectionId int64) ([]*model
 	return collectionArticles, nil
 }
 
-func (r *CollectionSqliteRepo) GetArticlesByCollectionName(userId int64, collectionName string) ([]*model.Article, error) {
+func (r *CollectionSqliteRepo) GetArticlesByCollectionName(collectionName string, userId int64) ([]*model.Article, error) {
 	collectionArticles := []*model.Article{}
 	err := r.DB.Select(&collectionArticles, `
 	SELECT
@@ -194,10 +203,18 @@ func (r *CollectionSqliteRepo) GetArticlesByCollectionName(userId int64, collect
 	return collectionArticles, nil
 }
 
-func (r *CollectionSqliteRepo) GetFeeds(userId, collectionId int64) ([]*model.NewsfeedExtended, error) {
+func (r *CollectionSqliteRepo) GetFeeds(collectionId, userId int64) ([]*model.NewsfeedExtended, error) {
 	return nil, nil
 }
 
-func (r *CollectionSqliteRepo) GetFeedsByCollectionName(userId int64, collectionName string) ([]*model.NewsfeedExtended, error) {
+func (r *CollectionSqliteRepo) GetFeedsByCollectionName(collectionName string, userId int64) ([]*model.NewsfeedExtended, error) {
 	return nil, nil
+}
+
+func (r *CollectionSqliteRepo) MarkArticleRead(articleId, userId int64) error {
+	return nil
+}
+
+func (r *CollectionSqliteRepo) MarkArticleUnread(articleId, userId int64) error {
+	return nil
 }

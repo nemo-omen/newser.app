@@ -72,8 +72,35 @@ func (r *ArticleSqliteRepo) CreateMany(aa []*model.Article) ([]*model.Article, e
 	return allPersisted, nil
 }
 
-func (r *ArticleSqliteRepo) Update(n *model.Article) (*model.Article, error) {
-	return nil, nil
+func (r *ArticleSqliteRepo) Update(a *model.Article) (*model.Article, error) {
+	stmt, err := r.db.PrepareNamed(`
+	UPDATE articles
+		SET id=:id,
+			title=:title,
+			description=:description,
+			content=:content,
+			article_link=:article_link,
+			published=:published,
+			published_parsed=:published_parsed,
+			updated=:updated,
+			updated_parsed=:updated_parsed,
+			guid=:guid,
+			slug=:slug,
+			feed_id=:feed_id,
+			read=:read
+	`)
+
+	if err != nil {
+		fmt.Println("error preparing update stmt: ", err.Error())
+		return nil, err
+	}
+
+	_, err = stmt.Exec(a)
+	if err != nil {
+		fmt.Println("error updating article: ", err.Error())
+		return nil, err
+	}
+	return a, nil
 }
 
 func (r *ArticleSqliteRepo) Delete(id int64) error {

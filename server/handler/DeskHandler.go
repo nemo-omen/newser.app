@@ -22,6 +22,7 @@ type DeskHandler struct {
 	authService         service.AuthService         // auth logic (logout, etc)
 	subscriptionService service.SubscriptionService // subscription logic
 	newsfeedService     service.NewsfeedService
+	collectionService   service.CollectionService
 	// NoteService										// notes logic
 }
 
@@ -30,6 +31,7 @@ func NewDeskHandler(
 	ss service.SubscriptionService,
 	as service.AuthService,
 	ns service.NewsfeedService,
+	cs service.CollectionService,
 	sessionManager *scs.SessionManager,
 ) DeskHandler {
 	return DeskHandler{
@@ -38,6 +40,7 @@ func NewDeskHandler(
 		authService:         as,
 		subscriptionService: ss,
 		newsfeedService:     ns,
+		collectionService:   cs,
 	}
 }
 
@@ -81,7 +84,7 @@ func (h DeskHandler) GetDeskArticle(c echo.Context) error {
 		h.session.SetFlash(c, "error", "Error retrieving article.")
 		return render(c, desk.Article((&model.Article{Title: "Oops!"})))
 	}
-	c.Set("title", article.Title)
+	c.Set("title", article.FeedTitle)
 	return render(c, desk.Article(article))
 }
 
@@ -104,11 +107,19 @@ func (h DeskHandler) GetDeskNewsfeed(c echo.Context) error {
 
 func (h *DeskHandler) GetDeskCollection(c echo.Context) error {
 	collectionName := c.Param("collectionname")
+	email := h.session.GetUser(c)
+	user, err := h.authService.GetUserByEmail(email)
+	if err != nil {
+		h.session.SetFlash(c, "error", "You need to be logged in")
+		return c.Redirect(http.StatusSeeOther, "/auth/login")
+	}
 	upper := cases.Title(language.AmericanEnglish).String(collectionName)
 	c.Set("title", upper)
 
-	collectionArticles := []*model.Article{}
-
+	collectionArticles, err := h.collectionService.GetArticlesByCollectionByName(collectionName, user.Id)
+	if err != nil {
+		h.session.SetFlash(c, "error", fmt.Sprintf("Error getting %s articles", upper))
+	}
 	return render(c, desk.Index(collectionArticles))
 }
 
@@ -181,4 +192,43 @@ func (h DeskHandler) PostDeskSubscribe(c echo.Context) error {
 	// return render(c, desk.Index())
 	h.session.SetFlash(c, "success", fmt.Sprintf("success subscribing to %v", newsfeed.Title))
 	return c.Redirect(http.StatusSeeOther, "/desk/feeds/"+strconv.FormatInt(newsfeed.ID, 10))
+}
+
+func (h DeskHandler) PostDeskAddToRead(c echo.Context) error {
+	email := h.session.GetUser(c)
+	user, err := h.authService.GetUserByEmail(email)
+	if err != nil {
+		h.session.SetFlash(c, "error", "You need to log in.")
+		return c.Redirect(http.StatusSeeOther, "/auth/login")
+	}
+
+	ref := c.Request().Referer()
+	fmt.Println("referrer: ", ref)
+
+	idStr := c.Request().FormValue("articleid")
+	fmt.Println("idStr", idStr)
+	if idStr == "" {
+		h.session.SetFlash(c, "error", "Could not mark as read")
+		return c.Redirect(http.StatusSeeOther, ref)
+	}
+
+	aId, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		h.session.SetFlash(c, "error", "Could not mark as read")
+		return c.Redirect(http.StatusSeeOther, ref)
+	}
+
+	fmt.Println("user: ", user.Id)
+	fmt.Println("article: ", aId)
+	err = h.collectionService.AddArticleToRead(aId)
+	if err != nil {
+		h.session.SetFlash(c, "error", "Could not mark as read")
+		return c.Redirect(http.StatusSeeOther, ref)
+	}
+
+	return c.Redirect(http.StatusSeeOther, ref)
+}
+
+func (h DeskHandler) PostDeskAddToUnread(c echo.Context) error {
+	return nil
 }

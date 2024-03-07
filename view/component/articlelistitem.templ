@@ -55,34 +55,33 @@ templ CardMenu(article *model.Article) {
 		// 	</form>
 		// </li>
 		<li class="tooltip-container">
-			<form action="/desk/collections/add-article" method="post">
-				<input type="hidden" name="entryId" value={ util.IdToString(article.ID) }/>
+			<form action="/desk/collections/collections/saved/" method="post">
+				<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
 				<input type="hidden" name="collectionName" value="Some New Collection"/>
 				<button class="icon-link-button" type="submit" aria-label="Add to Collection">
-					// <Icon name="folder_add" />
 					@Icon("folder_add")
 					<span role="status" class="icon-link-label">Save</span>
 				</button>
-				// <span role="status" class="tooltip">Add to Collection</span>
 			</form>
 		</li>
 		<li class="tooltip-container">
-			<form action="/desk/collections/add-entry" method="post">
-				<input type="hidden" name="entryId" value={ util.IdToString(article.ID) }/>
-				// <input type="hidden" name="collectionName" value={ entry.read ? "Unread" : "Read" }/>
-				// <button class="icon-link-button" aria-label={ entry.read ? "Mark Unread" : "Mark Read" }>
-				// <Icon name={entry.read ? "checkbox_circle_outline" : "checkbox_circle_fill"} />
-				<button class="icon-link-button">
-					if article.Read == true {
+			if article.Read == true {
+				<form action="/desk/collections/unread" method="post">
+					<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
+					<button class="icon-link-button">
 						@Icon("checkbox_circle_fill")
 						<span role="status" class="icon-link-label">Mark Unread</span>
-					} else {
+					</button>
+				</form>
+			} else {
+				<form action="/desk/collections/read" method="post">
+					<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
+					<button class="icon-link-button">
 						@Icon("checkbox_circle_outline")
 						<span role="status" class="icon-link-label">Mark Read</span>
-					}
-				</button>
-				// <span role="status" class="tooltip">{ entry.read ? "Mark Unread" : "Mark Read" }</span>
-			</form>
+					</button>
+				</form>
+			}
 		</li>
 	</ul>
 }

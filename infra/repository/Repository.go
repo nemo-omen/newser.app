@@ -59,10 +59,13 @@ type CollectionRepository interface {
 	FindBySlug(slug string) (*model.Collection, error)
 	FindByTitle(title string) (*model.Collection, error)
 	InsertCollectionItem(itemId int64, collectionId int64) error
+	DeleteCollectionItem(itemId, collectionId int64) error
 	InsertManyCollectionItems(aa []*model.Article, cId int64) error
-	GetArticles(userId, collectionId int64) ([]*model.Article, error)
-	GetArticlesByCollectionName(userId int64, collectionName string) ([]*model.Article, error)
-	GetFeeds(userId, collectionId int64) ([]*model.NewsfeedExtended, error)
-	GetFeedsByCollectionName(userId int64, collectionName string) ([]*model.NewsfeedExtended, error)
+	GetArticles(collectionId, userId int64) ([]*model.Article, error)
+	GetArticlesByCollectionName(collectionName string, userId int64) ([]*model.Article, error)
+	GetFeeds(collectionId, userId int64) ([]*model.NewsfeedExtended, error)
+	GetFeedsByCollectionName(collectionName string, userId int64) ([]*model.NewsfeedExtended, error)
+	MarkArticleRead(articleId, userId int64) error
+	MarkArticleUnread(articleId, userId int64) error
 	Migrate() error
 }
