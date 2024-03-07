@@ -220,7 +220,7 @@ func (h DeskHandler) PostDeskAddToRead(c echo.Context) error {
 
 	fmt.Println("user: ", user.Id)
 	fmt.Println("article: ", aId)
-	err = h.collectionService.AddArticleToRead(aId)
+	err = h.collectionService.AddArticleToRead(aId, user.Id)
 	if err != nil {
 		h.session.SetFlash(c, "error", "Could not mark as read")
 		return c.Redirect(http.StatusSeeOther, ref)

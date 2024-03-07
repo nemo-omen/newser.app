@@ -8,7 +8,7 @@ import (
 )
 
 type CollectionSqliteRepo struct {
-	DB *sqlx.DB
+	db *sqlx.DB
 }
 
 func (r *CollectionSqliteRepo) Migrate() error {
@@ -25,7 +25,7 @@ func (r *CollectionSqliteRepo) Migrate() error {
 	)
 	`
 	fmt.Println("Migrating collections table...")
-	_, err := r.DB.Exec(q)
+	_, err := r.db.Exec(q)
 	if err != nil {
 		fmt.Println("error migrating collections: ", err.Error())
 		return err
@@ -49,7 +49,7 @@ func (r *CollectionSqliteRepo) Migrate() error {
 	);
 	`
 	fmt.Println("Migrating collection_articles table...")
-	_, err = r.DB.Exec(qa)
+	_, err = r.db.Exec(qa)
 	if err != nil {
 		fmt.Println("error migrating collections_articles: ", err.Error())
 		return err
@@ -60,7 +60,7 @@ func (r *CollectionSqliteRepo) Migrate() error {
 }
 
 func NewCollectionSqliteRepo(db *sqlx.DB) *CollectionSqliteRepo {
-	return &CollectionSqliteRepo{DB: db}
+	return &CollectionSqliteRepo{db: db}
 }
 
 func (r *CollectionSqliteRepo) Get(id int64) (*model.Collection, error) {
@@ -72,7 +72,7 @@ func (r *CollectionSqliteRepo) Create(c *model.Collection) (*model.Collection, e
 	INSERT INTO collections(title, slug, user_id)
 		VALUES(?, ?, ?);
 	`
-	res, err := r.DB.Exec(q, c.Title, c.Slug, c.UserId)
+	res, err := r.db.Exec(q, c.Title, c.Slug, c.UserId)
 
 	if err != nil {
 		return nil, err
@@ -84,7 +84,7 @@ func (r *CollectionSqliteRepo) Create(c *model.Collection) (*model.Collection, e
 
 func (r *CollectionSqliteRepo) All(userId int64) ([]*model.Collection, error) {
 	ss := []*model.Collection{}
-	err := r.DB.Select(&ss, "SELECT * FROM collections WHERE user_id=?", userId)
+	err := r.db.Select(&ss, "SELECT * FROM collections WHERE user_id=?", userId)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +101,7 @@ func (r *CollectionSqliteRepo) Delete(id int64) error {
 
 func (r *CollectionSqliteRepo) FindByTitle(title string) (*model.Collection, error) {
 	coll := &model.Collection{}
-	err := r.DB.Get(coll, "SELECT * FROM collections WHERE title=?", title)
+	err := r.db.Get(coll, "SELECT * FROM collections WHERE title=?", title)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +117,7 @@ func (r *CollectionSqliteRepo) InsertCollectionItem(articleId int64, collectionI
 	INSERT INTO collection_articles(article_id, collection_id)
 		VALUES(?, ?)
 	`
-	_, err := r.DB.Exec(q, articleId, collectionId)
+	_, err := r.db.Exec(q, articleId, collectionId)
 	if err != nil {
 		return err
 	}
@@ -126,7 +126,7 @@ func (r *CollectionSqliteRepo) InsertCollectionItem(articleId int64, collectionI
 
 func (r *CollectionSqliteRepo) DeleteCollectionItem(itemId, collectionId int64) error {
 	q := `DELETE FROM collection_articles WHERE article_id=? AND collection_id=?`
-	_, err := r.DB.Exec(q, itemId, collectionId)
+	_, err := r.db.Exec(q, itemId, collectionId)
 	if err != nil {
 		return err
 	}
@@ -145,7 +145,7 @@ func (r *CollectionSqliteRepo) InsertManyCollectionItems(aa []*model.Article, cI
 
 func (r *CollectionSqliteRepo) GetArticles(collectionId, userId int64) ([]*model.Article, error) {
 	collectionArticles := []*model.Article{}
-	err := r.DB.Select(&collectionArticles, `
+	err := r.db.Select(&collectionArticles, `
 	SELECT
 		articles.*,
 		newsfeeds.title as feed_title,
@@ -175,7 +175,7 @@ func (r *CollectionSqliteRepo) GetArticles(collectionId, userId int64) ([]*model
 
 func (r *CollectionSqliteRepo) GetArticlesByCollectionName(collectionName string, userId int64) ([]*model.Article, error) {
 	collectionArticles := []*model.Article{}
-	err := r.DB.Select(&collectionArticles, `
+	err := r.db.Select(&collectionArticles, `
 	SELECT
 		articles.*,
 		newsfeeds.title as feed_title,
@@ -212,6 +212,85 @@ func (r *CollectionSqliteRepo) GetFeedsByCollectionName(collectionName string, u
 }
 
 func (r *CollectionSqliteRepo) MarkArticleRead(articleId, userId int64) error {
+	fmt.Println("STARTING TX")
+	tx := r.db.MustBegin()
+	defer tx.Rollback()
+
+	read := model.Collection{}
+	err := tx.Get(&read, "SELECT * FROM collections WHERE title='read' AND user_id=? LIMIT 1", userId)
+	if err != nil {
+		fmt.Println("error selecting read collection: ", err.Error())
+		return ErrNotFound
+	}
+
+	unread := model.Collection{}
+	err = tx.Get(&unread, "SELECT * FROM collections WHERE title='unread' AND user_id=? LIMIT 1", userId)
+	if err != nil {
+		fmt.Println("error selecting unread collection: ", err.Error())
+		return ErrNotFound
+	}
+
+	insertQ := `
+	INSERT INTO collection_articles(article_id, collection_id)
+	VALUES(?, ?)
+	`
+	_, err = tx.Exec(insertQ, articleId, read.Id)
+	if err != nil {
+		fmt.Println("error removing from 'read' collection: ", err.Error())
+		return ErrInsertError
+	}
+
+	deleteQ := `DELETE FROM collection_articles WHERE article_id=? AND collection_id=?`
+	_, err = tx.Exec(deleteQ, articleId, unread.Id)
+	if err != nil {
+		fmt.Println("error removing from 'unread' collection: ", err.Error())
+		return ErrInsertError
+	}
+
+	var storedArticle model.Article
+	err = tx.Get(&storedArticle, "SELECT * FROM articles WHERE id=?", articleId)
+	if err != nil {
+		fmt.Println("error selecting article: ", err.Error())
+		return ErrNotFound
+	}
+
+	storedArticle.Read = true
+
+	stmt, err := tx.PrepareNamed(`
+	UPDATE articles
+		SET title=:title,
+			description=:description,
+			content=:content,
+			article_link=:article_link,
+			published=:published,
+			published_parsed=:published_parsed,
+			updated=:updated,
+			updated_parsed=:updated_parsed,
+			guid=:guid,
+			slug=:slug,
+			feed_id=:feed_id,
+			read=:read
+		WHERE id=?
+	`)
+
+	if err != nil {
+		fmt.Println("error preparing article update stmt: ", err.Error())
+		return ErrInsertError
+	}
+
+	_, err = stmt.Exec(&storedArticle)
+
+	if err != nil {
+		fmt.Println("error updating article: ", err.Error())
+		return ErrInsertError
+	}
+
+	fmt.Println("COMMITTING TX")
+	err = tx.Commit()
+	if err != nil {
+		fmt.Println("commit error: ", err)
+		return ErrTransactionError
+	}
 	return nil
 }
 
