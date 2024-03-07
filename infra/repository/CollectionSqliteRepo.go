@@ -236,7 +236,7 @@ func (r *CollectionSqliteRepo) MarkArticleRead(articleId, userId int64) error {
 	`
 	_, err = tx.Exec(insertQ, articleId, read.Id)
 	if err != nil {
-		fmt.Println("error removing from 'read' collection: ", err.Error())
+		fmt.Println("error inserting into 'read' collection: ", err.Error())
 		return ErrInsertError
 	}
 
@@ -270,7 +270,7 @@ func (r *CollectionSqliteRepo) MarkArticleRead(articleId, userId int64) error {
 			slug=:slug,
 			feed_id=:feed_id,
 			read=:read
-		WHERE id=?
+		WHERE id=:id
 	`)
 
 	if err != nil {
@@ -295,5 +295,84 @@ func (r *CollectionSqliteRepo) MarkArticleRead(articleId, userId int64) error {
 }
 
 func (r *CollectionSqliteRepo) MarkArticleUnread(articleId, userId int64) error {
+	fmt.Println("STARTING TX")
+	tx := r.db.MustBegin()
+	defer tx.Rollback()
+
+	read := model.Collection{}
+	err := tx.Get(&read, "SELECT * FROM collections WHERE title='read' AND user_id=? LIMIT 1", userId)
+	if err != nil {
+		fmt.Println("error selecting read collection: ", err.Error())
+		return ErrNotFound
+	}
+
+	unread := model.Collection{}
+	err = tx.Get(&unread, "SELECT * FROM collections WHERE title='unread' AND user_id=? LIMIT 1", userId)
+	if err != nil {
+		fmt.Println("error selecting unread collection: ", err.Error())
+		return ErrNotFound
+	}
+
+	insertQ := `
+	INSERT INTO collection_articles(article_id, collection_id)
+	VALUES(?, ?)
+	`
+	_, err = tx.Exec(insertQ, articleId, unread.Id)
+	if err != nil {
+		fmt.Println("error inserting into 'unread' collection: ", err.Error())
+		return ErrInsertError
+	}
+
+	deleteQ := `DELETE FROM collection_articles WHERE article_id=? AND collection_id=?`
+	_, err = tx.Exec(deleteQ, articleId, read.Id)
+	if err != nil {
+		fmt.Println("error removing from 'read' collection: ", err.Error())
+		return ErrInsertError
+	}
+
+	var storedArticle model.Article
+	err = tx.Get(&storedArticle, "SELECT * FROM articles WHERE id=?", articleId)
+	if err != nil {
+		fmt.Println("error selecting article: ", err.Error())
+		return ErrNotFound
+	}
+
+	storedArticle.Read = false
+
+	stmt, err := tx.PrepareNamed(`
+	UPDATE articles
+		SET title=:title,
+			description=:description,
+			content=:content,
+			article_link=:article_link,
+			published=:published,
+			published_parsed=:published_parsed,
+			updated=:updated,
+			updated_parsed=:updated_parsed,
+			guid=:guid,
+			slug=:slug,
+			feed_id=:feed_id,
+			read=:read
+		WHERE id=:id
+	`)
+
+	if err != nil {
+		fmt.Println("error preparing article update stmt: ", err.Error())
+		return ErrInsertError
+	}
+
+	_, err = stmt.Exec(&storedArticle)
+
+	if err != nil {
+		fmt.Println("error updating article: ", err.Error())
+		return ErrInsertError
+	}
+
+	fmt.Println("COMMITTING TX")
+	err = tx.Commit()
+	if err != nil {
+		fmt.Println("commit error: ", err)
+		return ErrTransactionError
+	}
 	return nil
 }

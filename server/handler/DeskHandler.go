@@ -230,5 +230,36 @@ func (h DeskHandler) PostDeskAddToRead(c echo.Context) error {
 }
 
 func (h DeskHandler) PostDeskAddToUnread(c echo.Context) error {
-	return nil
+	email := h.session.GetUser(c)
+	user, err := h.authService.GetUserByEmail(email)
+	if err != nil {
+		h.session.SetFlash(c, "error", "You need to log in.")
+		return c.Redirect(http.StatusSeeOther, "/auth/login")
+	}
+
+	ref := c.Request().Referer()
+	fmt.Println("referrer: ", ref)
+
+	idStr := c.Request().FormValue("articleid")
+	fmt.Println("idStr", idStr)
+	if idStr == "" {
+		h.session.SetFlash(c, "error", "Could not mark as unread")
+		return c.Redirect(http.StatusSeeOther, ref)
+	}
+
+	aId, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		h.session.SetFlash(c, "error", "Could not mark as unread")
+		return c.Redirect(http.StatusSeeOther, ref)
+	}
+
+	fmt.Println("user: ", user.Id)
+	fmt.Println("article: ", aId)
+	err = h.collectionService.RemoveArticleFromRead(aId, user.Id)
+	if err != nil {
+		h.session.SetFlash(c, "error", "Could not mark as unread")
+		return c.Redirect(http.StatusSeeOther, ref)
+	}
+
+	return c.Redirect(http.StatusSeeOther, ref)
 }

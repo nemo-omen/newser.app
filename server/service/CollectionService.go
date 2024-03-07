@@ -59,22 +59,8 @@ func (s *CollectionService) AddArticleToRead(articleId, userId int64) error {
 	return nil
 }
 
-func (s *CollectionService) RemoveArticleFromRead(articleId int64) error {
-	article, err := s.articleRepo.Get(articleId)
-	if err != nil {
-		return err
-	}
-	err = s.RemoveArticleFromCollectionByName("read", articleId)
-	if err != nil {
-		return err
-	}
-	err = s.AddArticleToCollectionByName("unread", articleId)
-	if err != nil {
-		return err
-	}
-
-	article.Read = false
-	_, err = s.articleRepo.Update(article)
+func (s *CollectionService) RemoveArticleFromRead(articleId, userId int64) error {
+	err := s.collectionRepo.MarkArticleUnread(articleId, userId)
 	if err != nil {
 		return err
 	}
