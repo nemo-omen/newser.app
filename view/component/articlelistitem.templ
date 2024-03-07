@@ -1,21 +1,9 @@
 package component
 
-import "newser.app/model"
-import "strconv"
-
-func getImgAlt(imgTitle, feedTitle string) string {
-	alt := ""
-	if imgTitle != "" {
-		alt = imgTitle
-	} else if feedTitle != "" {
-		alt = feedTitle
-	}
-	return alt
-}
-
-func idToString(id int64) string {
-	return strconv.FormatInt(id, 10)
-}
+import (
+	"newser.app/model"
+	"newser.app/view/util"
+)
 
 templ ArticleListItem(article *model.Article) {
 	<li class="article-list-item">
@@ -24,9 +12,9 @@ templ ArticleListItem(article *model.Article) {
 				<div class="flex-column gap-1">
 					<div class="flex-row gap-1 flex-align-center">
 						if article.FeedImageUrl != "" {
-							<image class="feed-logo" src={ article.FeedImageUrl } alt={ getImgAlt(article.FeedImageTitle, article.FeedTitle) }></image>
+							<image class="feed-logo" src={ article.FeedImageUrl } alt={ util.GetImgAlt(article.FeedImageTitle, article.FeedTitle) }></image>
 						}
-						<a href={ templ.SafeURL("/desk/articles/" + idToString(article.ID)) } class="card-primary-action">
+						<a href={ templ.SafeURL("/desk/articles/" + util.IdToString(article.ID)) } class="card-primary-action">
 							<h3>{ article.Title }</h3>
 						</a>
 					</div>
@@ -68,7 +56,7 @@ templ CardMenu(article *model.Article) {
 		// </li>
 		<li class="tooltip-container">
 			<form action="/desk/collections/add-article" method="post">
-				<input type="hidden" name="entryId" value={ idToString(article.ID) }/>
+				<input type="hidden" name="entryId" value={ util.IdToString(article.ID) }/>
 				<input type="hidden" name="collectionName" value="Some New Collection"/>
 				<button class="icon-link-button" type="submit" aria-label="Add to Collection">
 					// <Icon name="folder_add" />
@@ -80,7 +68,7 @@ templ CardMenu(article *model.Article) {
 		</li>
 		<li class="tooltip-container">
 			<form action="/desk/collections/add-entry" method="post">
-				<input type="hidden" name="entryId" value={ idToString(article.ID) }/>
+				<input type="hidden" name="entryId" value={ util.IdToString(article.ID) }/>
 				// <input type="hidden" name="collectionName" value={ entry.read ? "Unread" : "Read" }/>
 				// <button class="icon-link-button" aria-label={ entry.read ? "Mark Unread" : "Mark Read" }>
 				// <Icon name={entry.read ? "checkbox_circle_outline" : "checkbox_circle_fill"} />

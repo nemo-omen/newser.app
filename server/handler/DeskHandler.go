@@ -52,6 +52,10 @@ func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 		fmt.Println("error getting stored subscription articles: ", err.Error())
 	}
 
+	if len(storedSubscriptionArticles) < 1 {
+		return c.Redirect(http.StatusSeeOther, "/desk/search")
+	}
+
 	c.Set("title", "Latest Articles")
 	return render(c, desk.Index(storedSubscriptionArticles))
 }

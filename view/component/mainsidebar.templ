@@ -1,0 +1,52 @@
+package component
+
+import (
+	"newser.app/model"
+	"newser.app/view/util"
+)
+
+func getSidebarFeedLinks(ctx context.Context) []*model.NewsfeedExtended {
+	feedlinks := ctx.Value("feedlinks")
+	if feedlinks != nil {
+		return feedlinks.([]*model.NewsfeedExtended)
+	}
+	return []*model.NewsfeedExtended{}
+}
+
+templ MainSidebar() {
+	<aside class="sidebar" id="sidebar-main">
+		<nav aria-label="Secondary Navigation">
+			<ul>
+				<li>
+					@IconLink("/desk/", "list", "All Posts")
+				</li>
+				<li>
+					@IconLink("/desk/collections/unread", "inbox", "Unread")
+				</li>
+				<li>
+					@IconLink("/desk/collections/saved", "bookmark", "Saved")
+				</li>
+				<li>
+					@IconLink("/desk/notes", "note", "Notes")
+				</li>
+				<li>
+					@IconLink("/desk/search", "folder_add", "Add Feed")
+				</li>
+			</ul>
+		</nav>
+		if len(getSidebarFeedLinks(ctx)) > 0 {
+			<nav class="nav-vertical" aria-label="Subscriptions">
+				<ul>
+					for _, feedlink := range getSidebarFeedLinks(ctx) {
+						<li>
+							<a class="icon-link" href={ templ.SafeURL("/desk/feeds/" + util.IdToString(feedlink.ID)) }>
+								<img src={ feedlink.ImageUrl } alt="feedLink.ImageTitle" class="image-icon"/>
+								{ feedlink.Title }
+							</a>
+						</li>
+					}
+				</ul>
+			</nav>
+		}
+	</aside>
+}

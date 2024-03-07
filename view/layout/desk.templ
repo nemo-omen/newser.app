@@ -1,59 +1,13 @@
 package layout
 
 import (
-	"newser.app/model"
 	"newser.app/view/component"
-	"strconv"
 )
-
-func getSidebarFeedLinks(ctx context.Context) []*model.NewsfeedExtended {
-	feedlinks := ctx.Value("feedlinks")
-	if feedlinks != nil {
-		return feedlinks.([]*model.NewsfeedExtended)
-	}
-	return []*model.NewsfeedExtended{}
-}
-
-func idToString(id int64) string {
-	return strconv.FormatInt(id, 10)
-}
 
 templ Desk() {
 	@Base() {
 		<div class="grid-container">
-			<aside class="sidebar" id="sidebar-main">
-				<nav aria-label="Secondary Navigation">
-					<ul>
-						<li>
-							@component.IconLink("/desk/", "list", "All Posts")
-						</li>
-						<li>
-							@component.IconLink("/desk/articles/unread", "inbox", "Unread")
-						</li>
-						<li>
-							@component.IconLink("/desk/articles/saved", "bookmark", "Saved")
-						</li>
-						<li>
-							@component.IconLink("/desk/notes", "note", "Notes")
-						</li>
-						<li>
-							@component.IconLink("/desk/search", "folder_add", "Add Feed")
-						</li>
-					</ul>
-				</nav>
-				<nav class="nav-vertical" aria-label="Subscriptions">
-					<ul>
-						for _, feedlink := range getSidebarFeedLinks(ctx) {
-							<li>
-								<a class="icon-link" href={ templ.SafeURL("/desk/feeds/" + idToString(feedlink.ID)) }>
-									<img src={ feedlink.ImageUrl } alt="feedLink.ImageTitle" class="image-icon"/>
-									{ feedlink.Title }
-								</a>
-							</li>
-						}
-					</ul>
-				</nav>
-			</aside>
+			@component.MainSidebar()
 			<main>
 				{ children... }
 			</main>

@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	defaultUserCollections = []string{"read", "unread", "favorites"}
+	defaultUserCollections = []string{"read", "unread", "saved"}
 )
 
 type AuthService struct {
