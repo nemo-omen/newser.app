@@ -16,7 +16,7 @@ async function loadTheme() {
   }
   
   const highlighter = await getHighlighter({
-    langs: ['html', 'css', 'javascript', 'go', 'python', 'cpp', 'yaml', 'json', 'xml'],
+    langs: ['bash', 'html', 'scss', 'css', 'javascript', 'go', 'python', 'cpp', 'yaml', 'json', 'xml'],
     themes: []
   })
   

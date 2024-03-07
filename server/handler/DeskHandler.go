@@ -8,6 +8,8 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/labstack/echo/v4"
 	"github.com/mmcdole/gofeed"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"newser.app/model"
 	"newser.app/server/service"
 	"newser.app/shared/util"
@@ -98,6 +100,16 @@ func (h DeskHandler) GetDeskNewsfeed(c echo.Context) error {
 	}
 	c.Set("title", feed.Title)
 	return render(c, desk.Newsfeed(feed))
+}
+
+func (h *DeskHandler) GetDeskCollection(c echo.Context) error {
+	collectionName := c.Param("collectionname")
+	upper := cases.Title(language.AmericanEnglish).String(collectionName)
+	c.Set("title", upper)
+
+	collectionArticles := []*model.Article{}
+
+	return render(c, desk.Index(collectionArticles))
 }
 
 func (h DeskHandler) PostDeskSearch(c echo.Context) error {

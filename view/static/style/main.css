@@ -247,7 +247,7 @@ header {
   grid-template-columns: var(--grid-container-columns);
   align-items: center;
   width: var(--container-width);
-  gap: var(--space-m);
+  /* gap: var(--space-m); */
   /* width: 100%; */
   margin: 0 auto;
   border-bottom: 1px solid var(--background-3);
