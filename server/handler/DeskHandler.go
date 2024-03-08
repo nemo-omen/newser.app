@@ -48,6 +48,9 @@ func NewDeskHandler(
 func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 	eml := h.session.GetUser(c)
 	user, err := h.authService.GetUserByEmail(eml)
+	isHx := c.Get("isHx")
+	// ref := c.Request().Referer()
+
 	if err != nil {
 		return c.Redirect(http.StatusSeeOther, "/auth/login")
 	}
@@ -63,17 +66,29 @@ func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 	}
 
 	c.Set("title", "Latest Articles")
+	if isHx != nil {
+		if isHx.(bool) {
+			return render(c, desk.IndexPageContent(storedSubscriptionArticles))
+		}
+	}
 	return render(c, desk.Index(storedSubscriptionArticles))
 }
 
 func (h DeskHandler) GetDeskSearch(c echo.Context) error {
+	isHx := c.Get("isHx")
 	c.Set("title", "Add a Newsfeed")
+	if isHx != nil {
+		if isHx.(bool) {
+			return render(c, desk.SearchPageContent([]*gofeed.Feed{}))
+		}
+	}
 	return render(c, desk.Search([]*gofeed.Feed{}))
 }
 
 func (h DeskHandler) GetDeskArticle(c echo.Context) error {
 	stringId := c.Param("articleid")
 	id, err := strconv.ParseInt(stringId, 10, 64)
+	isHx := c.Get("isHx")
 
 	if err != nil {
 		h.session.SetFlash(c, "error", "Error retrieving article.")
@@ -86,12 +101,19 @@ func (h DeskHandler) GetDeskArticle(c echo.Context) error {
 		return render(c, desk.Article((&model.Article{Title: "Oops!"})))
 	}
 	c.Set("title", article.FeedTitle)
+	if isHx != nil {
+		if isHx.(bool) {
+			return render(c, desk.ArticlePageContent(article))
+		}
+	}
 	return render(c, desk.Article(article))
 }
 
 func (h DeskHandler) GetDeskNewsfeed(c echo.Context) error {
 	idStr := c.Param("feedid")
 	id, err := strconv.ParseInt(idStr, 10, 64)
+	isHx := c.Get("isHx")
+
 	if err != nil {
 		h.session.SetFlash(c, "error", "Error getting newsfeed")
 		return render(c, desk.Newsfeed(&model.Newsfeed{}))
@@ -103,23 +125,35 @@ func (h DeskHandler) GetDeskNewsfeed(c echo.Context) error {
 		return render(c, desk.Newsfeed(&model.Newsfeed{}))
 	}
 	c.Set("title", feed.Title)
+	if isHx != nil {
+		if isHx.(bool) {
+			return render(c, desk.NewsfeedPageContent(feed))
+		}
+	}
 	return render(c, desk.Newsfeed(feed))
 }
 
 func (h *DeskHandler) GetDeskCollection(c echo.Context) error {
 	collectionName := c.Param("collectionname")
 	email := h.session.GetUser(c)
+	isHx := c.Get("isHx")
 	user, err := h.authService.GetUserByEmail(email)
 	if err != nil {
 		h.session.SetFlash(c, "error", "You need to be logged in")
 		return c.Redirect(http.StatusSeeOther, "/auth/login")
 	}
-	upper := cases.Title(language.AmericanEnglish).String(collectionName)
-	c.Set("title", upper)
 
 	collectionArticles, err := h.collectionService.GetArticlesByCollectionByName(collectionName, user.Id)
+	upper := cases.Title(language.AmericanEnglish).String(collectionName)
+	c.Set("title", upper)
 	if err != nil {
 		h.session.SetFlash(c, "error", fmt.Sprintf("Error getting %s articles", upper))
+	}
+
+	if isHx != nil {
+		if isHx.(bool) {
+			return render(c, desk.IndexPageContent(collectionArticles))
+		}
 	}
 	return render(c, desk.Index(collectionArticles))
 }

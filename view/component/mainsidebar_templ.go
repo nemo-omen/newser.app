@@ -45,7 +45,17 @@ func MainSidebar() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = IconLink("/desk/", "list", "All Posts").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = IconLink(
+			"/desk/",
+			"list",
+			"All Posts",
+			templ.Attributes{
+				"class":     "icon-link",
+				"hx-get":    "/desk/",
+				"hx-target": "main",
+				"hx-swap":   "innerHTML",
+			},
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -53,7 +63,17 @@ func MainSidebar() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = IconLink("/desk/collections/unread", "inbox", "Unread").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = IconLink(
+			"/desk/collections/unread",
+			"inbox",
+			"Unread",
+			templ.Attributes{
+				"class":     "icon-link",
+				"hx-get":    "/desk/collections/unread",
+				"hx-target": "main",
+				"hx-swap":   "innerHTML",
+			},
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -61,7 +81,17 @@ func MainSidebar() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = IconLink("/desk/collections/saved", "bookmark", "Saved").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = IconLink(
+			"/desk/collections/saved",
+			"bookmark",
+			"Saved",
+			templ.Attributes{
+				"class":     "icon-link",
+				"hx-get":    "/desk/collections/saved",
+				"hx-target": "main",
+				"hx-swap":   "innerHTML",
+			},
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -69,7 +99,17 @@ func MainSidebar() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = IconLink("/desk/notes", "note", "Notes").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = IconLink(
+			"/desk/notes",
+			"note",
+			"Notes",
+			templ.Attributes{
+				"class":     "icon-link",
+				"hx-get":    "/desk/notes",
+				"hx-target": "main",
+				"hx-swap":   "innerHTML",
+			},
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -77,7 +117,17 @@ func MainSidebar() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = IconLink("/desk/search", "folder_add", "Add Feed").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = IconLink(
+			"/desk/search",
+			"folder_add",
+			"Add Feed",
+			templ.Attributes{
+				"class":     "icon-link",
+				"hx-get":    "/desk/search",
+				"hx-target": "main",
+				"hx-swap":   "innerHTML",
+			},
+		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -152,7 +202,7 @@ func MainFeedLinks() templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(feedlink.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/mainsidebar.templ`, Line: 63, Col: 22}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/mainsidebar.templ`, Line: 113, Col: 22}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -170,7 +220,7 @@ func MainFeedLinks() templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(getFeedLinkCount(feedlink))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/mainsidebar.templ`, Line: 67, Col: 35}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/mainsidebar.templ`, Line: 117, Col: 35}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {

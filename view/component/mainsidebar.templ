@@ -23,19 +23,69 @@ templ MainSidebar() {
 		<nav aria-label="Secondary Navigation">
 			<ul>
 				<li>
-					@IconLink("/desk/", "list", "All Posts")
+					@IconLink(
+						"/desk/",
+						"list",
+						"All Posts",
+						templ.Attributes{
+							"class":     "icon-link",
+							"hx-get":    "/desk/",
+							"hx-target": "main",
+							"hx-swap":   "innerHTML",
+						},
+					)
 				</li>
 				<li>
-					@IconLink("/desk/collections/unread", "inbox", "Unread")
+					@IconLink(
+						"/desk/collections/unread",
+						"inbox",
+						"Unread",
+						templ.Attributes{
+							"class":     "icon-link",
+							"hx-get":    "/desk/collections/unread",
+							"hx-target": "main",
+							"hx-swap":   "innerHTML",
+						},
+					)
 				</li>
 				<li>
-					@IconLink("/desk/collections/saved", "bookmark", "Saved")
+					@IconLink(
+						"/desk/collections/saved",
+						"bookmark",
+						"Saved",
+						templ.Attributes{
+							"class":     "icon-link",
+							"hx-get":    "/desk/collections/saved",
+							"hx-target": "main",
+							"hx-swap":   "innerHTML",
+						},
+					)
 				</li>
 				<li>
-					@IconLink("/desk/notes", "note", "Notes")
+					@IconLink(
+						"/desk/notes",
+						"note",
+						"Notes",
+						templ.Attributes{
+							"class":     "icon-link",
+							"hx-get":    "/desk/notes",
+							"hx-target": "main",
+							"hx-swap":   "innerHTML",
+						},
+					)
 				</li>
 				<li>
-					@IconLink("/desk/search", "folder_add", "Add Feed")
+					@IconLink(
+						"/desk/search",
+						"folder_add",
+						"Add Feed",
+						templ.Attributes{
+							"class":     "icon-link",
+							"hx-get":    "/desk/search",
+							"hx-target": "main",
+							"hx-swap":   "innerHTML",
+						},
+					)
 				</li>
 			</ul>
 		</nav>

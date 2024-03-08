@@ -6,16 +6,30 @@ import (
 	"newser.app/view/layout"
 )
 
+// We're splitting the main page component
+// from the content so we can send back
+// the full page — Newsfeed — when the
+// request is not an HTMX request.
+// When we do get an HTMX request,
+// we can just return the NewsfeedPageContent
+// without the layout wrappers
 templ Newsfeed(feed *model.Newsfeed) {
 	@layout.Desk() {
-		<div class="container stack">
-			if len(feed.Articles) > 0 {
-				<ul class="card-list">
-					for _, article := range feed.Articles {
-						@component.ArticleCard(article)
-					}
-				</ul>
-			}
-		</div>
+		@NewsfeedPageContent(feed)
 	}
+}
+
+templ NewsfeedPageContent(feed *model.Newsfeed) {
+	<div class="stack-header flex-row flex-align-center gap-2 text-med">
+		@component.Icon("checkbox_circle_outline")
+	</div>
+	<div class="container stack">
+		if len(feed.Articles) > 0 {
+			<ul class="card-list">
+				for _, article := range feed.Articles {
+					@component.ArticleCard(article)
+				}
+			</ul>
+		}
+	</div>
 }
