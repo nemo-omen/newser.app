@@ -42,7 +42,7 @@ templ Header() {
 			</a>
 			<div class="header-container">
 				if getIsAuthenticated(ctx) {
-					<h1 class="header-title">{ util.GetPageTitle(ctx) }</h1>
+					@PageTitle(util.GetPageTitle(ctx))
 				}
 				@Flash()
 			</div>
@@ -58,6 +58,16 @@ templ Header() {
 			</nav>
 		</div>
 	</header>
+}
+
+templ PageTitle(title string) {
+	<h1
+		class="header-title"
+		hx-get="/desk/control/pagetitle"
+		hx-trigger="updatePageTitle from:body"
+		hx-target="this"
+		hx-swap="innerHTML"
+	>{ title }</h1>
 }
 
 templ UserDropdown (email string) {

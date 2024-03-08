@@ -108,7 +108,13 @@ templ MainFeedLinks() {
 	<ul id="main-feed-links">
 		for _, feedlink := range getSidebarFeedLinks(ctx) {
 			<li>
-				<a class="icon-link" href={ templ.SafeURL("/desk/feeds/" + util.IdToString(feedlink.ID)) }>
+				<a
+					class="icon-link"
+					href={ templ.SafeURL("/desk/feeds/" + util.IdToString(feedlink.ID)) }
+					hx-get={ "/desk/feeds/" + util.IdToString(feedlink.ID) }
+					hx-target="main"
+					hx-swap="innerHTML"
+				>
 					<img src={ feedlink.ImageUrl } alt="feedLink.ImageTitle" class="image-icon"/>
 					<span class="link-text">
 						{ feedlink.Title }

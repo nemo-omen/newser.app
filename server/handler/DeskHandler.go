@@ -65,9 +65,11 @@ func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, "/desk/search")
 	}
 
-	c.Set("title", "Latest Articles")
+	// c.Set("title", "Latest Articles")
+	h.session.SetTitle(c, "Latest Articles")
 	if isHx != nil {
 		if isHx.(bool) {
+			c.Response().Header().Add("Hx-Trigger", "updatePageTitle")
 			return render(c, desk.IndexPageContent(storedSubscriptionArticles))
 		}
 	}
@@ -76,9 +78,11 @@ func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 
 func (h DeskHandler) GetDeskSearch(c echo.Context) error {
 	isHx := c.Get("isHx")
-	c.Set("title", "Add a Newsfeed")
+	// c.Set("title", "Add a Newsfeed")
+	h.session.SetTitle(c, "Add a Newsfeed")
 	if isHx != nil {
 		if isHx.(bool) {
+			c.Response().Header().Add("Hx-Trigger", "updatePageTitle")
 			return render(c, desk.SearchPageContent([]*gofeed.Feed{}))
 		}
 	}
@@ -100,9 +104,11 @@ func (h DeskHandler) GetDeskArticle(c echo.Context) error {
 		h.session.SetFlash(c, "error", "Error retrieving article.")
 		return render(c, desk.Article((&model.Article{Title: "Oops!"})))
 	}
-	c.Set("title", article.FeedTitle)
+	// c.Set("title", article.FeedTitle)
+	h.session.SetTitle(c, article.FeedTitle)
 	if isHx != nil {
 		if isHx.(bool) {
+			c.Response().Header().Add("Hx-Trigger", "updatePageTitle")
 			return render(c, desk.ArticlePageContent(article))
 		}
 	}
@@ -124,9 +130,11 @@ func (h DeskHandler) GetDeskNewsfeed(c echo.Context) error {
 		h.session.SetFlash(c, "error", "Error getting newsfeed.")
 		return render(c, desk.Newsfeed(&model.Newsfeed{}))
 	}
-	c.Set("title", feed.Title)
+	// c.Set("title", feed.Title)
+	h.session.SetTitle(c, feed.Title)
 	if isHx != nil {
 		if isHx.(bool) {
+			c.Response().Header().Add("Hx-Trigger", "updatePageTitle")
 			return render(c, desk.NewsfeedPageContent(feed))
 		}
 	}
@@ -145,13 +153,15 @@ func (h *DeskHandler) GetDeskCollection(c echo.Context) error {
 
 	collectionArticles, err := h.collectionService.GetArticlesByCollectionByName(collectionName, user.Id)
 	upper := cases.Title(language.AmericanEnglish).String(collectionName)
-	c.Set("title", upper)
+	h.session.SetTitle(c, upper)
+	// c.Set("title", upper)
 	if err != nil {
 		h.session.SetFlash(c, "error", fmt.Sprintf("Error getting %s articles", upper))
 	}
 
 	if isHx != nil {
 		if isHx.(bool) {
+			c.Response().Header().Add("Hx-Trigger", "updatePageTitle")
 			return render(c, desk.IndexPageContent(collectionArticles))
 		}
 	}
@@ -160,6 +170,16 @@ func (h *DeskHandler) GetDeskCollection(c echo.Context) error {
 
 func (h *DeskHandler) GetDeskUnreadCount(c echo.Context) error {
 	return render(c, component.MainFeedLinks())
+}
+
+func (h *DeskHandler) GetDeskPageTitle(c echo.Context) error {
+	title := c.Get("title")
+	fmt.Println("titlectx: ", title)
+	if title == nil {
+		return c.String(http.StatusOK, "")
+	}
+	fmt.Println("title: ", title.(string))
+	return c.String(http.StatusOK, title.(string))
 }
 
 func (h DeskHandler) PostDeskSearch(c echo.Context) error {

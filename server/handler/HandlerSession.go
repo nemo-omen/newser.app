@@ -91,3 +91,8 @@ func (hs Session) HasCollapsedCard(c echo.Context, card int64) bool {
 	}
 	return slices.Contains(collapsedCards, card)
 }
+
+func (hs *Session) SetTitle(c echo.Context, title string) {
+	hs.manager.Put(c.Request().Context(), "pagetitle", title)
+	hs.manager.Commit(c.Request().Context())
+}

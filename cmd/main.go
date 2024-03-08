@@ -129,6 +129,7 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 		&authService,
 	))
 	deskGroup.Use(custommiddleware.CtxCardState(sessionManager))
+	deskGroup.Use(custommiddleware.PageTitle(sessionManager))
 	deskGroup.GET("/", deskHandler.GetDeskIndex)
 	deskGroup.GET("/search", deskHandler.GetDeskSearch)
 	deskGroup.POST("/search", deskHandler.PostDeskSearch)
@@ -137,6 +138,7 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 	deskGroup.GET("/feeds/:feedid", deskHandler.GetDeskNewsfeed)
 	deskGroup.GET("/collections/:collectionname", deskHandler.GetDeskCollection)
 	deskGroup.GET("/control/unreadcount", deskHandler.GetDeskUnreadCount)
+	deskGroup.GET("/control/pagetitle", deskHandler.GetDeskPageTitle)
 	deskGroup.POST("/collections/read", deskHandler.PostDeskAddToRead)
 	deskGroup.POST("/collections/unread", deskHandler.PostDeskAddToUnread)
 	deskGroup.POST("/control/setcollapse", deskHandler.DeskPostCardCollapsed)
