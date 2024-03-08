@@ -19,9 +19,13 @@ templ ArticleCard(article *model.Article) {
 								<h3>{ article.Title }</h3>
 							</a>
 						</div>
-						<button class="icon-link-button text-med">
-							@Icon("arrow_left")
-						</button>
+						// TODO: Find a way to persist a card's
+						// state separate from the model so we
+						// can collapse/expand the cards without
+						// saving that information in db... localstorage?
+						// <button class="icon-link-button text-med">
+						// 	@Icon("arrow_left")
+						// </button>
 					</div>
 					<div class="flex-row gap-3">
 						@FormattedDateTime(article.PublishedParsed)

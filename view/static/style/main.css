@@ -482,7 +482,7 @@ button {
 
   & svg {
     transform-origin: center;
-    transform: rotate(-90deg);
+    /* transform: rotate(-90deg); */
   }
 }
 
@@ -540,8 +540,25 @@ main {
     color: var(--foreground);
     padding: 0.5rem;
     border-radius: 0.5rem;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    display: grid;
+    grid-template-columns: auto 1fr 1.5em;
+    gap: 0.5rem;
+
+    & .link-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    & .badge {
+      background-color: var(--background-3);
+      border-radius: 0.5rem;
+      font-size: var(--step--2);
+      aspect-ratio: 1/1;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
 
   & nav ul a:hover,
@@ -959,17 +976,17 @@ button:hover,
 
 }
 
-li:has(.icon-link) {
-  overflow: hidden;
-  text-overflow: ellipsis;
+.sidebar-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
 }
 
 .icon-link-button {
   padding: 0.25em 0.5em;
-  /* background: var(--background-3); */
-  /* background-color: var(--accent-alt-1); */
   color: currentColor;
-  /* padding: 0; */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -995,13 +1012,6 @@ li:has(.icon-link) {
   color: var(--foreground);
   /* background: var(--accent-alt-2); */
 }
-
-/* .icon-link,
-.icon-link-button,
-.icon-link-button-label {
-  padding: 1rem;
-  margin: -1rem;
-} */
 
 .icon-link-label {
   font-size: var(--step--1);

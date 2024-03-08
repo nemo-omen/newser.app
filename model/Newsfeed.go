@@ -13,6 +13,7 @@ type NewsfeedExtended struct {
 	SubscriptionId int64  `db:"subscription_id"`
 	ImageUrl       string `db:"feed_image_url"`
 	ImageTitle     string `db:"feed_image_title"`
+	UnreadCount    int
 }
 
 type Newsfeed struct {

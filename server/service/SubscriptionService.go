@@ -85,5 +85,18 @@ func (s *SubscriptionService) GetNewsfeeds(userId int64) ([]*model.NewsfeedExten
 	if err != nil {
 		return nil, err
 	}
+	for _, feed := range feeds {
+		unreadCount := 0
+		articles, err := s.articleRepo.ArticlesByNewsfeed(feed.ID)
+		if err == nil {
+			for _, article := range articles {
+				if !article.Read {
+					unreadCount += 1
+				}
+			}
+		}
+		feed.UnreadCount = unreadCount
+	}
+
 	return feeds, nil
 }
