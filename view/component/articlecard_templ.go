@@ -65,7 +65,7 @@ func ArticleCard(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><article class=\"card\"><div class=\"card-header flex-column\"><div class=\"flex-column gap-1\"><div class=\"flex-row flex-between\"><div class=\"flex-row gap-1 flex-align-center\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><article class=\"card\"><div class=\"card-header flex-column\"><div class=\"flex-column gap-1\"><div class=\"card-header-primary\"><div class=\"flex-row gap-1 flex-align-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -384,7 +384,7 @@ func CollapseForm(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"outerHTML\"><input type=\"hidden\" name=\"articleid\" value=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"outerHTML\" class=\"card-header-toggle\"><input type=\"hidden\" name=\"articleid\" value=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

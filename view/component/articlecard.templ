@@ -26,7 +26,7 @@ templ ArticleCard(article *model.Article) {
 		<article class="card">
 			<div class="card-header flex-column">
 				<div class="flex-column gap-1">
-					<div class="flex-row flex-between">
+					<div class="card-header-primary">
 						<div class="flex-row gap-1 flex-align-center">
 							if article.FeedImageUrl != "" {
 								<image class="feed-logo" src={ article.FeedImageUrl } alt={ util.GetImgAlt(article.FeedImageTitle, article.FeedTitle) }></image>
@@ -120,6 +120,7 @@ templ CollapseForm(article *model.Article) {
 		hx-post="/desk/control/setcollapse"
 		hx-target={ "closest #card-" + util.IdToString(article.ID) }
 		hx-swap="outerHTML"
+		class="card-header-toggle"
 	>
 		<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
 		<input id={ "collapse-input-" + util.IdToString(article.ID) } type="hidden" name="shouldcollapse" value={ getCollapsedString(ctx, article.ID) }/>
