@@ -237,8 +237,9 @@ body {
 }
 
 header {
-  height: 4.5rem;
+  /* height: 4.5rem; */
   grid-area: header;
+  z-index: 10;
   /* border-bottom: 1px solid var(--background-3); */
 }
 
@@ -398,7 +399,9 @@ header {
   font-size: var(--step-1);
   font-weight: 800;
   border-radius: 50%;
-  aspect-ratio: 1;
+  width: 2.5rem;
+  height: 2.5rem;
+  aspect-ratio: 1/1 !important;
 }
 
 
@@ -501,6 +504,16 @@ main {
   container-type: inline-size;
   overflow-y: auto;
   padding: var(--space-2xs) var(--space-s);
+  /* view-transition-name: slide-it; */
+}
+
+main * {
+  animation: fade-in 300ms ease-in-out normal both;
+  /* animation-name: slide-from-right; */
+  /* animation-duration: 200ms;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+  animation-direction: normal; */
 }
 
 .sidebar {
@@ -1092,3 +1105,43 @@ pre.shiki {
     opacity: 0;
   }
 }
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slide-from-right {
+  from {
+    transform: translateX(90px);
+  }
+}
+
+@keyframes slide-to-left {
+  to {
+    transform: translateX(-90px);
+  }
+}
+
+/* define animations for the old and new content */
+::view-transition-old(slide-it) {
+  animation: 180ms cubic-bezier(0.4, 0, 1, 1) both fade-out,
+    600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
+}
+
+::view-transition-new(slide-it) {
+  animation: 420ms cubic-bezier(0, 0, 0.2, 1) 90ms both fade-in,
+    600ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right;
+}
+
+/* tie the view transition to a given CSS class */
+/* .sample-transition {
+  view-transition-name: slide-it;
+} */

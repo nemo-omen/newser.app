@@ -66,10 +66,11 @@ func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 	}
 
 	// c.Set("title", "Latest Articles")
-	h.session.SetTitle(c, "Latest Articles")
+	fmt.Println("setting page title: ", "Latest Articles")
+	c.Response().Header().Add("Hx-Trigger", "updatePageTitle")
 	if isHx != nil {
 		if isHx.(bool) {
-			c.Response().Header().Add("Hx-Trigger", "updatePageTitle")
+			h.session.SetTitle(c, "Latest Articles")
 			return render(c, desk.IndexPageContent(storedSubscriptionArticles))
 		}
 	}

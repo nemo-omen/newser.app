@@ -34,7 +34,13 @@ func getEmailInitial(email string) string {
 templ Header() {
 	<header>
 		<div class="header-inner">
-			<a href="/" id="main-link">
+			<a
+				href="/"
+				id="main-link"
+				hx-get="/"
+				hx-replace-url="true"
+				hx-target="main"
+			>
 				<span>
 					@Icon("logo")
 				</span>

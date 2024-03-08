@@ -28,10 +28,11 @@ templ MainSidebar() {
 						"list",
 						"All Posts",
 						templ.Attributes{
-							"class":     "icon-link",
-							"hx-get":    "/desk/",
-							"hx-target": "main",
-							"hx-swap":   "innerHTML",
+							"class":          "icon-link",
+							"hx-get":         "/desk/",
+							"hx-target":      "main",
+							"hx-swap":        "innerHTML",
+							"hx-replace-url": "true",
 						},
 					)
 				</li>
@@ -41,10 +42,11 @@ templ MainSidebar() {
 						"inbox",
 						"Unread",
 						templ.Attributes{
-							"class":     "icon-link",
-							"hx-get":    "/desk/collections/unread",
-							"hx-target": "main",
-							"hx-swap":   "innerHTML",
+							"class":          "icon-link",
+							"hx-get":         "/desk/collections/unread",
+							"hx-target":      "main",
+							"hx-swap":        "innerHTML",
+							"hx-replace-url": "true",
 						},
 					)
 				</li>
@@ -54,10 +56,11 @@ templ MainSidebar() {
 						"bookmark",
 						"Saved",
 						templ.Attributes{
-							"class":     "icon-link",
-							"hx-get":    "/desk/collections/saved",
-							"hx-target": "main",
-							"hx-swap":   "innerHTML",
+							"class":          "icon-link",
+							"hx-get":         "/desk/collections/saved",
+							"hx-target":      "main",
+							"hx-swap":        "innerHTML",
+							"hx-replace-url": "true",
 						},
 					)
 				</li>
@@ -67,10 +70,11 @@ templ MainSidebar() {
 						"note",
 						"Notes",
 						templ.Attributes{
-							"class":     "icon-link",
-							"hx-get":    "/desk/notes",
-							"hx-target": "main",
-							"hx-swap":   "innerHTML",
+							"class":          "icon-link",
+							"hx-get":         "/desk/notes",
+							"hx-target":      "main",
+							"hx-swap":        "innerHTML",
+							"hx-replace-url": "true",
 						},
 					)
 				</li>
@@ -80,10 +84,11 @@ templ MainSidebar() {
 						"folder_add",
 						"Add Feed",
 						templ.Attributes{
-							"class":     "icon-link",
-							"hx-get":    "/desk/search",
-							"hx-target": "main",
-							"hx-swap":   "innerHTML",
+							"class":          "icon-link",
+							"hx-get":         "/desk/search",
+							"hx-target":      "main",
+							"hx-swap":        "innerHTML",
+							"hx-replace-url": "true",
 						},
 					)
 				</li>
@@ -97,6 +102,7 @@ templ MainSidebar() {
 				hx-trigger="updateUnreadCount from:body"
 				hx-target="#main-feed-links"
 				hx-swap="outerHTML"
+				hx-replace-url="true"
 			>
 				@MainFeedLinks()
 			</nav>
