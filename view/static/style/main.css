@@ -798,6 +798,7 @@ time {
   & a,
   button {
     font-size: var(--step-1);
+    padding-inline: 0;
   }
 }
 
