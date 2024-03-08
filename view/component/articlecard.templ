@@ -5,18 +5,23 @@ import (
 	"newser.app/view/util"
 )
 
-templ ArticleListItem(article *model.Article) {
-	<li class="article-list-item">
+templ ArticleCard(article *model.Article) {
+	<li class={ "article-list-item", templ.KV("read", article.Read) }>
 		<article class="card">
 			<div class="card-header flex-column">
 				<div class="flex-column gap-1">
-					<div class="flex-row gap-1 flex-align-center">
-						if article.FeedImageUrl != "" {
-							<image class="feed-logo" src={ article.FeedImageUrl } alt={ util.GetImgAlt(article.FeedImageTitle, article.FeedTitle) }></image>
-						}
-						<a href={ templ.SafeURL("/desk/articles/" + util.IdToString(article.ID)) } class="card-primary-action">
-							<h3>{ article.Title }</h3>
-						</a>
+					<div class="flex-row flex-between">
+						<div class="flex-row gap-1 flex-align-center">
+							if article.FeedImageUrl != "" {
+								<image class="feed-logo" src={ article.FeedImageUrl } alt={ util.GetImgAlt(article.FeedImageTitle, article.FeedTitle) }></image>
+							}
+							<a href={ templ.SafeURL("/desk/articles/" + util.IdToString(article.ID)) } class="card-link">
+								<h3>{ article.Title }</h3>
+							</a>
+						</div>
+						<button class="icon-link-button text-med">
+							@Icon("arrow_left")
+						</button>
 					</div>
 					<div class="flex-row gap-3">
 						@FormattedDateTime(article.PublishedParsed)
@@ -25,7 +30,9 @@ templ ArticleListItem(article *model.Article) {
 				</div>
 			</div>
 			<div class="card-body">
-				@templ.Raw(article.Description)
+				<a href={ templ.SafeURL("/desk/articles/" + util.IdToString(article.ID)) } class="card-link">
+					@templ.Raw(article.Description)
+				</a>
 			</div>
 			<div class="card-footer">
 				@CardMenu(article)

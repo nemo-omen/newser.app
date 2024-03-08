@@ -15,7 +15,7 @@ templ Index(articles []*model.Article) {
 			if len(articles) > 0 {
 				<ul class="card-list">
 					for _, article := range articles {
-						@component.ArticleListItem(article)
+						@component.ArticleCard(article)
 					}
 				</ul>
 			}

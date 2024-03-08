@@ -53,7 +53,7 @@ func Index(articles []*model.Article) templ.Component {
 					return templ_7745c5c3_Err
 				}
 				for _, article := range articles {
-					templ_7745c5c3_Err = component.ArticleListItem(article).Render(ctx, templ_7745c5c3_Buffer)
+					templ_7745c5c3_Err = component.ArticleCard(article).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}

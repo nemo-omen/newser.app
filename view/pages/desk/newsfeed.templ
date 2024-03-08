@@ -12,7 +12,7 @@ templ Newsfeed(feed *model.Newsfeed) {
 			if len(feed.Articles) > 0 {
 				<ul class="card-list">
 					for _, article := range feed.Articles {
-						@component.ArticleListItem(article)
+						@component.ArticleCard(article)
 					}
 				</ul>
 			}
