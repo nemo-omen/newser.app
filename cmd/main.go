@@ -136,6 +136,7 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 	deskGroup.GET("/articles/:articleid", deskHandler.GetDeskArticle)
 	deskGroup.GET("/feeds/:feedid", deskHandler.GetDeskNewsfeed)
 	deskGroup.GET("/collections/:collectionname", deskHandler.GetDeskCollection)
+	deskGroup.GET("/control/unreadcount", deskHandler.GetDeskUnreadCount)
 	deskGroup.POST("/collections/read", deskHandler.PostDeskAddToRead)
 	deskGroup.POST("/collections/unread", deskHandler.PostDeskAddToUnread)
 	deskGroup.POST("/control/setcollapse", deskHandler.DeskPostCardCollapsed)

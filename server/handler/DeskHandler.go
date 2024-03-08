@@ -124,6 +124,10 @@ func (h *DeskHandler) GetDeskCollection(c echo.Context) error {
 	return render(c, desk.Index(collectionArticles))
 }
 
+func (h *DeskHandler) GetDeskUnreadCount(c echo.Context) error {
+	return render(c, component.MainFeedLinks())
+}
+
 func (h DeskHandler) PostDeskSearch(c echo.Context) error {
 	feeds := []*gofeed.Feed{}
 	searchLinks := []string{}
@@ -235,6 +239,7 @@ func (h DeskHandler) PostDeskAddToRead(c echo.Context) error {
 		}
 
 		if isHx.(bool) {
+			c.Response().Header().Add("HX-Trigger", "updateUnreadCount")
 			return render(c, component.ArticleCard(article))
 		}
 	}
@@ -282,6 +287,7 @@ func (h DeskHandler) PostDeskAddToUnread(c echo.Context) error {
 		}
 
 		if isHx.(bool) {
+			c.Response().Header().Add("HX-Trigger", "updateUnreadCount")
 			return render(c, component.ArticleCard(article))
 		}
 	}

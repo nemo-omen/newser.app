@@ -40,23 +40,34 @@ templ MainSidebar() {
 			</ul>
 		</nav>
 		if len(getSidebarFeedLinks(ctx)) > 0 {
-			<nav class="nav-vertical" aria-label="Subscriptions">
-				<ul>
-					for _, feedlink := range getSidebarFeedLinks(ctx) {
-						<li>
-							<a class="icon-link" href={ templ.SafeURL("/desk/feeds/" + util.IdToString(feedlink.ID)) }>
-								<img src={ feedlink.ImageUrl } alt="feedLink.ImageTitle" class="image-icon"/>
-								<span class="link-text">
-									{ feedlink.Title }
-								</span>
-								<span class="badge">
-									{ getFeedLinkCount(feedlink) }
-								</span>
-							</a>
-						</li>
-					}
-				</ul>
+			<nav
+				class="nav-vertical"
+				aria-label="Subscriptions"
+				hx-get="/desk/control/unreadcount"
+				hx-trigger="updateUnreadCount from:body"
+				hx-target="#main-feed-links"
+				hx-swap="outerHTML"
+			>
+				@MainFeedLinks()
 			</nav>
 		}
 	</aside>
+}
+
+templ MainFeedLinks() {
+	<ul id="main-feed-links">
+		for _, feedlink := range getSidebarFeedLinks(ctx) {
+			<li>
+				<a class="icon-link" href={ templ.SafeURL("/desk/feeds/" + util.IdToString(feedlink.ID)) }>
+					<img src={ feedlink.ImageUrl } alt="feedLink.ImageTitle" class="image-icon"/>
+					<span class="link-text">
+						{ feedlink.Title }
+					</span>
+					<span class="badge">
+						{ getFeedLinkCount(feedlink) }
+					</span>
+				</a>
+			</li>
+		}
+	</ul>
 }
