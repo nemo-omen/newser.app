@@ -131,7 +131,6 @@ func (h *DeskHandler) GetDeskUnreadCount(c echo.Context) error {
 func (h DeskHandler) PostDeskSearch(c echo.Context) error {
 	feeds := []*gofeed.Feed{}
 	searchLinks := []string{}
-	// isHx := c.Get("isHx").(bool)
 	searchInput := c.Request().FormValue("searchurl")
 	validUrl, err := util.MakeUrl(searchInput)
 	if err != nil {
