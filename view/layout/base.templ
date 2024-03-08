@@ -11,12 +11,14 @@ templ Base() {
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			// <meta name="htmx-config" content='{"useTemplateFragments":"true"}'/>
+			<script src="/static/script/vendor/htmx/htmx-min.js"></script>
 			<link rel="stylesheet" href="/static/style/main.css"/>
 			<link rel="shortcut icon" href="/static/favicon.svg" type="image/svg+xml"/>
 			if util.GetPageTitle(ctx) != "" {
 				<title>{ util.GetPageTitle(ctx) }</title>
 			} else {
-				<title>Current</title>
+				<title>Newser</title>
 			}
 		</head>
 		<body>

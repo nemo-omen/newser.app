@@ -13,6 +13,7 @@ import (
 	"newser.app/model"
 	"newser.app/server/service"
 	"newser.app/shared/util"
+	"newser.app/view/component"
 	"newser.app/view/pages/desk"
 )
 
@@ -197,6 +198,7 @@ func (h DeskHandler) PostDeskSubscribe(c echo.Context) error {
 func (h DeskHandler) PostDeskAddToRead(c echo.Context) error {
 	email := h.session.GetUser(c)
 	user, err := h.authService.GetUserByEmail(email)
+	isHx := c.Get("isHx")
 	if err != nil {
 		h.session.SetFlash(c, "error", "You need to log in.")
 		return c.Redirect(http.StatusSeeOther, "/auth/login")
@@ -226,12 +228,24 @@ func (h DeskHandler) PostDeskAddToRead(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, ref)
 	}
 
+	if isHx != nil {
+		article, err := h.newsfeedService.GetArticleById(aId)
+		if err != nil {
+			return c.Redirect(http.StatusSeeOther, ref)
+		}
+
+		if isHx.(bool) {
+			return render(c, component.ArticleCard(article))
+		}
+	}
+
 	return c.Redirect(http.StatusSeeOther, ref)
 }
 
 func (h DeskHandler) PostDeskAddToUnread(c echo.Context) error {
 	email := h.session.GetUser(c)
 	user, err := h.authService.GetUserByEmail(email)
+	isHx := c.Get("isHx")
 	if err != nil {
 		h.session.SetFlash(c, "error", "You need to log in.")
 		return c.Redirect(http.StatusSeeOther, "/auth/login")
@@ -260,6 +274,51 @@ func (h DeskHandler) PostDeskAddToUnread(c echo.Context) error {
 		h.session.SetFlash(c, "error", "Could not mark as unread")
 		return c.Redirect(http.StatusSeeOther, ref)
 	}
+
+	if isHx != nil {
+		article, err := h.newsfeedService.GetArticleById(aId)
+		if err != nil {
+			return c.Redirect(http.StatusSeeOther, ref)
+		}
+
+		if isHx.(bool) {
+			return render(c, component.ArticleCard(article))
+		}
+	}
+
+	return c.Redirect(http.StatusSeeOther, ref)
+}
+
+func (h DeskHandler) DeskPostCardCollapsed(c echo.Context) error {
+	ref := c.Request().Referer()
+	idInput := c.Request().FormValue("articleid")
+	collapseInput := c.Request().FormValue("shouldcollapse")
+	isHx := c.Get("isHx")
+
+	id, err := strconv.ParseInt(idInput, 10, 64)
+	if err != nil {
+		return c.Redirect(http.StatusSeeOther, ref)
+	}
+
+	if collapseInput == "true" {
+		h.session.PutCollapsedCard(c, id)
+	} else {
+		if h.session.HasCollapsedCard(c, id) {
+			h.session.RemoveCollapsedCard(c, id)
+		}
+	}
+
+	if isHx != nil {
+		article, err := h.newsfeedService.GetArticleById(id)
+		if err != nil {
+			return c.Redirect(http.StatusSeeOther, ref)
+		}
+
+		if isHx.(bool) {
+			return render(c, component.ArticleCard(article))
+		}
+	}
+	fmt.Println("why are you here?")
 
 	return c.Redirect(http.StatusSeeOther, ref)
 }

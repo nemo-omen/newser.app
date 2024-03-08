@@ -69,6 +69,7 @@ func main() {
 	app.Use(conf.SetConfig)
 	app.Use((custommiddleware.CtxFlash(sessionManager)))
 	app.Use(custommiddleware.AuthContext(sessionManager))
+	app.Use(custommiddleware.HTMX)
 
 	app.Logger.Fatal(app.Start(*addr))
 }
@@ -127,6 +128,7 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 		&subscriptionService,
 		&authService,
 	))
+	deskGroup.Use(custommiddleware.CtxCardState(sessionManager))
 	deskGroup.GET("/", deskHandler.GetDeskIndex)
 	deskGroup.GET("/search", deskHandler.GetDeskSearch)
 	deskGroup.POST("/search", deskHandler.PostDeskSearch)
@@ -136,6 +138,7 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 	deskGroup.GET("/collections/:collectionname", deskHandler.GetDeskCollection)
 	deskGroup.POST("/collections/read", deskHandler.PostDeskAddToRead)
 	deskGroup.POST("/collections/unread", deskHandler.PostDeskAddToUnread)
+	deskGroup.POST("/control/setcollapse", deskHandler.DeskPostCardCollapsed)
 }
 
 func openDB(dsn string) (*sqlx.DB, error) {

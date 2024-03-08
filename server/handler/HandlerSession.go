@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"slices"
+
 	"github.com/alexedwards/scs/v2"
 	"github.com/labstack/echo/v4"
+	"newser.app/shared/util"
 )
 
 type Session struct {
@@ -45,4 +48,46 @@ func (hs Session) CheckAuth(c echo.Context) bool {
 // GetUser retrieves the "user" string from session
 func (hs Session) GetUser(c echo.Context) string {
 	return hs.manager.GetString(c.Request().Context(), "user")
+}
+
+func (hs Session) SetCollapsedCards(c echo.Context, collapsedCards []int64) {
+	hs.manager.Put(c.Request().Context(), "collapsedcards", collapsedCards)
+	hs.manager.Commit(c.Request().Context())
+	c.Set("collapsedCards", collapsedCards)
+}
+
+func (hs Session) GetCollapsedCards(c echo.Context) []int64 {
+	collapsedSession := hs.manager.Get(c.Request().Context(), "collapsedcards")
+	collapsedCards := []int64{}
+	if collapsedSession != nil {
+		collapsedCards = collapsedSession.([]int64)
+	}
+	return collapsedCards
+}
+
+func (hs Session) PutCollapsedCard(c echo.Context, card int64) {
+	collapsedCards := hs.GetCollapsedCards(c)
+	if !slices.Contains(collapsedCards, card) {
+		collapsedCards = append(collapsedCards, card)
+	}
+	hs.SetCollapsedCards(c, collapsedCards)
+}
+
+func (hs Session) RemoveCollapsedCard(c echo.Context, card int64) {
+	collapsedCards := hs.GetCollapsedCards(c)
+	if len(collapsedCards) < 1 {
+		return
+	}
+	filtered := util.Filter(collapsedCards, func(cardId int64) bool {
+		return cardId != card
+	})
+	hs.SetCollapsedCards(c, filtered)
+}
+
+func (hs Session) HasCollapsedCard(c echo.Context, card int64) bool {
+	collapsedCards := hs.GetCollapsedCards(c)
+	if len(collapsedCards) < 1 {
+		return false
+	}
+	return slices.Contains(collapsedCards, card)
 }

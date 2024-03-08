@@ -676,6 +676,10 @@ time {
   font-size: var(--step-2);
 }
 
+.rotate--90 {
+  transform: rotate(-90deg);
+}
+
 .stack-header {
   color: var(--background-4);
   margin-block-end: var(--space-2xs);
@@ -700,7 +704,7 @@ time {
   position: relative;
   background-color: transparent;
   transition: background-color var(--transition);
-  min-block-size: 7rem;
+  /* min-block-size: 7rem; */
   display: flex;
   flex-direction: column;
   gap: var(--space-2xs);
@@ -713,10 +717,18 @@ time {
   }
 }
 
+.card:has(.collapsed) {
+  gap: unset;
+}
+
 .card-header {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2xs);
+  /* gap: var(--space-2xs); */
+}
+
+.card-collapse {
+  width: 100%;
 }
 
 .card-primary-action::before {
@@ -818,19 +830,11 @@ time {
     color: var(--complement-6);
     background-color: var(--background-3);
   }
+}
 
-  & .card-body::after {
-    opacity: 0;
-  }
-
-  & .card-body::before {
-    opacity: 1;
-  }
-
-  /* & .card-menu {
-    opacity: 1;
-    transform: translateX(0);
-  } */
+.collapsed {
+  height: 0;
+  overflow: hidden;
 }
 
 fieldset {

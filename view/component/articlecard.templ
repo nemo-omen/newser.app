@@ -3,10 +3,26 @@ package component
 import (
 	"newser.app/model"
 	"newser.app/view/util"
+	"slices"
 )
 
+func getIsCollapsed(ctx context.Context, articleId int64) bool {
+	collapsedCards := ctx.Value("collapsedCards")
+	if collapsedCards == nil {
+		return false
+	}
+	return slices.Contains(collapsedCards.([]int64), articleId)
+}
+
+func getCollapsedString(ctx context.Context, articleId int64) string {
+	if getIsCollapsed(ctx, articleId) {
+		return "false"
+	}
+	return "true"
+}
+
 templ ArticleCard(article *model.Article) {
-	<li class={ "article-list-item", templ.KV("read", article.Read) }>
+	<li class={ "article-list-item", templ.KV("read", article.Read) } id={ "card-" + util.IdToString(article.ID) }>
 		<article class="card">
 			<div class="card-header flex-column">
 				<div class="flex-column gap-1">
@@ -19,52 +35,31 @@ templ ArticleCard(article *model.Article) {
 								<h3>{ article.Title }</h3>
 							</a>
 						</div>
-						// TODO: Find a way to persist a card's
-						// state separate from the model so we
-						// can collapse/expand the cards without
-						// saving that information in db... localstorage?
-						// <button class="icon-link-button text-med">
-						// 	@Icon("arrow_left")
-						// </button>
-					</div>
-					<div class="flex-row gap-3">
-						@FormattedDateTime(article.PublishedParsed)
-						<span class="card-feed-link"><a href={ templ.SafeURL(article.FeedSiteUrl) } target="_blank">{ article.FeedTitle }</a></span>
+						@CollapseForm(article)
 					</div>
 				</div>
 			</div>
-			<div class="card-body">
+			<div
+				class={
+					"card-body flex-column gap-1",
+					templ.KV("collapsed", getIsCollapsed(ctx, article.ID)),
+				}
+			>
+				<div class="flex-row gap-3">
+					@FormattedDateTime(article.PublishedParsed)
+					<span class="card-feed-link"><a href={ templ.SafeURL(article.FeedSiteUrl) } target="_blank">{ article.FeedTitle }</a></span>
+				</div>
 				<a href={ templ.SafeURL("/desk/articles/" + util.IdToString(article.ID)) } class="card-link">
 					@templ.Raw(article.Description)
 				</a>
 			</div>
-			<div class="card-footer">
-				@CardMenu(article)
-			</div>
+			@CardFooter(article)
 		</article>
 	</li>
 }
 
 templ CardMenu(article *model.Article) {
 	<ul class="card-menu flex-menu">
-		// <li class="tooltip-container">
-		// 	<a class="icon-link" href={ templ.SafeURL("/items/tags/" + entry.id) } aria-label="Add Tags">
-		// 		// <Icon name="tag" />
-		// 		@Icon("tag")
-		// 	</a>
-		// 	<span role="status" class="tooltip">Add Tags</span>
-		// </li>
-		// <li class="tooltip-container">
-		// 	<form action="/desk/collections/add-article" method="post">
-		// 		<input type="hidden" name="articleId" value={ idToString(article.ID) }/>
-		// 		<input type="hidden" name="collectionName" value="Read Later"/>
-		// 		<button class="icon-link-button" type="submit" aria-label="Bookmark Post">
-		// 			@Icon("bookmark")
-		// 			<span class="icon-link-label">Bookmark</span>
-		// 		</button>
-		// 		// <span role="status" class="tooltip">Bookmark Post</span>
-		// 	</form>
-		// </li>
 		<li class="tooltip-container">
 			<form action="/desk/collections/collections/saved/" method="post">
 				<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
@@ -77,7 +72,13 @@ templ CardMenu(article *model.Article) {
 		</li>
 		<li class="tooltip-container">
 			if article.Read == true {
-				<form action="/desk/collections/unread" method="post">
+				<form
+					action="/desk/collections/unread"
+					method="post"
+					hx-post="/desk/collections/unread"
+					hx-target={ "closest #card-" + util.IdToString(article.ID) }
+					hx-swap="outerHTML"
+				>
 					<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
 					<button class="icon-link-button">
 						@Icon("checkbox_circle_fill")
@@ -85,7 +86,13 @@ templ CardMenu(article *model.Article) {
 					</button>
 				</form>
 			} else {
-				<form action="/desk/collections/read" method="post">
+				<form
+					action="/desk/collections/read"
+					method="post"
+					hx-post="/desk/collections/read"
+					hx-target={ "closest #card-" + util.IdToString(article.ID) }
+					hx-swap="outerHTML"
+				>
 					<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
 					<button class="icon-link-button">
 						@Icon("checkbox_circle_outline")
@@ -95,4 +102,29 @@ templ CardMenu(article *model.Article) {
 			}
 		</li>
 	</ul>
+}
+
+templ CardFooter(article *model.Article) {
+	<div
+		id={ "card-footer-" + util.IdToString(article.ID) }
+		class={ "card-footer", templ.KV("collapsed", getIsCollapsed(ctx, article.ID)) }
+	>
+		@CardMenu(article)
+	</div>
+}
+
+templ CollapseForm(article *model.Article) {
+	<form
+		action="/desk/control/setcollapse"
+		method="POST"
+		hx-post="/desk/control/setcollapse"
+		hx-target={ "closest #card-" + util.IdToString(article.ID) }
+		hx-swap="outerHTML"
+	>
+		<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
+		<input id={ "collapse-input-" + util.IdToString(article.ID) } type="hidden" name="shouldcollapse" value={ getCollapsedString(ctx, article.ID) }/>
+		<button class={ "card-collapse icon-link-button", templ.KV("rotate--90", !getIsCollapsed(ctx, article.ID)) } type="submit">
+			@Icon("arrow_left")
+		</button>
+	</form>
 }

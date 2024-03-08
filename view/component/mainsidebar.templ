@@ -4,7 +4,6 @@ import (
 	"newser.app/model"
 	"newser.app/view/util"
 	"strconv"
-	"fmt"
 )
 
 func getSidebarFeedLinks(ctx context.Context) []*model.NewsfeedExtended {
@@ -16,7 +15,6 @@ func getSidebarFeedLinks(ctx context.Context) []*model.NewsfeedExtended {
 }
 
 func getFeedLinkCount(nf *model.NewsfeedExtended) string {
-	fmt.Println("unread: ", nf.UnreadCount)
 	return strconv.Itoa(nf.UnreadCount)
 }
 
