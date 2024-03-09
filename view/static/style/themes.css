@@ -97,9 +97,9 @@
   --foreground-9: var(--light-9);
   --foreground-10: var(--light-10);
 
-  --background-offset: color-mix(in srgb, var(--accent), var(--background) 80%);
+  --background-offset: color-mix(in srgb, var(--accent), var(--background) 90%);
   --hover-background-offset: color-mix(in srgb, var(--accent), var(--background) 70%);
-
+  --foreground-muted: color-mix(in srgb, var(--foreground), var(--background) 90%);
   --scrollbar-size: 5px;
 }
 
@@ -145,6 +145,7 @@
     --foreground-10: var(--dark-10);
 
     --hover-background: var(--background-offset);
+    --hover: var(--accent-3);
     /* --hover-background-offset: var(--tertiary-10); */
     --link: var(--secondary-1);
     --hover: var(--secondary-2);
@@ -175,7 +176,7 @@
     --accent-10: var(--primary-10);
 
     --hover-background: var(--background-offset);
-    /* --hover-background-offset: var(--background-7); */
+    --hover-background-offset: var(--background-7);
     --link: var(--primary-2);
     --hover: var(--primary-4);
     --inactive: var(--background-8);
