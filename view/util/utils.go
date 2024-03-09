@@ -26,3 +26,11 @@ func GetPageTitle(ctx context.Context) string {
 	}
 	return ""
 }
+
+func GetUserViewPreference(ctx context.Context) string {
+	viewPref := ctx.Value("viewPreference")
+	if viewPref != nil {
+		return viewPref.(string)
+	}
+	return ""
+}

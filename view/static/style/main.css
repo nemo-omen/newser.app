@@ -573,20 +573,56 @@ time {
   padding-block: var(--space-3xs);
 }
 
-.card {
-  position: relative;
+.article-list-item:has(.condensed) {
+  padding-block: 0;
+}
+
+.card,
+.condensed {
   background-color: transparent;
   transition: background-color var(--transition);
-  /* min-block-size: 7rem; */
   display: flex;
+  border-radius: var(--space-2xs);
+}
+
+.card {
+  padding: var(--space-2xs);
+  padding: var(--space-2xs);
+  position: relative;
+  /* min-block-size: 7rem; */
   flex-direction: column;
   gap: var(--space-2xs);
-  padding: var(--space-2xs);
-  border-radius: var(--space-2xs);
 
   & h2,
   h3 {
     line-height: 1.3;
+  }
+}
+
+.condensed {
+  padding-block: var(--space-3xs);
+  position: relative;
+
+  & .card-info {
+    overflow: hidden;
+  }
+
+  & a {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  & a:before {
+    position: absolute;
+    content: '';
+    inset: 0;
+  }
+
+  & h2,
+  h3 {
+    font-size: var(--step--1);
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }
 
@@ -639,7 +675,7 @@ time {
 }
 
 .read {
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .tooltip-container {
@@ -702,8 +738,10 @@ time {
 }
 
 .card:hover,
-.card:focus-within {
-  border-color: var(--accent);
+.card:focus-within,
+.condensed:hover,
+.condensed:focus-within {
+  /* border-color: var(--accent); */
   background-color: var(--hover-background);
 }
 

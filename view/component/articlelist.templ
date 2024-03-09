@@ -1,0 +1,20 @@
+package component
+
+import (
+	"newser.app/model"
+	"newser.app/view/util"
+)
+
+templ ArticleList(articles []*model.Article) {
+	if len(articles) > 0 {
+		<ul class="card-list">
+			for _, article := range articles {
+				if util.GetUserViewPreference(ctx) == "card" {
+					@ArticleCard(article)
+				} else {
+					@ArticleCondensed(article)
+				}
+			}
+		</ul>
+	}
+}
