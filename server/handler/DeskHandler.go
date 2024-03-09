@@ -298,6 +298,8 @@ func (h DeskHandler) PostDeskAddToRead(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, ref)
 	}
 
+	h.session.PutCollapsedCard(c, aId)
+
 	if isHx != nil {
 		article, err := h.newsfeedService.GetArticleById(aId)
 		if err != nil {
