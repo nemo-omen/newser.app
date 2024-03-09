@@ -50,6 +50,8 @@
 
   --grid-container-columns: 15vw auto 17vw;
   --grid-container-gap: var(--space-s);
+
+  --scrollbar-width-legacy: 5px;
 }
 
 *,
@@ -84,11 +86,18 @@ body {
     "footer";
   overflow: hidden;
   scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
-  scrollbar-width: thin;
+  scrollbar-width: none;
+}
+
+body,
+main {
+  scrollbar-color: var(--scrollbar-thumb-color) var(--scrollbar-track-color);
+  scrollbar-width: none;
 }
 
 ::-webkit-scrollbar {
-  width: var(--scrollbar-size);
+  max-width: var(--scrollbar-width-legacy) !important;
+  width: var(--scrollbar-width-legacy) !important;
 }
 
 ::-webkit-scrollbar-track {
@@ -374,7 +383,7 @@ main {
 /* } */
 
 .sidebar {
-  padding: var(--space-2xs) 0 0 0;
+  padding: var(--space-xs) 0 0 0;
   overflow-y: auto;
 }
 
@@ -395,7 +404,7 @@ main {
   & nav ul {
     list-style-type: none;
     margin: 0;
-    padding: 0;
+    padding: 0 var(--space-xs) 0 0;
     display: flex;
     flex-direction: column;
     /* gap: var(--space-s); */
@@ -441,6 +450,8 @@ main {
 
 #sidebar-secondary {
   /* background-color: var(--dark--1); */
+  border-inline-start: 1px solid var(--foreground-muted);
+  padding-inline-start: var(--space-xs);
 
   .sidebar-section {
     background-color: var(--background-offset);
