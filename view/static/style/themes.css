@@ -2,25 +2,25 @@
   --dark: #0b0916;
   --dark-alpha: 253 44% 6%;
   --dark--1: color-mix(in srgb, var(--dark), black 50%);
-  --dark-0: color-mix(in srgb, var(--dark), black 5%);
-  --dark-1: var(--dark);
-  --dark-2: color-mix(in srgb, var(--dark), white 5%);
-  --dark-3: color-mix(in srgb, var(--dark), white 10%);
-  --dark-4: color-mix(in srgb, var(--dark), white 15%);
-  --dark-5: color-mix(in srgb, var(--dark), white 20%);
-  --dark-6: color-mix(in srgb, var(--dark), white 25%);
-  --dark-7: color-mix(in srgb, var(--dark), white 30%);
-  --dark-8: color-mix(in srgb, var(--dark), white 35%);
+  --dark-0: color-mix(in srgb, var(--dark), black 40%);
+  --dark-1: color-mix(in srgb, var(--dark), black 30%);
+  --dark-2: color-mix(in srgb, var(--dark), black 20%);
+  --dark-3: color-mix(in srgb, var(--dark), black 10%);
+  --dark-4: color-mix(in srgb, var(--dark), black 5%);
+  --dark-5: var(--dark);
+  --dark-6: color-mix(in srgb, var(--dark), white 10%);
+  --dark-7: color-mix(in srgb, var(--dark), white 20%);
+  --dark-8: color-mix(in srgb, var(--dark), white 30%);
   --dark-9: color-mix(in srgb, var(--dark), white 40%);
-  --dark-10: color-mix(in srgb, var(--dark), white 45%);
+  --dark-10: color-mix(in srgb, var(--dark), white 50%);
 
   --light: #fffef5;
-  --light--1: color-mix(in srgb, var(--light), black 15%);
-  --light-0: color-mix(in srgb, var(--light), black 12.5%);
-  --light-1: color-mix(in srgb, var(--light), black 10%);
-  --light-2: color-mix(in srgb, var(--light), black 7.5%);
-  --light-3: color-mix(in srgb, var(--light), black 5%);
-  --light-4: color-mix(in srgb, var(--light), black 2.5%);
+  --light--1: color-mix(in srgb, var(--light), black 55%);
+  --light-0: color-mix(in srgb, var(--light), black 50%);
+  --light-1: color-mix(in srgb, var(--light), black 40%);
+  --light-2: color-mix(in srgb, var(--light), black 30%);
+  --light-3: color-mix(in srgb, var(--light), black 20%);
+  --light-4: color-mix(in srgb, var(--light), black 10%);
   --light-5: var(--light);
   --light-6: color-mix(in srgb, var(--light), white 5%);
   --light-7: color-mix(in srgb, var(--light), white 10%);
@@ -97,7 +97,8 @@
   --foreground-9: var(--light-9);
   --foreground-10: var(--light-10);
 
-  --background-offset: color-mix(in srgb, var(--accent), var(--background) 70%);
+  --background-offset: color-mix(in srgb, var(--accent), var(--background) 80%);
+  --hover-background-offset: color-mix(in srgb, var(--accent), var(--background) 70%);
 
   --scrollbar-size: 5px;
 }
@@ -107,10 +108,7 @@
     --accent: var(--secondary);
     --background: var(--light);
     --foreground: var(--dark);
-    --hover-background: var(--light-4);
-    --hover-background-offset: var(--light-3);
-    --link: var(--secondary-1);
-    --hover: var(--secondary-2);
+
     --accent--1: var(--secondary--1);
     --accent-0: var(--secondary-0);
     --accent-1: var(--secondary-1);
@@ -145,6 +143,12 @@
     --foreground-8: var(--dark-8);
     --foreground-9: var(--dark-9);
     --foreground-10: var(--dark-10);
+
+    --hover-background: var(--background-offset);
+    /* --hover-background-offset: var(--tertiary-10); */
+    --link: var(--secondary-1);
+    --hover: var(--secondary-2);
+    --inactive: var(--background--1);
     --scrollbar-track-color: var(--background-4);
     --scrollbar-thumb-color: var(--background-offset);
   }
@@ -156,10 +160,7 @@
     --background: var(--dark);
     --foreground: var(--light);
     --accent: var(--primary);
-    --hover-background: var(--dark-2);
-    --hover-background-offset: var(--dark-3);
-    --link: var(--primary-2);
-    --hover: var(--primary-4);
+
     --accent--1: var(--primary--1);
     --accent-0: var(--primary-0);
     --accent-1: var(--primary-1);
@@ -172,6 +173,12 @@
     --accent-8: var(--primary-8);
     --accent-9: var(--primary-9);
     --accent-10: var(--primary-10);
+
+    --hover-background: var(--background-offset);
+    /* --hover-background-offset: var(--background-7); */
+    --link: var(--primary-2);
+    --hover: var(--primary-4);
+    --inactive: var(--background-8);
     --scrollbar-track-color: var(--background-2);
     --scrollbar-thumb-color: var(--background-offset);
   }

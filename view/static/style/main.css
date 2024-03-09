@@ -435,7 +435,7 @@ main {
     }
 
     & .badge {
-      background-color: var(--hover-background-offset);
+      background-color: var(--hover-background);
       border-radius: 0.5rem;
       font-size: var(--step--2);
       aspect-ratio: 1/1;
@@ -566,7 +566,7 @@ time {
 }
 
 .stack-header {
-  color: var(--background-4);
+  color: var(--inactive);
   margin-block-end: var(--space-2xs);
   padding-inline: var(--space-3xs);
   padding-block-end: var(--space-2xs);
@@ -880,6 +880,9 @@ button:hover,
     background-color: var(--background);
   }
 
+  & .badge {
+    background-color: var(--hover-background) !important;
+  }
 }
 
 .sidebar-item {
@@ -908,15 +911,6 @@ button:hover,
   flex-direction: row;
   flex-wrap: nowrap;
   font-size: var(--step--2) !important;
-}
-
-.icon-link-button:hover,
-.icon-link:hover,
-.icon-link-button-label:hover {
-  background: transparent;
-  color: var(--accent) !important;
-  color: var(--foreground);
-  /* background: var(--accent-2); */
 }
 
 .icon-link-label {
