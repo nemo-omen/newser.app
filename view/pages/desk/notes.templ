@@ -1,0 +1,19 @@
+package desk
+
+import (
+	"newser.app/view/component"
+	"newser.app/view/layout"
+)
+
+templ Notes() {
+	@layout.Base() {
+		@NotesPageContent()
+	}
+}
+
+templ NotesPageContent() {
+	<div class="stack-header flex-row flex-align-center gap-2 text-med">
+		@component.Icon("checkbox_circle_outline")
+	</div>
+	<div class="container stack"></div>
+}

@@ -49,7 +49,7 @@ func Desk() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main><aside class=\"sidebar\" id=\"sidebar-secondary\"><div class=\"sidebar-section\"><h3>Recent Posts</h3></div></aside></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main><aside class=\"sidebar\" id=\"sidebar-secondary\"><div class=\"sidebar-section\"><h3>Recent Posts</h3><p>Blah blah blah. Stuff and things.</p></div></aside></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

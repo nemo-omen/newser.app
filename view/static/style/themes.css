@@ -1,0 +1,178 @@
+:root {
+  --dark: #0b0916;
+  --dark-alpha: 253 44% 6%;
+  --dark--1: color-mix(in srgb, var(--dark), black 50%);
+  --dark-0: color-mix(in srgb, var(--dark), black 5%);
+  --dark-1: var(--dark);
+  --dark-2: color-mix(in srgb, var(--dark), white 5%);
+  --dark-3: color-mix(in srgb, var(--dark), white 10%);
+  --dark-4: color-mix(in srgb, var(--dark), white 15%);
+  --dark-5: color-mix(in srgb, var(--dark), white 20%);
+  --dark-6: color-mix(in srgb, var(--dark), white 25%);
+  --dark-7: color-mix(in srgb, var(--dark), white 30%);
+  --dark-8: color-mix(in srgb, var(--dark), white 35%);
+  --dark-9: color-mix(in srgb, var(--dark), white 40%);
+  --dark-10: color-mix(in srgb, var(--dark), white 45%);
+
+  --light: #fffef5;
+  --light--1: color-mix(in srgb, var(--light), black 15%);
+  --light-0: color-mix(in srgb, var(--light), black 12.5%);
+  --light-1: color-mix(in srgb, var(--light), black 10%);
+  --light-2: color-mix(in srgb, var(--light), black 7.5%);
+  --light-3: color-mix(in srgb, var(--light), black 5%);
+  --light-4: color-mix(in srgb, var(--light), black 2.5%);
+  --light-5: var(--light);
+  --light-6: color-mix(in srgb, var(--light), white 5%);
+  --light-7: color-mix(in srgb, var(--light), white 10%);
+  --light-8: color-mix(in srgb, var(--light), white 15%);
+  --light-9: color-mix(in srgb, var(--light), white 20%);
+  --light-10: color-mix(in srgb, var(--light), white 25%);
+
+
+  --primary: #47b9ff;
+  --primary--1: color-mix(in srgb, var(--primary), black 30%);
+  --primary-0: color-mix(in srgb, var(--primary), black 25%);
+  --primary-1: color-mix(in srgb, var(--primary), black 20%);
+  --primary-2: color-mix(in srgb, var(--primary), black 15%);
+  --primary-3: color-mix(in srgb, var(--primary), black 10%);
+  --primary-4: color-mix(in srgb, var(--primary), black 5%);
+  --primary-5: var(--primary);
+  --primary-6: color-mix(in srgb, var(--primary), white 5%);
+  --primary-7: color-mix(in srgb, var(--primary), white 10%);
+  --primary-8: color-mix(in srgb, var(--primary), white 15%);
+  --primary-9: color-mix(in srgb, var(--primary), white 20%);
+  --primary-10: color-mix(in srgb, var(--primary), white 25%);
+
+  --secondary: #ff5789;
+  --secondary--1: color-mix(in srgb, var(--secondary), black 30%);
+  --secondary-0: color-mix(in srgb, var(--secondary), black 25%);
+  --secondary-1: color-mix(in srgb, var(--secondary), black 20%);
+  --secondary-2: color-mix(in srgb, var(--secondary), black 15%);
+  --secondary-3: color-mix(in srgb, var(--secondary), black 10%);
+  --secondary-4: color-mix(in srgb, var(--secondary), black 5%);
+  --secondary-5: var(--secondary);
+  --secondary-6: color-mix(in srgb, var(--secondary), white 5%);
+  --secondary-7: color-mix(in srgb, var(--secondary), white 10%);
+  --secondary-8: color-mix(in srgb, var(--secondary), white 15%);
+  --secondary-9: color-mix(in srgb, var(--secondary), white 20%);
+  --secondary-10: color-mix(in srgb, var(--secondary), white 25%);
+
+  --tertiary: #ffbc57;
+  --tertiary--1: color-mix(in srgb, var(--tertiary), black 30%);
+  --tertiary-0: color-mix(in srgb, var(--tertiary), black 25%);
+  --tertiary-1: color-mix(in srgb, var(--tertiary), black 20%);
+  --tertiary-2: color-mix(in srgb, var(--tertiary), black 15%);
+  --tertiary-3: color-mix(in srgb, var(--tertiary), black 10%);
+  --tertiary-4: color-mix(in srgb, var(--tertiary), black 5%);
+  --tertiary-5: var(--tertiary);
+  --tertiary-6: color-mix(in srgb, var(--tertiary), white 5%);
+  --tertiary-7: color-mix(in srgb, var(--tertiary), white 10%);
+  --tertiary-8: color-mix(in srgb, var(--tertiary), white 15%);
+  --tertiary-9: color-mix(in srgb, var(--tertiary), white 20%);
+  --tertiary-10: color-mix(in srgb, var(--tertiary), white 25%);
+
+  --background--1: var(--dark--1);
+  --background-0: var(--dark-0);
+  --background-1: var(--dark-1);
+  --background-2: var(--dark-2);
+  --background-3: var(--dark-3);
+  --background-4: var(--dark-4);
+  --background-5: var(--dark-5);
+  --background-6: var(--dark-6);
+  --background-7: var(--dark-7);
+  --background-8: var(--dark-8);
+  --background-9: var(--dark-9);
+  --background-10: var(--dark-10);
+
+  --foreground: var(--light);
+  --foreground--1: var(--light--1);
+  --foreground-1: var(--light-1);
+  --foreground-2: var(--light-2);
+  --foreground-3: var(--light-3);
+  --foreground-4: var(--light-4);
+  --foreground-5: var(--light-5);
+  --foreground-6: var(--light-6);
+  --foreground-7: var(--light-7);
+  --foreground-8: var(--light-8);
+  --foreground-9: var(--light-9);
+  --foreground-10: var(--light-10);
+
+  --background-offset: color-mix(in srgb, var(--accent), var(--background) 70%);
+
+  --scrollbar-size: 5px;
+}
+
+@media (prefers-color-scheme: light) {
+  html:not([data-theme]) {
+    --accent: var(--secondary);
+    --background: var(--light);
+    --foreground: var(--dark);
+    --hover-background: var(--light-4);
+    --hover-background-offset: var(--light-3);
+    --link: var(--secondary-1);
+    --hover: var(--secondary-2);
+    --accent--1: var(--secondary--1);
+    --accent-0: var(--secondary-0);
+    --accent-1: var(--secondary-1);
+    --accent-2: var(--secondary-2);
+    --accent-3: var(--secondary-3);
+    --accent-4: var(--secondary-4);
+    --accent-5: var(--secondary-5);
+    --accent-6: var(--secondary-6);
+    --accent-7: var(--secondary-7);
+    --accent-8: var(--secondary-8);
+    --accent-9: var(--secondary-9);
+    --accent-10: var(--secondary-10);
+    --background--1: var(--light--1);
+    --background-0: var(--light-0);
+    --background-1: var(--light-1);
+    --background-2: var(--light-2);
+    --background-3: var(--light-3);
+    --background-4: var(--light-4);
+    --background-5: var(--light-5);
+    --background-6: var(--light-6);
+    --background-7: var(--light-7);
+    --background-8: var(--light-8);
+    --background-9: var(--light-9);
+    --background-10: var(--light-10);
+    --foreground-1: var(--dark-1);
+    --foreground-2: var(--dark-2);
+    --foreground-3: var(--dark-3);
+    --foreground-4: var(--dark-4);
+    --foreground-5: var(--dark-5);
+    --foreground-6: var(--dark-6);
+    --foreground-7: var(--dark-7);
+    --foreground-8: var(--dark-8);
+    --foreground-9: var(--dark-9);
+    --foreground-10: var(--dark-10);
+    --scrollbar-track-color: var(--background-4);
+    --scrollbar-thumb-color: var(--background-offset);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+
+  html:not([data-theme]) {
+    --background: var(--dark);
+    --foreground: var(--light);
+    --accent: var(--primary);
+    --hover-background: var(--dark-2);
+    --hover-background-offset: var(--dark-3);
+    --link: var(--primary-2);
+    --hover: var(--primary-4);
+    --accent--1: var(--primary--1);
+    --accent-0: var(--primary-0);
+    --accent-1: var(--primary-1);
+    --accent-2: var(--primary-2);
+    --accent-3: var(--primary-3);
+    --accent-4: var(--primary-4);
+    --accent-5: var(--primary-5);
+    --accent-6: var(--primary-6);
+    --accent-7: var(--primary-7);
+    --accent-8: var(--primary-8);
+    --accent-9: var(--primary-9);
+    --accent-10: var(--primary-10);
+    --scrollbar-track-color: var(--background-2);
+    --scrollbar-thumb-color: var(--background-offset);
+  }
+}

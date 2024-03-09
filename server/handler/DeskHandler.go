@@ -169,6 +169,18 @@ func (h *DeskHandler) GetDeskCollection(c echo.Context) error {
 	return render(c, desk.Index(collectionArticles))
 }
 
+func (h DeskHandler) GetDeskNotes(c echo.Context) error {
+	isHx := c.Get("isHx")
+	h.session.SetTitle(c, "Your Notes")
+	if isHx != nil {
+		if isHx.(bool) {
+			c.Response().Header().Add("Hx-Trigger", "updatePageTitle")
+			return render(c, desk.NotesPageContent())
+		}
+	}
+	return render(c, desk.Notes())
+}
+
 func (h *DeskHandler) GetDeskUnreadCount(c echo.Context) error {
 	return render(c, component.MainFeedLinks())
 }
