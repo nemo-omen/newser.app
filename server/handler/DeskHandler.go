@@ -396,3 +396,25 @@ func (h DeskHandler) DeskPostCardCollapsed(c echo.Context) error {
 
 	return c.Redirect(http.StatusSeeOther, ref)
 }
+
+func (h DeskHandler) DeskPostSetView(c echo.Context) error {
+	view := c.Request().FormValue("view")
+	ref := c.Request().Referer()
+	isHx := c.Get("isHx")
+
+	if view != "" {
+		h.session.SetView(c, view)
+		c.Set("view", view)
+	} else {
+		h.session.SetView(c, "card")
+		c.Set("view", "card")
+	}
+
+	if isHx != nil {
+		if isHx.(bool) {
+			c.Response().Header().Add("Hx-Redirect", ref)
+		}
+	}
+
+	return c.Redirect(http.StatusSeeOther, ref)
+}

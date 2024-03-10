@@ -28,9 +28,9 @@ func GetPageTitle(ctx context.Context) string {
 }
 
 func GetUserViewPreference(ctx context.Context) string {
-	viewPref := ctx.Value("viewPreference")
+	viewPref := ctx.Value("view")
 	if viewPref != nil {
 		return viewPref.(string)
 	}
-	return ""
+	return "card"
 }

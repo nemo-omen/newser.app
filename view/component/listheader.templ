@@ -1,26 +1,39 @@
 package component
 
+import (
+	"newser.app/view/util"
+)
+
 templ ListHeader() {
-	<div class="stack-header flex-row flex-align-center gap-2 text-med">
-		<form
-			action="/desk/control/setview"
-			id="view-form"
-			hx-post="/dask/control/setview"
-			hx-target="#articles"
-			hx-swap="innerHTML"
-		>
-			<input type="hidden" name="view" value="list"/>
-			@Icon("list")
-		</form>
-		<form
-			action="/desk/control/setview"
-			id="view-form"
-			hx-post="/dask/control/setview"
-			hx-target="#articles"
-			hx-swap="innerHTML"
-		>
-			<input type="hidden" name="view" value="stack"/>
-			@Icon("stack")
-		</form>
+	<div class="stack-header flex-row flex-align-center flex-end gap-2 text-med">
+		if util.GetUserViewPreference(ctx) != "list" {
+			<form
+				action="/desk/control/setview"
+				method="POST"
+				hx-post="/desk/control/setview"
+				hx-target="closest main"
+				hx-swap="innerHtml"
+				id="view-form"
+			>
+				<input type="hidden" name="view" value="list"/>
+				<button class="icon-link-button" type="submit" style="padding-inline: 0;">
+					@Icon("list")
+				</button>
+			</form>
+		} else {
+			<form
+				action="/desk/control/setview"
+				method="POST"
+				hx-post="/desk/control/setview"
+				hx-target="closest main"
+				hx-swap="innerHtml"
+				id="view-form"
+			>
+				<input type="hidden" name="view" value="card"/>
+				<button type="submit" class="icon-link-button" style="padding-inline: 0;">
+					@Icon("stack")
+				</button>
+			</form>
+		}
 	</div>
 }

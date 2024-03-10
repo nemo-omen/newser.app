@@ -10,6 +10,10 @@ import "context"
 import "io"
 import "bytes"
 
+import (
+	"newser.app/view/util"
+)
+
 func ListHeader() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -23,23 +27,38 @@ func ListHeader() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"stack-header flex-row flex-align-center gap-2 text-med\"><form action=\"/desk/control/setview\" id=\"view-form\" hx-post=\"/dask/control/setview\" hx-target=\"#articles\" hx-swap=\"innerHTML\"><input type=\"hidden\" name=\"view\" value=\"list\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"stack-header flex-row flex-align-center flex-end gap-2 text-med\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = Icon("list").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+		if util.GetUserViewPreference(ctx) != "list" {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/control/setview\" method=\"POST\" hx-post=\"/desk/control/setview\" hx-target=\"closest main\" hx-swap=\"innerHtml\" id=\"view-form\"><input type=\"hidden\" name=\"view\" value=\"list\"> <button class=\"icon-link-button\" type=\"submit\" style=\"padding-inline: 0;\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = Icon("list").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></form>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/control/setview\" method=\"POST\" hx-post=\"/desk/control/setview\" hx-target=\"closest main\" hx-swap=\"innerHtml\" id=\"view-form\"><input type=\"hidden\" name=\"view\" value=\"card\"> <button type=\"submit\" class=\"icon-link-button\" style=\"padding-inline: 0;\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = Icon("stack").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></form>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</form><form action=\"/desk/control/setview\" id=\"view-form\" hx-post=\"/dask/control/setview\" hx-target=\"#articles\" hx-swap=\"innerHTML\"><input type=\"hidden\" name=\"view\" value=\"stack\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = Icon("stack").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</form></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -96,3 +96,17 @@ func (hs *Session) SetTitle(c echo.Context, title string) {
 	hs.manager.Put(c.Request().Context(), "pagetitle", title)
 	hs.manager.Commit(c.Request().Context())
 }
+
+func (hs *Session) SetView(c echo.Context, view string) {
+	hs.manager.Put(c.Request().Context(), "view", view)
+	hs.manager.Commit(c.Request().Context())
+	c.Set("view", view)
+}
+
+func (hs *Session) GetView(c echo.Context) string {
+	view := hs.manager.GetString(c.Request().Context(), "view")
+	if view == "" {
+		return "card"
+	}
+	return view
+}
