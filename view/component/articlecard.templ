@@ -35,16 +35,10 @@ templ ArticleCard(article *model.Article) {
 								<h3>{ article.Title }</h3>
 							</a>
 						</div>
-						@CollapseForm(article)
 					</div>
 				</div>
 			</div>
-			<div
-				class={
-					"card-body flex-column gap-1",
-					templ.KV("collapsed", getIsCollapsed(ctx, article.ID)),
-				}
-			>
+			<div class="card-body flex-column gap-1">
 				<div class="flex-row gap-3">
 					@FormattedDateTime(article.PublishedParsed)
 					<span class="card-feed-link"><a href={ templ.SafeURL(article.FeedSiteUrl) } target="_blank">{ article.FeedTitle }</a></span>
@@ -71,15 +65,17 @@ templ CardMenu(article *model.Article) {
 			</form>
 		</li>
 		<li class="tooltip-container">
-			if article.Read == true {
+			if article.Read {
 				<form
 					action="/desk/collections/unread"
 					method="post"
 					hx-post="/desk/collections/unread"
 					hx-target={ "closest #card-" + util.IdToString(article.ID) }
 					hx-swap="outerHTML"
+					hx-replace-url="false"
 				>
 					<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
+					<input type="hidden" name="responseType" value="card"/>
 					<button class="icon-link-button">
 						@Icon("checkbox_circle_fill")
 						<span role="status" class="icon-link-label">Mark Unread</span>
@@ -92,8 +88,10 @@ templ CardMenu(article *model.Article) {
 					hx-post="/desk/collections/read"
 					hx-target={ "closest #card-" + util.IdToString(article.ID) }
 					hx-swap="outerHTML"
+					hx-replace-url="false"
 				>
 					<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
+					<input type="hidden" name="responseType" value="card"/>
 					<button class="icon-link-button">
 						@Icon("checkbox_circle_outline")
 						<span role="status" class="icon-link-label">Mark Read</span>
@@ -107,7 +105,7 @@ templ CardMenu(article *model.Article) {
 templ CardFooter(article *model.Article) {
 	<div
 		id={ "card-footer-" + util.IdToString(article.ID) }
-		class={ "card-footer", templ.KV("collapsed", getIsCollapsed(ctx, article.ID)) }
+		class="card-footer"
 	>
 		@CardMenu(article)
 	</div>

@@ -41,7 +41,7 @@ func MainSidebar() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside class=\"sidebar\" id=\"sidebar-main\"><nav aria-label=\"Secondary Navigation\"><ul><li>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<aside class=\"sidebar\" id=\"sidebar-main\"><nav aria-label=\"Secondary Navigation\" hx-boost=\"true\" hx-disinherit=\"*\"><ul><li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

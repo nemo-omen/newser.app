@@ -5,7 +5,7 @@ import (
 )
 
 templ ListHeader() {
-	<div class="stack-header flex-row flex-align-center flex-end gap-2 text-med">
+	<div class="stack-header flex-row flex-align-center flex-end gap-2">
 		if util.GetShowUnreadPreference(ctx) {
 			<form
 				action="/desk/control/setreadview"

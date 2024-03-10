@@ -26,8 +26,12 @@ func formatDateTime(date time.Time, length string) string {
 	return date.Format(time.RFC3339)
 }
 
-templ FormattedDateTime(date time.Time) {
-	<time date={ formatDateTime(date, "dt") }>{ formatDateTime(date, "med-month-day") }</time>
+templ FormattedDateTime(date time.Time, args... string) {
+	if args != nil {
+		<time date={ formatDateTime(date, "dt") }>{ formatDateTime(date, args[0]) }</time>
+	} else {
+		<time date={ formatDateTime(date, "dt") }>{ formatDateTime(date, "med-month-day") }</time>
+	}
 }
 
 templ FormattedDateTimeRange(a time.Time, b time.Time) {

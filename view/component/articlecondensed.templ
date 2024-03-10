@@ -7,7 +7,7 @@ import (
 
 templ ArticleCondensed(article *model.Article) {
 	<li class={ "article-list-item", templ.KV("read", article.Read) }>
-		<div class="condensed flex-row gap-1 flex-align-center flex-between">
+		<div class="condensed flex-row gap-1 flex-align-center flex-between" id={ "item-" + util.IdToString(article.ID) }>
 			<div class="flex-row gap-1 flex-align-center card-info">
 				if article.FeedImageUrl != "" {
 					<image class="feed-logo-menu" src={ article.FeedImageUrl } alt={ util.GetImgAlt(article.FeedImageTitle, article.FeedTitle) }></image>
@@ -16,7 +16,53 @@ templ ArticleCondensed(article *model.Article) {
 					<h3>{ article.Title }</h3>
 				</a>
 			</div>
-			@FormattedDateTime(article.PublishedParsed)
+			<div class="flex-row flex-align-center flex-end gap-1">
+				<div class="item-control flex-row flex-align-center gap-1">
+					@Icon("bookmark")
+					@ReadToggleForm(article)
+				</div>
+				@FormattedDateTime(article.PublishedParsed, "short")
+			</div>
 		</div>
 	</li>
+}
+
+templ ReadToggleForm(article *model.Article) {
+	if article.Read {
+		<form
+			action="/desk/collections/unread"
+			method="post"
+			hx-post="/desk/collections/unread"
+			hx-target="closest .article-list-item"
+			hx-swap="outerHTML"
+			hx-replace-url="false"
+		>
+			<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
+			<input type="hidden" name="responseType" value="condensed"/>
+			<button class="icon-link-button">
+				@Icon("checkbox_circle_fill")
+				// <span role="status" class="icon-link-label">Mark Unread</span>
+			</button>
+		</form>
+	} else {
+		<form
+			action="/desk/collections/read"
+			method="post"
+			hx-post="/desk/collections/read"
+			hx-target="closest .article-list-item"
+			hx-swap="outerHTML"
+			hx-replace-url="false"
+		>
+			<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
+			<input type="hidden" name="responseType" value="condensed"/>
+			<button class="icon-link-button">
+				@Icon("checkbox_circle_outline")
+				// <span role="status" class="icon-link-label">Mark Read</span>
+			</button>
+		</form>
+	}
+}
+
+templ BookmarkForm(articleId int64) {
+	<form action="/"></form>
 }

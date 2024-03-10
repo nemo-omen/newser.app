@@ -71,24 +71,30 @@ func (h DeskHandler) GetDeskIndex(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, "/auth/login")
 	}
 
-	articles, getArticlesErr := h.subscriptionService.GetArticles(user.Id)
+	storedArticles, err := h.subscriptionService.GetArticles(user.Id)
 
-	if getArticlesErr != nil {
+	if err != nil {
 		handleErrorFlash(c, h.session, "Error getting your feeds")
-		log.Println("error getting stored subscription articles: ", getArticlesErr)
+		log.Println("error getting stored subscription articles: ", err)
 	}
 
-	if len(articles) < 1 {
+	if len(storedArticles) < 1 {
 		return c.Redirect(http.StatusSeeOther, "/desk/search")
 	}
 
 	setPageTitle(c, h.session, "Latest Articles")
 	if isHxRequest(c) {
+		// connect SSE & send updated articles after initial response
 		c = hxTriggerTitleHeader(c)
-		return render(c, desk.IndexPageContent(articles))
+		return render(c, desk.IndexPageContent(storedArticles))
 	}
+	// not hxRequest?
+	// - Update remote feeds
+	// - Wait for persistence, etc
+	// - merge new articles
+	// - send full list
 
-	return render(c, desk.Index(articles))
+	return render(c, desk.Index(storedArticles))
 }
 
 func (h DeskHandler) GetDeskSearch(c echo.Context) error {
@@ -261,7 +267,6 @@ func (h DeskHandler) PostDeskAddToRead(c echo.Context) error {
 	fmt.Println("referrer: ", ref)
 
 	idStr := c.Request().FormValue("articleid")
-	fmt.Println("idStr", idStr)
 	if idStr == "" {
 		h.session.SetFlash(c, "error", "Could not mark as read")
 		return c.Redirect(http.StatusSeeOther, ref)
@@ -273,15 +278,11 @@ func (h DeskHandler) PostDeskAddToRead(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, ref)
 	}
 
-	fmt.Println("user: ", user.Id)
-	fmt.Println("article: ", aId)
 	err = h.collectionService.AddArticleToRead(aId, user.Id)
 	if err != nil {
 		h.session.SetFlash(c, "error", "Could not mark as read")
 		return c.Redirect(http.StatusSeeOther, ref)
 	}
-
-	h.session.PutCollapsedCard(c, aId)
 
 	if isHx != nil {
 		article, err := h.newsfeedService.GetArticleById(aId)
@@ -289,9 +290,15 @@ func (h DeskHandler) PostDeskAddToRead(c echo.Context) error {
 			return c.Redirect(http.StatusSeeOther, ref)
 		}
 
+		responseType := c.Request().FormValue("responseType")
+
 		if isHx.(bool) {
 			c.Response().Header().Add("HX-Trigger", "updateUnreadCount")
-			return render(c, component.ArticleCard(article))
+			if responseType == "card" {
+				return render(c, component.ArticleCard(article))
+			} else {
+				return render(c, component.ArticleCondensed(article))
+			}
 		}
 	}
 
@@ -337,9 +344,15 @@ func (h DeskHandler) PostDeskAddToUnread(c echo.Context) error {
 			return c.Redirect(http.StatusSeeOther, ref)
 		}
 
+		responseType := c.Request().FormValue("responseType")
+
 		if isHx.(bool) {
-			c.Response().Header().Add("HX-Trigger", "updateUnreadCount")
-			return render(c, component.ArticleCard(article))
+			c.Response().Header().Add("HX-Trigger", "updateUnreadCount, updateArticleList")
+			if responseType == "card" {
+				return render(c, component.ArticleCard(article))
+			} else {
+				return render(c, component.ArticleCondensed(article))
+			}
 		}
 	}
 

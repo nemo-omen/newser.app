@@ -20,7 +20,7 @@ func getFeedLinkCount(nf *model.NewsfeedExtended) string {
 
 templ MainSidebar() {
 	<aside class="sidebar" id="sidebar-main">
-		<nav aria-label="Secondary Navigation">
+		<nav aria-label="Secondary Navigation" hx-boost="true" hx-disinherit="*">
 			<ul>
 				<li>
 					@IconLink(

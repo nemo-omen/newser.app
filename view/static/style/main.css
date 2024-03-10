@@ -480,6 +480,7 @@ time {
   display: flex;
   flex-direction: column;
   gap: var(--space-default);
+  padding-inline: var(--space-2xs);
 }
 
 .container {
@@ -565,9 +566,12 @@ time {
 .stack-header {
   color: var(--inactive);
   margin-block-end: var(--space-2xs);
-  padding-inline: var(--space-3xs);
-  /* padding-block-end: var(--space-2xs); */
+  padding-inline: var(--space-2xs);
   border-bottom: 1px solid var(--foreground-muted);
+
+  & form button {
+    font-size: var(--step-1);
+  }
 }
 
 .card-list {
@@ -634,6 +638,10 @@ time {
     font-size: var(--step--1);
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+
+  & .item-control {
+    z-index: 10;
   }
 }
 
@@ -925,7 +933,7 @@ button:hover,
   align-items: center;
   flex-wrap: wrap;
   gap: 0.25em;
-  font-size: var(--step-1) !important;
+  /* font-size: var(--step-1) !important; */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
