@@ -177,7 +177,20 @@ func (h *DeskHandler) GetDeskCollection(c echo.Context) error {
 }
 
 func (h DeskHandler) GetDeskUpdateArticles(c echo.Context) error {
-	return nil
+	// fmt.Println("YOOOOO")
+	// idStr := c.Param("feedid")
+	// email := h.session.GetUser(c)
+	ref := c.Request().Referer()
+	// user, err := h.authService.GetUserByEmail(email)
+	// if err != nil {
+	// 	handleErrorFlash(c, h.session, "You need to be logged in")
+	// 	return c.Redirect(http.StatusSeeOther, "/auth/login")
+	// }
+	if isHxRequest(c) {
+		c.Response().Header().Add("Hx-Redirect", ref)
+	}
+
+	return c.Redirect(http.StatusSeeOther, ref)
 }
 
 func (h DeskHandler) GetDeskNotes(c echo.Context) error {
@@ -297,7 +310,7 @@ func (h DeskHandler) PostDeskAddToRead(c echo.Context) error {
 		responseType := c.Request().FormValue("responseType")
 
 		if isHx.(bool) {
-			c.Response().Header().Add("HX-Trigger", "updateUnreadCount")
+			c.Response().Header().Add("HX-Trigger", "updateUnreadCount, updateArticleList")
 			if responseType == "card" {
 				return render(c, component.ArticleCard(article))
 			} else {
