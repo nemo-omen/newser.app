@@ -21,7 +21,15 @@ templ Index(articles []*model.Article) {
 
 templ IndexPageContent(articles []*model.Article) {
 	@component.ListHeader()
-	<div class="container stack" id="articles">
+	<div
+		class="container stack"
+		id="articles"
+	>
+		// hx-get="/desk/articles/update"
+		// hx-replace-url="false"
+		// hx-target=".card-list"
+		// hx-trigger="updateArticleList from:body"
+		// hx-ext="debug"
 		@component.ArticleList(articles)
 	</div>
 }

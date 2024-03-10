@@ -176,6 +176,10 @@ func (h *DeskHandler) GetDeskCollection(c echo.Context) error {
 	return render(c, desk.Index(collectionArticles))
 }
 
+func (h DeskHandler) GetDeskUpdateArticles(c echo.Context) error {
+	return nil
+}
+
 func (h DeskHandler) GetDeskNotes(c echo.Context) error {
 	h.session.SetTitle(c, "Your Notes")
 	if isHxRequest(c) {

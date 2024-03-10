@@ -72,7 +72,7 @@ templ CardMenu(article *model.Article) {
 					hx-post="/desk/collections/unread"
 					hx-target={ "closest #card-" + util.IdToString(article.ID) }
 					hx-swap="outerHTML"
-					hx-replace-url="false"
+					hx-push-url="false"
 				>
 					<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
 					<input type="hidden" name="responseType" value="card"/>
@@ -88,7 +88,7 @@ templ CardMenu(article *model.Article) {
 					hx-post="/desk/collections/read"
 					hx-target={ "closest #card-" + util.IdToString(article.ID) }
 					hx-swap="outerHTML"
-					hx-replace-url="false"
+					hx-push-url="false"
 				>
 					<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
 					<input type="hidden" name="responseType" value="card"/>
@@ -118,6 +118,7 @@ templ CollapseForm(article *model.Article) {
 		hx-post="/desk/control/setcollapse"
 		hx-target={ "closest #card-" + util.IdToString(article.ID) }
 		hx-swap="outerHTML"
+		hx-push-url="false"
 		class="card-header-toggle"
 	>
 		<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>

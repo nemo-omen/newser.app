@@ -50,11 +50,11 @@ func MainSidebar() templ.Component {
 			"list",
 			"All Posts",
 			templ.Attributes{
-				"class":          "icon-link",
-				"hx-get":         "/desk/",
-				"hx-target":      "main",
-				"hx-swap":        "innerHTML",
-				"hx-replace-url": "true",
+				"class":       "icon-link",
+				"hx-get":      "/desk/",
+				"hx-target":   "main",
+				"hx-swap":     "innerHTML",
+				"hx-push-url": "true",
 			},
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -69,11 +69,11 @@ func MainSidebar() templ.Component {
 			"inbox",
 			"Unread",
 			templ.Attributes{
-				"class":          "icon-link",
-				"hx-get":         "/desk/collections/unread",
-				"hx-target":      "main",
-				"hx-swap":        "innerHTML",
-				"hx-replace-url": "true",
+				"class":       "icon-link",
+				"hx-get":      "/desk/collections/unread",
+				"hx-target":   "main",
+				"hx-swap":     "innerHTML",
+				"hx-push-url": "true",
 			},
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -88,11 +88,11 @@ func MainSidebar() templ.Component {
 			"bookmark",
 			"Saved",
 			templ.Attributes{
-				"class":          "icon-link",
-				"hx-get":         "/desk/collections/saved",
-				"hx-target":      "main",
-				"hx-swap":        "innerHTML",
-				"hx-replace-url": "true",
+				"class":       "icon-link",
+				"hx-get":      "/desk/collections/saved",
+				"hx-target":   "main",
+				"hx-swap":     "innerHTML",
+				"hx-push-url": "true",
 			},
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -107,11 +107,11 @@ func MainSidebar() templ.Component {
 			"note",
 			"Notes",
 			templ.Attributes{
-				"class":          "icon-link",
-				"hx-get":         "/desk/notes",
-				"hx-target":      "main",
-				"hx-swap":        "innerHTML",
-				"hx-replace-url": "true",
+				"class":       "icon-link",
+				"hx-get":      "/desk/notes",
+				"hx-target":   "main",
+				"hx-swap":     "innerHTML",
+				"hx-push-url": "true",
 			},
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -126,11 +126,11 @@ func MainSidebar() templ.Component {
 			"folder_add",
 			"Add Feed",
 			templ.Attributes{
-				"class":          "icon-link",
-				"hx-get":         "/desk/search",
-				"hx-target":      "main",
-				"hx-swap":        "innerHTML",
-				"hx-replace-url": "true",
+				"class":       "icon-link",
+				"hx-get":      "/desk/search",
+				"hx-target":   "main",
+				"hx-swap":     "innerHTML",
+				"hx-push-url": "true",
 			},
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -141,7 +141,7 @@ func MainSidebar() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if len(getSidebarFeedLinks(ctx)) > 0 {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"nav-vertical\" aria-label=\"Subscriptions\" hx-get=\"/desk/control/unreadcount\" hx-trigger=\"updateUnreadCount from:body\" hx-target=\"#main-feed-links\" hx-swap=\"outerHTML\" hx-replace-url=\"true\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"nav-vertical\" aria-label=\"Subscriptions\" hx-get=\"/desk/control/unreadcount\" hx-trigger=\"updateUnreadCount from:body\" hx-target=\"#main-feed-links\" hx-swap=\"outerHTML\" hx-push-url=\"false\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -200,7 +200,7 @@ func MainFeedLinks() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"main\" hx-swap=\"innerHTML\"><img src=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"main\" hx-swap=\"innerHTML\" hx-push-url=\"true\"><img src=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -215,7 +215,7 @@ func MainFeedLinks() templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(feedlink.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/mainsidebar.templ`, Line: 125, Col: 22}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/mainsidebar.templ`, Line: 126, Col: 22}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -233,7 +233,7 @@ func MainFeedLinks() templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(getFeedLinkCount(feedlink))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/mainsidebar.templ`, Line: 129, Col: 35}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/mainsidebar.templ`, Line: 130, Col: 35}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {

@@ -142,7 +142,7 @@ func ReadToggleForm(article *model.Article) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if article.Read {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/collections/unread\" method=\"post\" hx-post=\"/desk/collections/unread\" hx-target=\"closest .article-list-item\" hx-swap=\"outerHTML\" hx-replace-url=\"false\"><input type=\"hidden\" name=\"articleid\" value=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/collections/unread\" method=\"post\" hx-post=\"/desk/collections/unread\" hx-target=\"closest .article-list-item\" hx-swap=\"outerHTML\" hx-push-url=\"false\"><input type=\"hidden\" name=\"articleid\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -163,7 +163,7 @@ func ReadToggleForm(article *model.Article) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/collections/read\" method=\"post\" hx-post=\"/desk/collections/read\" hx-target=\"closest .article-list-item\" hx-swap=\"outerHTML\" hx-replace-url=\"false\"><input type=\"hidden\" name=\"articleid\" value=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/collections/read\" method=\"post\" hx-post=\"/desk/collections/read\" hx-target=\"closest .article-list-item\" hx-swap=\"outerHTML\" hx-push-url=\"false\"><input type=\"hidden\" name=\"articleid\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

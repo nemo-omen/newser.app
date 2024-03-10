@@ -35,7 +35,7 @@ templ ReadToggleForm(article *model.Article) {
 			hx-post="/desk/collections/unread"
 			hx-target="closest .article-list-item"
 			hx-swap="outerHTML"
-			hx-replace-url="false"
+			hx-push-url="false"
 		>
 			<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
 			<input type="hidden" name="responseType" value="condensed"/>
@@ -51,7 +51,7 @@ templ ReadToggleForm(article *model.Article) {
 			hx-post="/desk/collections/read"
 			hx-target="closest .article-list-item"
 			hx-swap="outerHTML"
-			hx-replace-url="false"
+			hx-push-url="false"
 		>
 			<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
 			<input type="hidden" name="responseType" value="condensed"/>
