@@ -70,7 +70,7 @@ templ PageTitle(title string) {
 	<h1
 		class="header-title"
 		hx-get="/desk/control/pagetitle"
-		hx-trigger="updatePageTitle from:body"
+		hx-trigger="load once, updatePageTitle from:body"
 		hx-target="this"
 		hx-swap="innerHTML"
 	>{ title }</h1>

@@ -31,6 +31,33 @@ func ListHeader() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
+		if util.GetShowUnreadPreference(ctx) {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/control/setreadview\" method=\"POST\" hx-post=\"/desk/control/setreadview\" hx-target=\"closest main\" hx-swap=\"innerHtml\" id=\"view-unread-form\"><input type=\"hidden\" name=\"viewRead\" value=\"false\"> <button class=\"icon-link-button\" type=\"submit\" style=\"padding-inline: 0;\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = Icon("eye-off").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></form>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/control/setreadview\" method=\"POST\" hx-post=\"/desk/control/setreadview\" hx-target=\"closest main\" hx-swap=\"innerHtml\" id=\"view-unread-form\"><input type=\"hidden\" name=\"viewRead\" value=\"true\"> <button class=\"icon-link-button\" type=\"submit\" style=\"padding-inline: 0;\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = Icon("eye").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></form>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
 		if util.GetUserViewPreference(ctx) != "list" {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/control/setview\" method=\"POST\" hx-post=\"/desk/control/setview\" hx-target=\"closest main\" hx-swap=\"innerHtml\" id=\"view-form\"><input type=\"hidden\" name=\"view\" value=\"list\"> <button class=\"icon-link-button\" type=\"submit\" style=\"padding-inline: 0;\">")
 			if templ_7745c5c3_Err != nil {

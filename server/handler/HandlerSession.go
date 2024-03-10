@@ -110,3 +110,12 @@ func (hs *Session) GetView(c echo.Context) string {
 	}
 	return view
 }
+
+func (hs *Session) SetViewRead(c echo.Context, viewRead bool) {
+	if viewRead {
+		hs.manager.Put(c.Request().Context(), "viewRead", true)
+	} else {
+		hs.manager.Put(c.Request().Context(), "viewRead", false)
+	}
+	hs.manager.Commit(c.Request().Context())
+}

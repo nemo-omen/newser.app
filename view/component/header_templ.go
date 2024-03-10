@@ -115,7 +115,7 @@ func PageTitle(title string) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1 class=\"header-title\" hx-get=\"/desk/control/pagetitle\" hx-trigger=\"updatePageTitle from:body\" hx-target=\"this\" hx-swap=\"innerHTML\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<h1 class=\"header-title\" hx-get=\"/desk/control/pagetitle\" hx-trigger=\"load once, updatePageTitle from:body\" hx-target=\"this\" hx-swap=\"innerHTML\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -45,73 +46,80 @@ func NewDeskHandler(
 	}
 }
 
+func isHxRequest(c echo.Context) bool {
+	return c.Get("isHx") != nil && c.Get("isHx").(bool)
+}
+
+func handleErrorFlash(c echo.Context, s Session, err string) {
+	s.SetFlash(c, "error", err)
+}
+
+func setPageTitle(c echo.Context, s Session, title string) {
+	s.SetTitle(c, title)
+}
+
+func hxTriggerTitleHeader(c echo.Context) echo.Context {
+	c.Response().Header().Add("Hx-Trigger", "updatePageTitle")
+	return c
+}
+
 func (h DeskHandler) GetDeskIndex(c echo.Context) error {
-	eml := h.session.GetUser(c)
-	user, err := h.authService.GetUserByEmail(eml)
-	isHx := c.Get("isHx")
-	// ref := c.Request().Referer()
+	userEmail := h.session.GetUser(c)
+	user, err := h.authService.GetUserByEmail(userEmail)
 
 	if err != nil {
 		return c.Redirect(http.StatusSeeOther, "/auth/login")
 	}
-	storedSubscriptionArticles, err := h.subscriptionService.GetArticles(user.Id)
 
-	if err != nil {
-		h.session.SetFlash(c, "error", "Error getting your feeds")
-		fmt.Println("error getting stored subscription articles: ", err.Error())
+	articles, getArticlesErr := h.subscriptionService.GetArticles(user.Id)
+
+	if getArticlesErr != nil {
+		handleErrorFlash(c, h.session, "Error getting your feeds")
+		log.Println("error getting stored subscription articles: ", getArticlesErr)
 	}
 
-	if len(storedSubscriptionArticles) < 1 {
+	if len(articles) < 1 {
 		return c.Redirect(http.StatusSeeOther, "/desk/search")
 	}
 
-	// c.Set("title", "Latest Articles")
-	fmt.Println("setting page title: ", "Latest Articles")
-	c.Response().Header().Add("Hx-Trigger", "updatePageTitle")
-	if isHx != nil {
-		if isHx.(bool) {
-			h.session.SetTitle(c, "Latest Articles")
-			return render(c, desk.IndexPageContent(storedSubscriptionArticles))
-		}
+	setPageTitle(c, h.session, "Latest Articles")
+	if isHxRequest(c) {
+		c = hxTriggerTitleHeader(c)
+		return render(c, desk.IndexPageContent(articles))
 	}
-	return render(c, desk.Index(storedSubscriptionArticles))
+
+	return render(c, desk.Index(articles))
 }
 
 func (h DeskHandler) GetDeskSearch(c echo.Context) error {
-	isHx := c.Get("isHx")
-	// c.Set("title", "Add a Newsfeed")
-	h.session.SetTitle(c, "Add a Newsfeed")
-	if isHx != nil {
-		if isHx.(bool) {
-			c.Response().Header().Add("Hx-Trigger", "updatePageTitle")
-			return render(c, desk.SearchPageContent([]*gofeed.Feed{}))
-		}
+	setPageTitle(c, h.session, "Add a Newsfeed")
+	if isHxRequest(c) {
+		c = hxTriggerTitleHeader(c)
+		return render(c, desk.SearchPageContent([]*gofeed.Feed{}))
 	}
+
 	return render(c, desk.Search([]*gofeed.Feed{}))
 }
 
 func (h DeskHandler) GetDeskArticle(c echo.Context) error {
 	stringId := c.Param("articleid")
 	id, err := strconv.ParseInt(stringId, 10, 64)
-	isHx := c.Get("isHx")
 
 	if err != nil {
-		h.session.SetFlash(c, "error", "Error retrieving article.")
+		handleErrorFlash(c, h.session, "Error retrieving article.")
 		return render(c, desk.Article((&model.Article{Title: "Oops!"})))
 	}
 
 	article, err := h.newsfeedService.GetArticleById(id)
 	if err != nil {
-		h.session.SetFlash(c, "error", "Error retrieving article.")
+		handleErrorFlash(c, h.session, "Error retrieving article.")
 		return render(c, desk.Article((&model.Article{Title: "Oops!"})))
 	}
-	// c.Set("title", article.FeedTitle)
-	h.session.SetTitle(c, article.FeedTitle)
-	if isHx != nil {
-		if isHx.(bool) {
-			c.Response().Header().Add("Hx-Trigger", "updatePageTitle")
-			return render(c, desk.ArticlePageContent(article))
-		}
+
+	setPageTitle(c, h.session, article.FeedTitle)
+	if isHxRequest(c) {
+		c = hxTriggerTitleHeader(c)
+		return render(c, desk.ArticlePageContent(article))
 	}
 	return render(c, desk.Article(article))
 }
@@ -119,25 +127,22 @@ func (h DeskHandler) GetDeskArticle(c echo.Context) error {
 func (h DeskHandler) GetDeskNewsfeed(c echo.Context) error {
 	idStr := c.Param("feedid")
 	id, err := strconv.ParseInt(idStr, 10, 64)
-	isHx := c.Get("isHx")
 
 	if err != nil {
-		h.session.SetFlash(c, "error", "Error getting newsfeed")
+		handleErrorFlash(c, h.session, "Error getting newsfeed")
 		return render(c, desk.Newsfeed(&model.Newsfeed{}))
 	}
 
 	feed, err := h.newsfeedService.GetNewsfeed(id)
 	if err != nil {
-		h.session.SetFlash(c, "error", "Error getting newsfeed.")
+		handleErrorFlash(c, h.session, "Error getting newsfeed.")
 		return render(c, desk.Newsfeed(&model.Newsfeed{}))
 	}
-	// c.Set("title", feed.Title)
-	h.session.SetTitle(c, feed.Title)
-	if isHx != nil {
-		if isHx.(bool) {
-			c.Response().Header().Add("Hx-Trigger", "updatePageTitle")
-			return render(c, desk.NewsfeedPageContent(feed))
-		}
+
+	setPageTitle(c, h.session, feed.Title)
+	if isHxRequest(c) {
+		c = hxTriggerTitleHeader(c)
+		return render(c, desk.NewsfeedPageContent(feed))
 	}
 	return render(c, desk.Newsfeed(feed))
 }
@@ -145,7 +150,6 @@ func (h DeskHandler) GetDeskNewsfeed(c echo.Context) error {
 func (h *DeskHandler) GetDeskCollection(c echo.Context) error {
 	collectionName := c.Param("collectionname")
 	email := h.session.GetUser(c)
-	isHx := c.Get("isHx")
 	user, err := h.authService.GetUserByEmail(email)
 	if err != nil {
 		h.session.SetFlash(c, "error", "You need to be logged in")
@@ -154,29 +158,23 @@ func (h *DeskHandler) GetDeskCollection(c echo.Context) error {
 
 	collectionArticles, err := h.collectionService.GetArticlesByCollectionByName(collectionName, user.Id)
 	upper := cases.Title(language.AmericanEnglish).String(collectionName)
-	h.session.SetTitle(c, upper)
-	// c.Set("title", upper)
+	setPageTitle(c, h.session, upper)
 	if err != nil {
-		h.session.SetFlash(c, "error", fmt.Sprintf("Error getting %s articles", upper))
+		handleErrorFlash(c, h.session, fmt.Sprintf("Error getting %s articles", upper))
 	}
 
-	if isHx != nil {
-		if isHx.(bool) {
-			c.Response().Header().Add("Hx-Trigger", "updatePageTitle")
-			return render(c, desk.IndexPageContent(collectionArticles))
-		}
+	if isHxRequest(c) {
+		c = hxTriggerTitleHeader(c)
+		return render(c, desk.IndexPageContent(collectionArticles))
 	}
 	return render(c, desk.Index(collectionArticles))
 }
 
 func (h DeskHandler) GetDeskNotes(c echo.Context) error {
-	isHx := c.Get("isHx")
 	h.session.SetTitle(c, "Your Notes")
-	if isHx != nil {
-		if isHx.(bool) {
-			c.Response().Header().Add("Hx-Trigger", "updatePageTitle")
-			return render(c, desk.NotesPageContent())
-		}
+	if isHxRequest(c) {
+		c = hxTriggerTitleHeader(c)
+		return render(c, desk.NotesPageContent())
 	}
 	return render(c, desk.Notes())
 }
@@ -187,11 +185,9 @@ func (h *DeskHandler) GetDeskUnreadCount(c echo.Context) error {
 
 func (h *DeskHandler) GetDeskPageTitle(c echo.Context) error {
 	title := c.Get("title")
-	fmt.Println("titlectx: ", title)
 	if title == nil {
 		return c.String(http.StatusOK, "")
 	}
-	fmt.Println("title: ", title.(string))
 	return c.String(http.StatusOK, title.(string))
 }
 
@@ -225,21 +221,9 @@ func (h DeskHandler) PostDeskSearch(c echo.Context) error {
 	feedsResult, err := h.api.GetFeedsConcurrent(searchLinks)
 	if err != nil {
 		h.session.SetFlash(c, "searchError", ErrorFeedNotFound(searchInput))
-		// TODO: find a way to send search result partials
-		// and separate flash message partials
-		// maybe SSE? with a flash element connected?
-		// if isHx {
-		// 	return render(c, desk.Search(feeds))
-		// }
 		return render(c, desk.Search(feeds))
 	}
 	feeds = append(feeds, feedsResult...)
-	// fmt.Println(feeds)
-
-	// TODO: isHx => partial
-	// if isHx {
-	// 	return render(c, component.FeedSearchResult(feeds))
-	// }
 	return render(c, desk.Search(feeds))
 }
 
@@ -259,8 +243,7 @@ func (h DeskHandler) PostDeskSubscribe(c echo.Context) error {
 	if err != nil {
 		h.session.SetFlash(c, "error", fmt.Sprintf("Could not subscribe to %v", feed.Title))
 	}
-	// fmt.Println(sub)
-	// return render(c, desk.Index())
+
 	h.session.SetFlash(c, "success", fmt.Sprintf("success subscribing to %v", newsfeed.Title))
 	return c.Redirect(http.StatusSeeOther, "/desk/feeds/"+strconv.FormatInt(newsfeed.ID, 10))
 }
@@ -408,6 +391,26 @@ func (h DeskHandler) DeskPostSetView(c echo.Context) error {
 	} else {
 		h.session.SetView(c, "card")
 		c.Set("view", "card")
+	}
+
+	if isHx != nil {
+		if isHx.(bool) {
+			c.Response().Header().Add("Hx-Redirect", ref)
+		}
+	}
+
+	return c.Redirect(http.StatusSeeOther, ref)
+}
+
+func (h DeskHandler) PostDeskSetReadView(c echo.Context) error {
+	readView := c.Request().FormValue("viewRead")
+	ref := c.Request().Referer()
+	isHx := c.Get("isHx")
+
+	if readView == "true" {
+		h.session.SetViewRead(c, true)
+	} else {
+		h.session.SetViewRead(c, false)
 	}
 
 	if isHx != nil {

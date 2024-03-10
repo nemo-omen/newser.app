@@ -34,3 +34,11 @@ func GetUserViewPreference(ctx context.Context) string {
 	}
 	return "card"
 }
+
+func GetShowUnreadPreference(ctx context.Context) bool {
+	unreadPref := ctx.Value("viewRead")
+	if unreadPref != nil {
+		return unreadPref.(bool)
+	}
+	return false
+}

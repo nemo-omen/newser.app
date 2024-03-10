@@ -12,8 +12,20 @@ import "bytes"
 
 import (
 	"newser.app/model"
+	sharedUtil "newser.app/shared/util"
 	"newser.app/view/util"
 )
+
+func filterUnread(ctx context.Context, articles []*model.Article) []*model.Article {
+	viewRead := util.GetShowUnreadPreference(ctx)
+	if !viewRead {
+		filtered := sharedUtil.Filter(articles, func(a *model.Article) bool {
+			return !a.Read
+		})
+		return filtered
+	}
+	return articles
+}
 
 func ArticleList(articles []*model.Article) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
@@ -33,7 +45,7 @@ func ArticleList(articles []*model.Article) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for _, article := range articles {
+			for _, article := range filterUnread(ctx, articles) {
 				if util.GetUserViewPreference(ctx) == "card" {
 					templ_7745c5c3_Err = ArticleCard(article).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {

@@ -6,6 +6,35 @@ import (
 
 templ ListHeader() {
 	<div class="stack-header flex-row flex-align-center flex-end gap-2 text-med">
+		if util.GetShowUnreadPreference(ctx) {
+			<form
+				action="/desk/control/setreadview"
+				method="POST"
+				hx-post="/desk/control/setreadview"
+				hx-target="closest main"
+				hx-swap="innerHtml"
+				id="view-unread-form"
+			>
+				<input type="hidden" name="viewRead" value="false"/>
+				<button class="icon-link-button" type="submit" style="padding-inline: 0;">
+					@Icon("eye-off")
+				</button>
+			</form>
+		} else {
+			<form
+				action="/desk/control/setreadview"
+				method="POST"
+				hx-post="/desk/control/setreadview"
+				hx-target="closest main"
+				hx-swap="innerHtml"
+				id="view-unread-form"
+			>
+				<input type="hidden" name="viewRead" value="true"/>
+				<button class="icon-link-button" type="submit" style="padding-inline: 0;">
+					@Icon("eye")
+				</button>
+			</form>
+		}
 		if util.GetUserViewPreference(ctx) != "list" {
 			<form
 				action="/desk/control/setview"
