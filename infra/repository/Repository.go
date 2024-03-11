@@ -56,8 +56,8 @@ type CollectionRepository interface {
 	All(userId int64) ([]*model.Collection, error)
 	Update(*model.Collection) (*model.Collection, error)
 	Delete(id int64) error
-	FindBySlug(slug string) (*model.Collection, error)
-	FindByTitle(title string) (*model.Collection, error)
+	FindBySlug(slug string, userId int64) (*model.Collection, error)
+	FindByTitle(title string, userId int64) (*model.Collection, error)
 	InsertCollectionItem(itemId int64, collectionId int64) error
 	DeleteCollectionItem(itemId, collectionId int64) error
 	InsertManyCollectionItems(aa []*model.Article, cId int64) error

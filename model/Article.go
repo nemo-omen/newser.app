@@ -28,6 +28,7 @@ type Article struct {
 	Slug            string    `json:"-" db:"slug"`
 	FeedId          int64     `json:"-" db:"feed_id"`
 	Read            bool      `json:"-" db:"read"`
+	Saved           bool      `json:"-" db:"-"`
 	FeedTitle       string    `db:"feed_title" json:"-"`
 	FeedUrl         string    `db:"feed_url" json:"-"`
 	FeedSiteUrl     string    `db:"feed_site_url" json:"-"`

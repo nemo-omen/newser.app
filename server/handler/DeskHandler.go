@@ -324,15 +324,14 @@ func (h DeskHandler) PostDeskAddToRead(c echo.Context) error {
 
 func (h DeskHandler) PostDeskAddToUnread(c echo.Context) error {
 	email := h.session.GetUser(c)
-	user, err := h.authService.GetUserByEmail(email)
 	isHx := c.Get("isHx")
+	user, err := h.authService.GetUserByEmail(email)
 	if err != nil {
 		h.session.SetFlash(c, "error", "You need to log in.")
 		return c.Redirect(http.StatusSeeOther, "/auth/login")
 	}
 
 	ref := c.Request().Referer()
-	fmt.Println("referrer: ", ref)
 
 	idStr := c.Request().FormValue("articleid")
 	fmt.Println("idStr", idStr)
@@ -376,7 +375,32 @@ func (h DeskHandler) PostDeskAddToUnread(c echo.Context) error {
 	return c.Redirect(http.StatusSeeOther, ref)
 }
 
-func (h DeskHandler) DeskPostCardCollapsed(c echo.Context) error {
+// func (h *DeskHandler) PostDeskSaveArticle(c echo.Context) error {
+// 	email := h.session.GetUser(c)
+// 	user, err := h.authService.GetUserByEmail(email)
+// 	if err != nil {
+// 		h.session.SetFlash(c, "error", "You need to log in.")
+// 		return c.Redirect(http.StatusSeeOther, "/auth/login")
+// 	}
+
+// 	ref := c.Request().Referer()
+
+// 	idStr := c.Request().FormValue("articleid")
+// 	fmt.Println("idStr", idStr)
+// 	if idStr == "" {
+// 		h.session.SetFlash(c, "error", "Could not mark as unread")
+// 		return c.Redirect(http.StatusSeeOther, ref)
+// 	}
+
+// 	aId, err := strconv.ParseInt(idStr, 10, 64)
+// 	if err != nil {
+// 		h.session.SetFlash(c, "error", "Could not mark as unread")
+// 		return c.Redirect(http.StatusSeeOther, ref)
+// 	}
+
+// }
+
+func (h DeskHandler) PostDeskCardCollapsed(c echo.Context) error {
 	ref := c.Request().Referer()
 	idInput := c.Request().FormValue("articleid")
 	collapseInput := c.Request().FormValue("shouldcollapse")
@@ -410,7 +434,7 @@ func (h DeskHandler) DeskPostCardCollapsed(c echo.Context) error {
 	return c.Redirect(http.StatusSeeOther, ref)
 }
 
-func (h DeskHandler) DeskPostSetView(c echo.Context) error {
+func (h DeskHandler) PostDeskSetView(c echo.Context) error {
 	view := c.Request().FormValue("view")
 	ref := c.Request().Referer()
 	isHx := c.Get("isHx")

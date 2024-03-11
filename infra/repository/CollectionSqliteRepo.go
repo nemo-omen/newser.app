@@ -99,17 +99,22 @@ func (r *CollectionSqliteRepo) Delete(id int64) error {
 	return nil
 }
 
-func (r *CollectionSqliteRepo) FindByTitle(title string) (*model.Collection, error) {
+func (r *CollectionSqliteRepo) FindByTitle(title string, userId int64) (*model.Collection, error) {
 	coll := &model.Collection{}
-	err := r.db.Get(coll, "SELECT * FROM collections WHERE title=?", title)
+	err := r.db.Get(coll, "SELECT * FROM collections WHERE title=? AND user_id", title, userId)
 	if err != nil {
 		return nil, err
 	}
 	return coll, nil
 }
 
-func (r *CollectionSqliteRepo) FindBySlug(slug string) (*model.Collection, error) {
-	return nil, nil
+func (r *CollectionSqliteRepo) FindBySlug(slug string, userId int64) (*model.Collection, error) {
+	coll := &model.Collection{}
+	err := r.db.Get(coll, "SELECT * FROM collections WHERE slug=? AND user_id", slug, userId)
+	if err != nil {
+		return nil, err
+	}
+	return coll, nil
 }
 
 func (r *CollectionSqliteRepo) InsertCollectionItem(articleId int64, collectionId int64) error {

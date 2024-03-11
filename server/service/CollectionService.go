@@ -25,21 +25,27 @@ func (s *CollectionService) GetArticlesByCollectionByName(cName string, userId i
 	return collectionArticles, nil
 }
 
-func (s *CollectionService) AddArticleToCollectionByName(collectionName string, articleId int64) error {
-	collection, err := s.collectionRepo.FindByTitle(collectionName)
+func (s *CollectionService) AddArticleToCollectionByName(collectionName string, articleId, userId int64) (*model.Article, error) {
+	collection, err := s.collectionRepo.FindByTitle(collectionName, userId)
 	if err != nil {
-		return err
+		return nil, err
+	}
+
+	article, err := s.articleRepo.Get(articleId)
+	if err != nil {
+		return nil, err
 	}
 
 	err = s.collectionRepo.InsertCollectionItem(articleId, collection.Id)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	return article, nil
 }
 
-func (s *CollectionService) RemoveArticleFromCollectionByName(collectionName string, articleId int64) error {
-	collection, err := s.collectionRepo.FindByTitle(collectionName)
+func (s *CollectionService) RemoveArticleFromCollectionByName(collectionName string, articleId, userId int64) error {
+	collection, err := s.collectionRepo.FindByTitle(collectionName, userId)
 	if err != nil {
 		return err
 	}
@@ -48,6 +54,28 @@ func (s *CollectionService) RemoveArticleFromCollectionByName(collectionName str
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (s *CollectionService) AddArticleToSaved(articleId, userId int64) (*model.Article, error) {
+	article, err := s.AddArticleToCollectionByName("saved", articleId, userId)
+	if err != nil {
+		return nil, err
+	}
+	article.Saved = true
+	return article, nil
+}
+
+func (s *CollectionService) RemoveArticleFromSaved(articleId, userId int64) error {
+	article, err := s.articleRepo.Get(articleId)
+	if err != nil {
+		return err
+	}
+	err = s.RemoveArticleFromCollectionByName("saved", articleId, userId)
+	if err != nil {
+		return err
+	}
+	article.Saved = true
 	return nil
 }
 
@@ -61,22 +89,6 @@ func (s *CollectionService) AddArticleToRead(articleId, userId int64) error {
 
 func (s *CollectionService) RemoveArticleFromRead(articleId, userId int64) error {
 	err := s.collectionRepo.MarkArticleUnread(articleId, userId)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *CollectionService) AddArticleToSaved(articleId int64) error {
-	err := s.AddArticleToCollectionByName("saved", articleId)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s *CollectionService) RemoveArticleFromSaved(articleId int64) error {
-	err := s.RemoveArticleFromCollectionByName("saved", articleId)
 	if err != nil {
 		return err
 	}

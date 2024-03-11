@@ -143,11 +143,11 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 	deskGroup.GET("/notes", deskHandler.GetDeskNotes)
 	deskGroup.GET("/control/unreadcount", deskHandler.GetDeskUnreadCount)
 	deskGroup.GET("/control/pagetitle", deskHandler.GetDeskPageTitle)
-	deskGroup.POST("/control/setview", deskHandler.DeskPostSetView)
+	deskGroup.POST("/control/setview", deskHandler.PostDeskSetView)
 	deskGroup.POST("/control/setreadview", deskHandler.PostDeskSetReadView)
 	deskGroup.POST("/collections/read", deskHandler.PostDeskAddToRead)
 	deskGroup.POST("/collections/unread", deskHandler.PostDeskAddToUnread)
-	deskGroup.POST("/control/setcollapse", deskHandler.DeskPostCardCollapsed)
+	deskGroup.POST("/control/setcollapse", deskHandler.PostDeskCardCollapsed)
 }
 
 func openDB(dsn string) (*sqlx.DB, error) {
