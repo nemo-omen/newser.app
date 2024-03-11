@@ -689,12 +689,16 @@ time {
 } */
 
 .card-footer {
-  /* padding-block-start: 1rem; */
   z-index: 2;
 }
 
 .read {
   opacity: 0.6;
+  transition: opacity var(--transition);
+}
+
+.read:hover {
+  opacity: 1;
 }
 
 .tooltip-container {

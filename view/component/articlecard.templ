@@ -55,49 +55,10 @@ templ ArticleCard(article *model.Article) {
 templ CardMenu(article *model.Article) {
 	<ul class="card-menu flex-menu">
 		<li class="tooltip-container">
-			<form action="/desk/collections/collections/saved/" method="post">
-				<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
-				<input type="hidden" name="collectionName" value="Some New Collection"/>
-				<button class="icon-link-button" type="submit" aria-label="Add to Collection">
-					@Icon("folder_add")
-					<span role="status" class="icon-link-label">Save</span>
-				</button>
-			</form>
+			@SaveForm(article, true)
 		</li>
 		<li class="tooltip-container">
-			if article.Read {
-				<form
-					action="/desk/collections/unread"
-					method="post"
-					hx-post="/desk/collections/unread"
-					hx-target={ "closest #card-" + util.IdToString(article.ID) }
-					hx-swap="outerHTML"
-					hx-push-url="false"
-				>
-					<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
-					<input type="hidden" name="responseType" value="card"/>
-					<button class="icon-link-button">
-						@Icon("checkbox_circle_fill")
-						<span role="status" class="icon-link-label">Mark Unread</span>
-					</button>
-				</form>
-			} else {
-				<form
-					action="/desk/collections/read"
-					method="post"
-					hx-post="/desk/collections/read"
-					hx-target={ "closest #card-" + util.IdToString(article.ID) }
-					hx-swap="outerHTML"
-					hx-push-url="false"
-				>
-					<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
-					<input type="hidden" name="responseType" value="card"/>
-					<button class="icon-link-button">
-						@Icon("checkbox_circle_outline")
-						<span role="status" class="icon-link-label">Mark Read</span>
-					</button>
-				</form>
-			}
+			@UnreadForm(article, true)
 		</li>
 	</ul>
 }
