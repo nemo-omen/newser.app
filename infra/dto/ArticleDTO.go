@@ -6,6 +6,14 @@ import (
 	"newser.app/model"
 )
 
+// DTO -> Client
+// DTO should have more information than is generally
+// persisted to the database because it should carry
+// all the information needed to render the view.
+// This may include information retrieved from tables
+// other than the primary table for the model the DTO
+// represents/coincides with.
+
 type ArticleDTO struct {
 	ID              int64         `json:"id"`
 	Title           string        `json:"title"`
@@ -30,6 +38,27 @@ type ArticleDTO struct {
 	FeedImageTitle  string        `json:"feed_image_title"`
 }
 
+// DAO -> Database
+// DAO should have the same fields as the database table
+// it represents. It should be used to interact with the
+// database and should not be exposed to the client.
+// If we were working with an ORM, this would be the
+// struct that would be mapped to the database table.
+type ArticleDAO struct {
+	ID              int64     `db:"id"`
+	Title           string    `db:"title"`
+	ArticleLink     string    `db:"article_link"`
+	AuthorId        int64     `db:"author_id"`
+	Description     string    `db:"description"`
+	Content         string    `db:"content"`
+	Published       string    `db:"published"`
+	PublishedParsed time.Time `db:"published_parsed"`
+	Updated         string    `db:"updated"`
+	UpdatedParsed   time.Time `db:"updated_parsed"`
+	GUID            string    `db:"guid"`
+	Slug            string    `db:"slug"`
+}
+
 func ArticleDTOFromDomain(a *model.Article) *ArticleDTO {
 	return &ArticleDTO{
 		ID:              a.ID,
@@ -48,6 +77,23 @@ func ArticleDTOFromDomain(a *model.Article) *ArticleDTO {
 	}
 }
 
+func ArticleDAOFromDomain(a *model.Article) *ArticleDAO {
+	return &ArticleDAO{
+		ID:              a.ID,
+		Title:           a.Title,
+		ArticleLink:     a.ArticleLink,
+		AuthorId:        a.Person.ID,
+		Description:     a.Description,
+		Content:         a.Content,
+		Published:       a.Published,
+		PublishedParsed: a.PublishedParsed,
+		Updated:         a.Updated,
+		UpdatedParsed:   a.UpdatedParsed,
+		GUID:            a.GUID,
+		Slug:            a.Slug,
+	}
+}
+
 func (d ArticleDTO) ToDomain() *model.Article {
 	return &model.Article{
 		ID:          d.ID,
@@ -61,5 +107,22 @@ func (d ArticleDTO) ToDomain() *model.Article {
 		GUID:        d.GUID,
 		Slug:        d.Slug,
 		FeedId:      d.FeedId,
+	}
+}
+
+func (d ArticleDAO) ToDomain() *model.Article {
+	return &model.Article{
+		ID:              d.ID,
+		Title:           d.Title,
+		ArticleLink:     d.ArticleLink,
+		Person:          model.Person{ID: d.AuthorId},
+		Description:     d.Description,
+		Content:         d.Content,
+		Published:       d.Published,
+		PublishedParsed: d.PublishedParsed,
+		Updated:         d.Updated,
+		UpdatedParsed:   d.UpdatedParsed,
+		GUID:            d.GUID,
+		Slug:            d.Slug,
 	}
 }
