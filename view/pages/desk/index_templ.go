@@ -11,7 +11,7 @@ import "io"
 import "bytes"
 
 import (
-	"newser.app/model"
+	"newser.app/infra/dto"
 	"newser.app/view/component"
 	"newser.app/view/layout"
 )
@@ -23,7 +23,7 @@ import (
 // When we do get an HTMX request,
 // we can just return the IndexPageContent
 // without the layout wrappers
-func Index(articles []*model.Article) templ.Component {
+func Index(articles []*dto.ArticleDTO) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -62,7 +62,7 @@ func Index(articles []*model.Article) templ.Component {
 	})
 }
 
-func IndexPageContent(articles []*model.Article) templ.Component {
+func IndexPageContent(articles []*dto.ArticleDTO) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {

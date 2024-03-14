@@ -106,7 +106,7 @@ func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManage
 	authService = service.NewAuthService(userRepo, collectionRepo)
 	api = service.NewAPI(&http.Client{})
 	subscriptionService = service.NewSubscriptionService(subscriptionRepo, newsfeedRepo, articleRepo, collectionRepo)
-	newsfeedService = service.NewNewsfeedService(articleRepo, imageRepo, personRepo, newsfeedRepo)
+	newsfeedService = service.NewNewsfeedService(articleRepo, imageRepo, personRepo, newsfeedRepo, collectionRepo)
 	collectionService = service.NewCollectionService(collectionRepo, articleRepo)
 
 	homeHandler := handler.NewHomeHandler(sessionManager)

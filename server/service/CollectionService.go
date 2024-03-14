@@ -1,8 +1,8 @@
 package service
 
 import (
+	"newser.app/infra/dto"
 	"newser.app/infra/repository"
-	"newser.app/model"
 )
 
 type CollectionService struct {
@@ -17,15 +17,20 @@ func NewCollectionService(cr repository.CollectionRepository, ar repository.Arti
 	}
 }
 
-func (s *CollectionService) GetArticlesByCollectionByName(cName string, userId int64) ([]*model.Article, error) {
+func (s *CollectionService) GetArticlesByCollectionByName(cName string, userId int64) ([]*dto.ArticleDTO, error) {
 	collectionArticles, err := s.collectionRepo.GetArticlesByCollectionName(cName, userId)
 	if err != nil {
 		return nil, err
 	}
-	return collectionArticles, nil
+
+	dtos := make([]*dto.ArticleDTO, len(collectionArticles))
+	for i, a := range collectionArticles {
+		dtos[i] = dto.ArticleDTOFromDomain(a)
+	}
+	return dtos, nil
 }
 
-func (s *CollectionService) AddArticleToCollectionByName(collectionName string, articleId, userId int64) (*model.Article, error) {
+func (s *CollectionService) AddArticleToCollectionByName(collectionName string, articleId, userId int64) (*dto.ArticleDTO, error) {
 	collection, err := s.collectionRepo.FindByTitle(collectionName, userId)
 	if err != nil {
 		return nil, err
@@ -41,7 +46,9 @@ func (s *CollectionService) AddArticleToCollectionByName(collectionName string, 
 		return nil, err
 	}
 
-	return article, nil
+	dto := dto.ArticleDTOFromDomain(article)
+
+	return dto, nil
 }
 
 func (s *CollectionService) RemoveArticleFromCollectionByName(collectionName string, articleId, userId int64) error {
@@ -57,13 +64,13 @@ func (s *CollectionService) RemoveArticleFromCollectionByName(collectionName str
 	return nil
 }
 
-func (s *CollectionService) AddArticleToSaved(articleId, userId int64) (*model.Article, error) {
-	article, err := s.AddArticleToCollectionByName("saved", articleId, userId)
+func (s *CollectionService) AddArticleToSaved(articleId, userId int64) (*dto.ArticleDTO, error) {
+	articleDTO, err := s.AddArticleToCollectionByName("saved", articleId, userId)
 	if err != nil {
 		return nil, err
 	}
-	article.Saved = true
-	return article, nil
+	articleDTO.Saved = true
+	return articleDTO, nil
 }
 
 func (s *CollectionService) RemoveArticleFromSaved(articleId, userId int64) error {
@@ -75,7 +82,9 @@ func (s *CollectionService) RemoveArticleFromSaved(articleId, userId int64) erro
 	if err != nil {
 		return err
 	}
-	article.Saved = true
+
+	dto := dto.ArticleDTOFromDomain(article)
+	dto.Saved = true
 	return nil
 }
 

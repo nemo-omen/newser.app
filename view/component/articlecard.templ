@@ -1,7 +1,7 @@
 package component
 
 import (
-	"newser.app/model"
+	"newser.app/infra/dto"
 	"newser.app/view/util"
 	"slices"
 )
@@ -21,7 +21,7 @@ func getCollapsedString(ctx context.Context, articleId int64) string {
 	return "true"
 }
 
-templ ArticleCard(article *model.Article) {
+templ ArticleCard(article *dto.ArticleDTO) {
 	<li class={ "article-list-item", templ.KV("read", article.Read) } id={ "card-" + util.IdToString(article.ID) }>
 		<article class="card">
 			<div class="card-header flex-column">
@@ -52,7 +52,7 @@ templ ArticleCard(article *model.Article) {
 	</li>
 }
 
-templ CardMenu(article *model.Article) {
+templ CardMenu(article *dto.ArticleDTO) {
 	<ul class="card-menu flex-menu">
 		<li class="tooltip-container">
 			@SaveForm(article, true)
@@ -63,7 +63,7 @@ templ CardMenu(article *model.Article) {
 	</ul>
 }
 
-templ CardFooter(article *model.Article) {
+templ CardFooter(article *dto.ArticleDTO) {
 	<div
 		id={ "card-footer-" + util.IdToString(article.ID) }
 		class="card-footer"
@@ -72,7 +72,7 @@ templ CardFooter(article *model.Article) {
 	</div>
 }
 
-templ CollapseForm(article *model.Article) {
+templ CollapseForm(article *dto.ArticleDTO) {
 	<form
 		action="/desk/control/setcollapse"
 		method="POST"

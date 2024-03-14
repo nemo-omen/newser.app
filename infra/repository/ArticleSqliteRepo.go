@@ -86,8 +86,7 @@ func (r *ArticleSqliteRepo) Update(a *model.Article) (*model.Article, error) {
 			updated_parsed=:updated_parsed,
 			guid=:guid,
 			slug=:slug,
-			feed_id=:feed_id,
-			read=:read
+			feed_id=:feed_id
 	`)
 
 	if err != nil {
@@ -160,7 +159,6 @@ func (r *ArticleSqliteRepo) Migrate() error {
 		guid TEXT,
 		slug TEXT NOT NULL,
 		feed_id int NOT NULL,
-		read BOOLEAN NOT NULL,
 		CONSTRAINT fk_newsfeeds
 			FOREIGN KEY (feed_id)
 			REFERENCES newsfeeds(id)

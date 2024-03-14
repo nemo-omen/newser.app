@@ -2,7 +2,7 @@ package desk
 
 import (
 	"newser.app/view/layout"
-	"newser.app/model"
+	"newser.app/infra/dto"
 	"newser.app/view/component"
 )
 
@@ -13,13 +13,13 @@ import (
 // When we do get an HTMX request,
 // we can just return the IndexPageContent
 // without the layout wrappers
-templ Index(articles []*model.Article) {
+templ Index(articles []*dto.ArticleDTO) {
 	@layout.Desk() {
 		@IndexPageContent(articles)
 	}
 }
 
-templ IndexPageContent(articles []*model.Article) {
+templ IndexPageContent(articles []*dto.ArticleDTO) {
 	@component.ListHeader()
 	<div
 		class="container stack"

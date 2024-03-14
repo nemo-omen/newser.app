@@ -1,15 +1,15 @@
 package component
 
 import (
-	"newser.app/model"
+	"newser.app/infra/dto"
 	"newser.app/view/util"
 	sharedUtil "newser.app/shared/util"
 )
 
-func filterUnread(ctx context.Context, articles []*model.Article) []*model.Article {
+func filterUnread(ctx context.Context, articles []*dto.ArticleDTO) []*dto.ArticleDTO {
 	viewRead := util.GetShowUnreadPreference(ctx)
 	if !viewRead {
-		filtered := sharedUtil.Filter(articles, func(a *model.Article) bool {
+		filtered := sharedUtil.Filter(articles, func(a *dto.ArticleDTO) bool {
 			return !a.Read
 		})
 		return filtered
@@ -17,7 +17,7 @@ func filterUnread(ctx context.Context, articles []*model.Article) []*model.Artic
 	return articles
 }
 
-templ ArticleList(articles []*model.Article) {
+templ ArticleList(articles []*dto.ArticleDTO) {
 	if len(articles) > 0 {
 		<ul class="card-list">
 			for _, article := range filterUnread(ctx, articles) {

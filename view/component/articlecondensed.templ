@@ -1,11 +1,11 @@
 package component
 
 import (
-	"newser.app/model"
+	"newser.app/infra/dto"
 	"newser.app/view/util"
 )
 
-templ ArticleCondensed(article *model.Article) {
+templ ArticleCondensed(article *dto.ArticleDTO) {
 	<li class={ "article-list-item", templ.KV("read", article.Read) }>
 		<div class="condensed flex-row gap-1 flex-align-center flex-between" id={ "item-" + util.IdToString(article.ID) }>
 			<div class="flex-row gap-1 flex-align-center card-info">

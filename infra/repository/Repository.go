@@ -67,5 +67,6 @@ type CollectionRepository interface {
 	GetFeedsByCollectionName(collectionName string, userId int64) ([]*model.NewsfeedExtended, error)
 	MarkArticleRead(articleId, userId int64) error
 	MarkArticleUnread(articleId, userId int64) error
+	IsArticleInCollection(articleId, collectionId int64) (bool, error)
 	Migrate() error
 }

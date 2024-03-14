@@ -252,44 +252,6 @@ func (r *CollectionSqliteRepo) MarkArticleRead(articleId, userId int64) error {
 		return ErrInsertError
 	}
 
-	var storedArticle model.Article
-	err = tx.Get(&storedArticle, "SELECT * FROM articles WHERE id=?", articleId)
-	if err != nil {
-		fmt.Println("error selecting article: ", err.Error())
-		return ErrNotFound
-	}
-
-	storedArticle.Read = true
-
-	stmt, err := tx.PrepareNamed(`
-	UPDATE articles
-		SET title=:title,
-			description=:description,
-			content=:content,
-			article_link=:article_link,
-			published=:published,
-			published_parsed=:published_parsed,
-			updated=:updated,
-			updated_parsed=:updated_parsed,
-			guid=:guid,
-			slug=:slug,
-			feed_id=:feed_id,
-			read=:read
-		WHERE id=:id
-	`)
-
-	if err != nil {
-		fmt.Println("error preparing article update stmt: ", err.Error())
-		return ErrInsertError
-	}
-
-	_, err = stmt.Exec(&storedArticle)
-
-	if err != nil {
-		fmt.Println("error updating article: ", err.Error())
-		return ErrInsertError
-	}
-
 	fmt.Println("COMMITTING TX")
 	err = tx.Commit()
 	if err != nil {
@@ -335,44 +297,6 @@ func (r *CollectionSqliteRepo) MarkArticleUnread(articleId, userId int64) error 
 		return ErrInsertError
 	}
 
-	var storedArticle model.Article
-	err = tx.Get(&storedArticle, "SELECT * FROM articles WHERE id=?", articleId)
-	if err != nil {
-		fmt.Println("error selecting article: ", err.Error())
-		return ErrNotFound
-	}
-
-	storedArticle.Read = false
-
-	stmt, err := tx.PrepareNamed(`
-	UPDATE articles
-		SET title=:title,
-			description=:description,
-			content=:content,
-			article_link=:article_link,
-			published=:published,
-			published_parsed=:published_parsed,
-			updated=:updated,
-			updated_parsed=:updated_parsed,
-			guid=:guid,
-			slug=:slug,
-			feed_id=:feed_id,
-			read=:read
-		WHERE id=:id
-	`)
-
-	if err != nil {
-		fmt.Println("error preparing article update stmt: ", err.Error())
-		return ErrInsertError
-	}
-
-	_, err = stmt.Exec(&storedArticle)
-
-	if err != nil {
-		fmt.Println("error updating article: ", err.Error())
-		return ErrInsertError
-	}
-
 	fmt.Println("COMMITTING TX")
 	err = tx.Commit()
 	if err != nil {
@@ -380,4 +304,13 @@ func (r *CollectionSqliteRepo) MarkArticleUnread(articleId, userId int64) error 
 		return ErrTransactionError
 	}
 	return nil
+}
+
+func (r *CollectionSqliteRepo) IsArticleInCollection(articleId, collectionId int64) (bool, error) {
+	var count int
+	err := r.db.Get(&count, "SELECT COUNT(*) FROM collection_articles WHERE article_id=? AND collection_id=?", articleId, collectionId)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }

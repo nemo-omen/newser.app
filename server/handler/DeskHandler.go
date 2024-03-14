@@ -11,7 +11,7 @@ import (
 	"github.com/mmcdole/gofeed"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
-	"newser.app/model"
+	"newser.app/infra/dto"
 	"newser.app/server/service"
 	"newser.app/shared/util"
 	"newser.app/view/component"
@@ -113,13 +113,13 @@ func (h DeskHandler) GetDeskArticle(c echo.Context) error {
 
 	if err != nil {
 		handleErrorFlash(c, h.session, "Error retrieving article.")
-		return render(c, desk.Article((&model.Article{Title: "Oops!"})))
+		return render(c, desk.Article((&dto.ArticleDTO{Title: "Oops!"})))
 	}
 
 	article, err := h.newsfeedService.GetArticleById(id)
 	if err != nil {
 		handleErrorFlash(c, h.session, "Error retrieving article.")
-		return render(c, desk.Article((&model.Article{Title: "Oops!"})))
+		return render(c, desk.Article((&dto.ArticleDTO{Title: "Oops!"})))
 	}
 
 	setPageTitle(c, h.session, article.FeedTitle)
@@ -133,16 +133,22 @@ func (h DeskHandler) GetDeskArticle(c echo.Context) error {
 func (h DeskHandler) GetDeskNewsfeed(c echo.Context) error {
 	idStr := c.Param("feedid")
 	id, err := strconv.ParseInt(idStr, 10, 64)
-
 	if err != nil {
 		handleErrorFlash(c, h.session, "Error getting newsfeed")
-		return render(c, desk.Newsfeed(&model.Newsfeed{}))
+		return render(c, desk.Newsfeed(&dto.NewsfeedDTO{}))
 	}
 
-	feed, err := h.newsfeedService.GetNewsfeed(id)
+	email := h.session.GetUser(c)
+	user, err := h.authService.GetUserByEmail(email)
+	if err != nil {
+		h.session.SetFlash(c, "error", "You need to be logged in")
+		return c.Redirect(http.StatusSeeOther, "/auth/login")
+	}
+
+	feed, err := h.newsfeedService.GetNewsfeed(id, user.Id)
 	if err != nil {
 		handleErrorFlash(c, h.session, "Error getting newsfeed.")
-		return render(c, desk.Newsfeed(&model.Newsfeed{}))
+		return render(c, desk.Newsfeed(&dto.NewsfeedDTO{}))
 	}
 
 	setPageTitle(c, h.session, feed.Title)

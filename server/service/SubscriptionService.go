@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/mmcdole/gofeed"
+	"newser.app/infra/dto"
 	"newser.app/infra/repository"
 	"newser.app/model"
 )
@@ -24,7 +25,7 @@ func NewSubscriptionService(
 	return SubscriptionService{subRepo: sr, feedRepo: fr, articleRepo: ar, collectionRepo: cr}
 }
 
-func (s *SubscriptionService) Subscribe(f *gofeed.Feed, userId int64) (*model.Newsfeed, error) {
+func (s *SubscriptionService) Subscribe(f *gofeed.Feed, userId int64) (*dto.NewsfeedDTO, error) {
 	// transform gofeed.Feed into model.Newsfeed
 	nf, err := model.FeedFromRemote(f)
 	if err != nil {
@@ -50,8 +51,10 @@ func (s *SubscriptionService) Subscribe(f *gofeed.Feed, userId int64) (*model.Ne
 		return nil, err
 	}
 
+	feedDTO := dto.NewsfeedDTOFromDomain(feed)
+
 	// return subscription model
-	return feed, nil
+	return feedDTO, nil
 }
 
 func (s *SubscriptionService) Unsubscribe(feedId, userId uint) error {
@@ -71,13 +74,18 @@ func (s *SubscriptionService) Get(subscriptionId uint) (*model.Subscription, err
 	return nil, nil
 }
 
-func (s *SubscriptionService) GetArticles(userId int64) ([]*model.Article, error) {
+func (s *SubscriptionService) GetArticles(userId int64) ([]*dto.ArticleDTO, error) {
 	articles, err := s.subRepo.FindArticles(userId)
 	if err != nil {
 		return nil, err
 	}
 
-	return articles, nil
+	articleDTOs := []*dto.ArticleDTO{}
+	for _, a := range articles {
+		articleDTOs = append(articleDTOs, dto.ArticleDTOFromDomain(a))
+	}
+
+	return articleDTOs, nil
 }
 
 func (s *SubscriptionService) GetNewsfeeds(userId int64) ([]*model.NewsfeedExtended, error) {

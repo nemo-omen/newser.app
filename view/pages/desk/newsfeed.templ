@@ -1,7 +1,7 @@
 package desk
 
 import (
-	"newser.app/model"
+	"newser.app/infra/dto"
 	"newser.app/view/component"
 	"newser.app/view/layout"
 )
@@ -13,13 +13,13 @@ import (
 // When we do get an HTMX request,
 // we can just return the NewsfeedPageContent
 // without the layout wrappers
-templ Newsfeed(feed *model.Newsfeed) {
+templ Newsfeed(feed *dto.NewsfeedDTO) {
 	@layout.Desk() {
 		@NewsfeedPageContent(feed)
 	}
 }
 
-templ NewsfeedPageContent(feed *model.Newsfeed) {
+templ NewsfeedPageContent(feed *dto.NewsfeedDTO) {
 	@component.ListHeader()
 	<div class="container stack">
 		@component.ArticleList(feed.Articles)

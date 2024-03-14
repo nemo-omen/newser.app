@@ -11,15 +11,15 @@ import "io"
 import "bytes"
 
 import (
-	"newser.app/model"
+	"newser.app/infra/dto"
 	sharedUtil "newser.app/shared/util"
 	"newser.app/view/util"
 )
 
-func filterUnread(ctx context.Context, articles []*model.Article) []*model.Article {
+func filterUnread(ctx context.Context, articles []*dto.ArticleDTO) []*dto.ArticleDTO {
 	viewRead := util.GetShowUnreadPreference(ctx)
 	if !viewRead {
-		filtered := sharedUtil.Filter(articles, func(a *model.Article) bool {
+		filtered := sharedUtil.Filter(articles, func(a *dto.ArticleDTO) bool {
 			return !a.Read
 		})
 		return filtered
@@ -27,7 +27,7 @@ func filterUnread(ctx context.Context, articles []*model.Article) []*model.Artic
 	return articles
 }
 
-func ArticleList(articles []*model.Article) templ.Component {
+func ArticleList(articles []*dto.ArticleDTO) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {

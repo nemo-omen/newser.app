@@ -1,11 +1,11 @@
 package component
 
 import (
-	"newser.app/model"
+	"newser.app/infra/dto"
 	"newser.app/view/util"
 )
 
-templ SaveForm(article *model.Article, showLabel bool) {
+templ SaveForm(article *dto.ArticleDTO, showLabel bool) {
 	<form
 		action="/desk/articles/save"
 		method="POST"

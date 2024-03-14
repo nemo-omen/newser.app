@@ -1,15 +1,16 @@
 package service
 
 import (
+	"newser.app/infra/dto"
 	"newser.app/infra/repository"
-	"newser.app/model"
 )
 
 type NewsfeedService struct {
-	articleRepo  repository.ArticleRepository
-	imageRepo    repository.ImageRepository
-	personRepo   repository.PersonRepository
-	newsfeedRepo repository.NewsfeedRepository
+	articleRepo    repository.ArticleRepository
+	imageRepo      repository.ImageRepository
+	personRepo     repository.PersonRepository
+	newsfeedRepo   repository.NewsfeedRepository
+	collectionRepo repository.CollectionRepository
 }
 
 func NewNewsfeedService(
@@ -17,40 +18,58 @@ func NewNewsfeedService(
 	ir repository.ImageRepository,
 	pr repository.PersonRepository,
 	nr repository.NewsfeedRepository,
+	cr repository.CollectionRepository,
 ) NewsfeedService {
 	return NewsfeedService{
-		articleRepo:  ar,
-		imageRepo:    ir,
-		personRepo:   pr,
-		newsfeedRepo: nr,
+		articleRepo:    ar,
+		imageRepo:      ir,
+		personRepo:     pr,
+		newsfeedRepo:   nr,
+		collectionRepo: cr,
 	}
 }
 
-func (s NewsfeedService) GetNewsfeed(id int64) (*model.Newsfeed, error) {
+func (s NewsfeedService) GetNewsfeed(id, userId int64) (*dto.NewsfeedDTO, error) {
 	feed, err := s.newsfeedRepo.Get(id)
 	if err != nil {
 		return nil, err
 	}
-	articles, err := s.GetArticlesByNewsfeedId(feed.ID)
-	if err != nil {
-		return nil, err
+
+	feedDTO := dto.NewsfeedDTOFromDomain(feed)
+
+	for _, a := range feedDTO.Articles {
+		userReadCollection, err := s.collectionRepo.FindByTitle("read", userId)
+		if err != nil {
+			return nil, err
+		}
+
+		isRead, err := s.collectionRepo.IsArticleInCollection(a.ID, userReadCollection.Id)
+		if err != nil {
+			return nil, err
+		}
+		a.Read = isRead
 	}
-	feed.Articles = articles
-	return feed, nil
+
+	return feedDTO, nil
 }
 
-func (s *NewsfeedService) GetArticlesByNewsfeedId(nId int64) ([]*model.Article, error) {
+func (s *NewsfeedService) GetArticlesByNewsfeedId(nId int64) ([]*dto.ArticleDTO, error) {
 	aa, err := s.articleRepo.ArticlesByNewsfeed(nId)
 	if err != nil {
 		return nil, err
 	}
-	return aa, nil
+
+	articleDTOs := []*dto.ArticleDTO{}
+	for _, a := range aa {
+		articleDTOs = append(articleDTOs, dto.ArticleDTOFromDomain(a))
+	}
+	return articleDTOs, nil
 }
 
-func (s *NewsfeedService) GetArticleById(aId int64) (*model.Article, error) {
+func (s *NewsfeedService) GetArticleById(aId int64) (*dto.ArticleDTO, error) {
 	a, err := s.articleRepo.Get(aId)
 	if err != nil {
 		return nil, err
 	}
-	return a, nil
+	return dto.ArticleDTOFromDomain(a), nil
 }

@@ -1,7 +1,7 @@
 package desk
 
 import (
-	"newser.app/model"
+	"newser.app/infra/dto"
 	"newser.app/view/component"
 	"newser.app/view/layout"
 )
@@ -13,13 +13,13 @@ import (
 // When we do get an HTMX request,
 // we can just return the ArticlePageContent
 // without the layout wrappers
-templ Article(a *model.Article) {
+templ Article(a *dto.ArticleDTO) {
 	@layout.Desk() {
 		@ArticlePageContent(a)
 	}
 }
 
-templ ArticlePageContent(a *model.Article) {
+templ ArticlePageContent(a *dto.ArticleDTO) {
 	<script src="/static/script/vendor/shiki/shiki.js" type="module"></script>
 	<div class="stack-header flex-row flex-align-center gap-2 text-med">
 		@component.Icon("checkbox_circle_outline")
@@ -31,7 +31,7 @@ templ ArticlePageContent(a *model.Article) {
 		<div class="article-header flex-row gap-1">
 			@component.FormattedDateTime(a.PublishedParsed)
 			<a href={ templ.SafeURL(a.FeedSiteUrl) } target="_blank">{ a.FeedTitle }</a>
-			<a href={ templ.SafeURL(a.FeedSiteUrl) } target="_blank">{ a.Person.Name }</a>
+			<a href={ templ.SafeURL(a.FeedSiteUrl) } target="_blank">{ a.Author.Name }</a>
 		</div>
 		<section class="stack article-content">
 			@templ.Raw(a.Content)
