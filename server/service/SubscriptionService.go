@@ -82,7 +82,19 @@ func (s *SubscriptionService) GetArticles(userId int64) ([]*dto.ArticleDTO, erro
 
 	articleDTOs := []*dto.ArticleDTO{}
 	for _, a := range articles {
-		articleDTOs = append(articleDTOs, dto.ArticleDTOFromDomain(a))
+		dto := dto.ArticleDTOFromDomain(a)
+		readColl, err := s.collectionRepo.FindByTitle("read", userId)
+		if err != nil {
+			return nil, err
+		}
+		isInRead, err := s.collectionRepo.IsArticleInCollection(readColl.Id, a.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		dto.Read = isInRead
+
+		articleDTOs = append(articleDTOs, dto)
 	}
 
 	return articleDTOs, nil

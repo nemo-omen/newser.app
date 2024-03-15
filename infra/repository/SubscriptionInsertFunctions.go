@@ -95,12 +95,12 @@ func InsertArticleWithTx(tx *sqlx.Tx, a *model.Article) (*model.Article, error) 
 		title,description,content,
 		article_link,published,published_parsed,
 		updated,updated_parsed,guid,
-		slug,feed_id,read
+		slug,feed_id
 	) VALUES(
 		:title,:description,:content,
 		:article_link,:published,:published_parsed,
 		:updated,:updated_parsed,:guid,
-		:slug,:feed_id,:read
+		:slug,:feed_id
 	) RETURNING id;
 	`)
 	if err != nil {

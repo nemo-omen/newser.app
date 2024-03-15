@@ -86,7 +86,6 @@ func setLogLevel(app *echo.Echo, dev bool) {
 }
 
 func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManager, isDev bool) {
-
 	userRepo = repository.NewUserSqliteRepo(db)
 	newsfeedRepo = repository.NewNewsfeedSqliteRepo(db)
 	articleRepo = repository.NewArticleSqliteRepo(db)

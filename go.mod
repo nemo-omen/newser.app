@@ -20,6 +20,9 @@ require (
 	github.com/alexedwards/scs/sqlite3store v0.0.0-20240203174419-a38e822451b6 // indirect
 	github.com/alexedwards/scs/v2 v2.7.0 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect
+	github.com/avito-tech/go-transaction-manager/drivers/sql/v2 v2.0.0-rc6 // indirect
+	github.com/avito-tech/go-transaction-manager/drivers/sqlx/v2 v2.0.0-rc8 // indirect
+	github.com/avito-tech/go-transaction-manager/trm/v2 v2.0.0-rc8 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/google/uuid v1.6.0 // indirect

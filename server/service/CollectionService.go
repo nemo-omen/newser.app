@@ -22,12 +22,7 @@ func (s *CollectionService) GetArticlesByCollectionByName(cName string, userId i
 	if err != nil {
 		return nil, err
 	}
-
-	dtos := make([]*dto.ArticleDTO, len(collectionArticles))
-	for i, a := range collectionArticles {
-		dtos[i] = dto.ArticleDTOFromDomain(a)
-	}
-	return dtos, nil
+	return collectionArticles, nil
 }
 
 func (s *CollectionService) AddArticleToCollectionByName(collectionName string, articleId, userId int64) (*dto.ArticleDTO, error) {

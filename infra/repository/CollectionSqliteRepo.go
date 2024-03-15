@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
+	"newser.app/infra/dto"
 	"newser.app/model"
 )
 
@@ -148,7 +149,7 @@ func (r *CollectionSqliteRepo) InsertManyCollectionItems(aa []*model.Article, cI
 	return nil
 }
 
-func (r *CollectionSqliteRepo) GetArticles(collectionId, userId int64) ([]*model.Article, error) {
+func (r *CollectionSqliteRepo) GetArticles(collectionId, userId int64) ([]*dto.ArticleDTO, error) {
 	collectionArticles := []*model.Article{}
 	err := r.db.Select(&collectionArticles, `
 	SELECT
@@ -175,10 +176,17 @@ func (r *CollectionSqliteRepo) GetArticles(collectionId, userId int64) ([]*model
 	if err != nil {
 		return nil, err
 	}
-	return collectionArticles, nil
+
+	dtos := make([]*dto.ArticleDTO, len(collectionArticles))
+	for i, a := range collectionArticles {
+		isInRead, _ := r.IsArticleInCollection(a.ID, userId)
+		a.Read = isInRead
+		dtos[i] = dto.ArticleDTOFromDomain(a)
+	}
+	return dtos, nil
 }
 
-func (r *CollectionSqliteRepo) GetArticlesByCollectionName(collectionName string, userId int64) ([]*model.Article, error) {
+func (r *CollectionSqliteRepo) GetArticlesByCollectionName(collectionName string, userId int64) ([]*dto.ArticleDTO, error) {
 	collectionArticles := []*model.Article{}
 	err := r.db.Select(&collectionArticles, `
 	SELECT
@@ -205,7 +213,15 @@ func (r *CollectionSqliteRepo) GetArticlesByCollectionName(collectionName string
 	if err != nil {
 		return nil, err
 	}
-	return collectionArticles, nil
+
+	dtos := make([]*dto.ArticleDTO, len(collectionArticles))
+	for i, a := range collectionArticles {
+		isInRead, _ := r.IsArticleInCollection(a.ID, userId)
+		a.Read = isInRead
+		dtos[i] = dto.ArticleDTOFromDomain(a)
+	}
+
+	return dtos, nil
 }
 
 func (r *CollectionSqliteRepo) GetFeeds(collectionId, userId int64) ([]*model.NewsfeedExtended, error) {

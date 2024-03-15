@@ -61,8 +61,8 @@ type CollectionRepository interface {
 	InsertCollectionItem(itemId int64, collectionId int64) error
 	DeleteCollectionItem(itemId, collectionId int64) error
 	InsertManyCollectionItems(aa []*model.Article, cId int64) error
-	GetArticles(collectionId, userId int64) ([]*model.Article, error)
-	GetArticlesByCollectionName(collectionName string, userId int64) ([]*model.Article, error)
+	GetArticles(collectionId, userId int64) ([]*dto.ArticleDTO, error)
+	GetArticlesByCollectionName(collectionName string, userId int64) ([]*dto.ArticleDTO, error)
 	GetFeeds(collectionId, userId int64) ([]*model.NewsfeedExtended, error)
 	GetFeedsByCollectionName(collectionName string, userId int64) ([]*model.NewsfeedExtended, error)
 	MarkArticleRead(articleId, userId int64) error
