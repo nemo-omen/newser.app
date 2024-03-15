@@ -11,7 +11,7 @@ import (
 )
 
 type Article struct {
-	ID          int64  `db:"id"`
+	ID          int64  `json:"id,omitempty" db:"id"`
 	Title       string `json:"title,omitempty" db:"title"`
 	Description string `json:"description,omitempty" db:"description"`
 	Content     string `json:"content,omitempty" db:"content"`
