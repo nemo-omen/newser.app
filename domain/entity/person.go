@@ -15,11 +15,11 @@ type Person struct {
 func NewPerson(name, email string) (*Person, error) {
 	validName, err := value.NewName(name)
 	if err != nil {
-		return nil, ErrInvalidInput
+		return nil, err
 	}
 	validEmail, err := value.NewEmail(email)
 	if err != nil {
-		return nil, ErrInvalidInput
+		return nil, err
 	}
 
 	return &Person{

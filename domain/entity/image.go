@@ -2,18 +2,24 @@ package entity
 
 import (
 	"encoding/json"
+
+	"newser.app/domain/value"
 )
 
 type Image struct {
-	ID    ID     `json:"id"`
-	URL   string `json:"url"`
-	Title string `json:"title"`
+	ID    ID         `json:"id"`
+	URL   value.Link `json:"url"`
+	Title string     `json:"title"`
 }
 
 func NewImage(url, title string) *Image {
+	validLink, err := value.NewLink(url)
+	if err != nil {
+		return nil
+	}
 	return &Image{
 		ID:    NewID(),
-		URL:   url,
+		URL:   validLink,
 		Title: title,
 	}
 }

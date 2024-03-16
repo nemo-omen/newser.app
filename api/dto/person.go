@@ -28,7 +28,7 @@ func (p PersonDTO) String() string {
 	return string(p.JSON())
 }
 
-func (p PersonDTO) FromDomain(person entity.Person) PersonDTO {
+func (p PersonDTO) FromDomain(person *entity.Person) PersonDTO {
 	return PersonDTO{
 		ID:    person.ID,
 		Name:  person.Name.String(),

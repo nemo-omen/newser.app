@@ -21,10 +21,10 @@ func (i ImageDTO) String() string {
 	return string(i.JSON())
 }
 
-func (i ImageDTO) FromDomain(image entity.Image) ImageDTO {
+func (i ImageDTO) FromDomain(image *entity.Image) ImageDTO {
 	return ImageDTO{
 		ID:    image.ID,
-		URL:   image.URL,
+		URL:   image.URL.String(),
 		Title: image.Title,
 	}
 }

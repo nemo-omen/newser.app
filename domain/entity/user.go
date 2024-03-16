@@ -1,13 +1,14 @@
 package entity
 
 import (
+	"encoding/json"
 	"time"
 )
 
 type User struct {
-	*Person
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	*Person   `json:"person,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
 func NewUser(name, email string) (*User, error) {
@@ -21,4 +22,13 @@ func NewUser(name, email string) (*User, error) {
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}, nil
+}
+
+func (u User) JSON() []byte {
+	j, _ := json.MarshalIndent(u, "", "  ")
+	return j
+}
+
+func (u User) String() string {
+	return string(u.JSON())
 }

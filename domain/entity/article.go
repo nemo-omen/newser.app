@@ -7,23 +7,51 @@ import (
 )
 
 type Article struct {
-	Item
+	*Item
 	Read  bool `json:"read"`
 	Saved bool `json:"saved"`
 }
 
 type Item struct {
-	ID          ID         `json:"id"`
-	Title       string     `json:"title"`
-	Description string     `json:"description"`
-	Content     string     `json:"content"`
-	Link        value.Link `json:"link"`
-	Updated     string     `json:"updated"`
-	Published   string     `json:"published"`
-	Author      *Person    `json:"author"`
-	GUID        string     `json:"guid"`
-	Image       *Image     `json:"image"`
-	Categories  []string   `json:"categories"`
+	ID          ID          `json:"id"`
+	Title       string      `json:"title"`
+	Description string      `json:"description"`
+	Content     string      `json:"content"`
+	Link        value.Link  `json:"link"`
+	Updated     string      `json:"updated"`
+	Published   string      `json:"published"`
+	Author      *Person     `json:"author"`
+	GUID        string      `json:"guid"`
+	Image       *Image      `json:"image"`
+	Categories  []*Category `json:"categories"`
+}
+
+func NewArticle(title, description, content, link, updated, published, guid string, author *Person, image *Image, categories []string) *Article {
+	validLink, err := value.NewLink(link)
+	if err != nil {
+		return nil
+	}
+	a := &Article{
+		Item: &Item{
+			ID:          NewID(),
+			Title:       title,
+			Description: description,
+			Content:     content,
+			Link:        validLink,
+			Updated:     updated,
+			Published:   published,
+			Author:      author,
+			GUID:        guid,
+			Image:       image,
+			Categories:  []*Category{},
+		},
+		Read:  false,
+		Saved: false,
+	}
+	for _, c := range categories {
+		a.Categories = append(a.Categories, NewCategory(c))
+	}
+	return a
 }
 
 func (a Article) JSON() []byte {

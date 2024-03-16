@@ -29,8 +29,12 @@ func (m GofeedMapper) ToNewsfeed(gfFeed *gofeed.Feed) *entity.Newsfeed {
 }
 
 func (m GofeedMapper) ToArticle(gfItem *gofeed.Item) *entity.Article {
+	categories := []*entity.Category{}
+	for _, c := range gfItem.Categories {
+		categories = append(categories, m.ToCategory(c))
+	}
 	return &entity.Article{
-		Item: entity.Item{
+		Item: &entity.Item{
 			ID:          entity.NewID(),
 			Title:       gfItem.Title,
 			Description: gfItem.Description,
@@ -41,7 +45,7 @@ func (m GofeedMapper) ToArticle(gfItem *gofeed.Item) *entity.Article {
 			Author:      m.ToPerson(gfItem.Author),
 			GUID:        gfItem.GUID,
 			Image:       m.ToImage(gfItem.Image),
-			Categories:  gfItem.Categories,
+			Categories:  categories,
 		},
 		Read:  false,
 		Saved: false,
@@ -49,9 +53,13 @@ func (m GofeedMapper) ToArticle(gfItem *gofeed.Item) *entity.Article {
 }
 
 func (m GofeedMapper) ToImage(gfImage *gofeed.Image) *entity.Image {
+	validLink, err := value.NewLink(gfImage.URL)
+	if err != nil {
+		return nil
+	}
 	return &entity.Image{
 		ID:    entity.NewID(),
-		URL:   gfImage.URL,
+		URL:   validLink,
 		Title: gfImage.Title,
 	}
 }
@@ -59,12 +67,12 @@ func (m GofeedMapper) ToImage(gfImage *gofeed.Image) *entity.Image {
 func (m GofeedMapper) ToPerson(gfPerson *gofeed.Person) *entity.Person {
 	name, err := value.NewName(gfPerson.Name)
 	if err != nil {
-		name, _ = value.NewName("Unknown")
+		return nil
 	}
 
 	email, err := value.NewEmail(gfPerson.Email)
 	if err != nil {
-		email, _ = value.NewEmail("unknown@unknown.com")
+		email, _ = value.NewEmail("unknown@unknown.unknown")
 	}
 
 	return &entity.Person{
@@ -72,4 +80,8 @@ func (m GofeedMapper) ToPerson(gfPerson *gofeed.Person) *entity.Person {
 		Name:  name,
 		Email: email,
 	}
+}
+
+func (m GofeedMapper) ToCategory(gfCategory string) *entity.Category {
+	return entity.NewCategory(gfCategory)
 }
