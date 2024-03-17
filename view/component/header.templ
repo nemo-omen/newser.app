@@ -57,7 +57,7 @@ templ Header() {
 				<ul>
 					if getIsAuthenticated(ctx) == false {
 						<li><a href="/auth/login">Log In</a></li>
-						<li><a href="/auth/signup">Sign Up</a></li>
+						<li><a href="/auth/register">Sign Up</a></li>
 					} else {
 						@UserDropdown(getEmail(ctx))
 					}

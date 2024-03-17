@@ -81,7 +81,7 @@ func Header() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if getIsAuthenticated(ctx) == false {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><a href=\"/auth/login\">Log In</a></li><li><a href=\"/auth/signup\">Sign Up</a></li>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<li><a href=\"/auth/login\">Log In</a></li><li><a href=\"/auth/register\">Sign Up</a></li>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

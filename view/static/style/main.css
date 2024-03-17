@@ -197,6 +197,10 @@ header {
   }
 }
 
+.error {
+  color: var(--secondary);
+}
+
 /* DROPDOWN MENU */
 .dropdown {
   list-style-type: none;
