@@ -1,0 +1,68 @@
+package component
+
+import (
+	"newser.app/view/util"
+)
+
+templ ListHeader() {
+	<div class="stack-header flex-row flex-align-center flex-end gap-2">
+		if util.GetShowUnreadPreference(ctx) {
+			<form
+				action="/desk/control/setreadview"
+				method="POST"
+				hx-post="/desk/control/setreadview"
+				hx-target="closest main"
+				hx-swap="innerHtml"
+				id="view-unread-form"
+			>
+				<input type="hidden" name="viewRead" value="false"/>
+				<button class="icon-link-button" type="submit" style="padding-inline: 0;">
+					@Icon("eye-off")
+				</button>
+			</form>
+		} else {
+			<form
+				action="/desk/control/setreadview"
+				method="POST"
+				hx-post="/desk/control/setreadview"
+				hx-target="closest main"
+				hx-swap="innerHtml"
+				id="view-unread-form"
+			>
+				<input type="hidden" name="viewRead" value="true"/>
+				<button class="icon-link-button" type="submit" style="padding-inline: 0;">
+					@Icon("eye")
+				</button>
+			</form>
+		}
+		if util.GetUserViewPreference(ctx) != "list" {
+			<form
+				action="/desk/control/setview"
+				method="POST"
+				hx-post="/desk/control/setview"
+				hx-target="closest main"
+				hx-swap="innerHtml"
+				id="view-form"
+			>
+				<input type="hidden" name="view" value="list"/>
+				<button class="icon-link-button" type="submit" style="padding-inline: 0;">
+					@Icon("list")
+				</button>
+			</form>
+		} else {
+			<form
+				action="/desk/control/setview"
+				method="POST"
+				hx-post="/desk/control/setview"
+				hx-target="closest main"
+				hx-swap="innerHtml"
+				id="view-form"
+			>
+				<input type="hidden" name="view" value="card"/>
+				<button type="submit" class="icon-link-button" style="padding-inline: 0;">
+					@Icon("stack")
+				</button>
+			</form>
+		}
+	</div>
+}

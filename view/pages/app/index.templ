@@ -1,0 +1,31 @@
+package app
+
+import (
+	"newser.app/view/layout"
+	"newser.app/view/component"
+	"newser.app/internal/dto"
+)
+
+// We're splitting the main page component
+// from the content so we can send back
+// the full page — Index — when the
+// request is not an HTMX request.
+// When we do get an HTMX request,
+// we can just return the IndexPageContent
+// without the layout wrappers
+templ Index(articles []*dto.ArticleDTO) {
+	@layout.App() {
+		@IndexPageContent(articles)
+	}
+}
+
+templ IndexPageContent(articles []*dto.ArticleDTO) {
+	@component.ListHeader()
+	<div
+		class="container stack"
+		id="articles"
+	>
+		// hx-ext="debug"
+		@component.ArticleList(articles)
+	</div>
+}

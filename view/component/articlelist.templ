@@ -1,0 +1,32 @@
+package component
+
+import (
+	"newser.app/internal/dto"
+	"newser.app/view/util"
+	sharedUtil "newser.app/shared/util"
+)
+
+func filterUnread(ctx context.Context, articles []*dto.ArticleDTO) []*dto.ArticleDTO {
+	viewRead := util.GetShowUnreadPreference(ctx)
+	if !viewRead {
+		filtered := sharedUtil.Filter(articles, func(a *dto.ArticleDTO) bool {
+			return !a.Read
+		})
+		return filtered
+	}
+	return articles
+}
+
+templ ArticleList(articles []*dto.ArticleDTO) {
+	if len(articles) > 0 {
+		<ul class="card-list">
+			for _, article := range filterUnread(ctx, articles) {
+				if util.GetUserViewPreference(ctx) == "card" {
+					@ArticleCard(article)
+				} else {
+					@ArticleCondensed(article)
+				}
+			}
+		</ul>
+	}
+}

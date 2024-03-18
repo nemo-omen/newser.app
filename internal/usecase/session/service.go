@@ -36,18 +36,18 @@ func (s *SessionService) GetFlash(c echo.Context, key string) string {
 	return s.sessionManager.PopString(c.Request().Context(), key)
 }
 
-func (s *SessionService) SetUser(c echo.Context, user interface{}) {
+func (s *SessionService) SetUser(c echo.Context, user string) {
 	s.sessionManager.Put(c.Request().Context(), "user", user)
 }
 
-func (s *SessionService) GetUser(c echo.Context) interface{} {
+func (s *SessionService) GetUser(c echo.Context) string {
 	if !s.sessionManager.Exists(c.Request().Context(), "user") {
-		return nil
+		return ""
 	}
-	return s.sessionManager.Get(c.Request().Context(), "user")
+	return s.sessionManager.GetString(c.Request().Context(), "user")
 }
 
-func (s *SessionService) SetAuth(c echo.Context, user interface{}) {
+func (s *SessionService) SetAuth(c echo.Context, user string) {
 	s.SetUser(c, user)
 	s.sessionManager.Put(c.Request().Context(), "authenticated", true)
 }
@@ -56,7 +56,7 @@ func (s *SessionService) GetAuth(c echo.Context) bool {
 	if !s.sessionManager.Exists(c.Request().Context(), "authenticated") {
 		return false
 	}
-	return s.sessionManager.Get(c.Request().Context(), "authenticated").(bool)
+	return s.sessionManager.GetBool(c.Request().Context(), "authenticated")
 }
 
 func (s *SessionService) RevokeAuth(c echo.Context) {
@@ -72,7 +72,7 @@ func (s *SessionService) GetTitle(c echo.Context) string {
 	if !s.sessionManager.Exists(c.Request().Context(), "title") {
 		return "Newser"
 	}
-	return s.sessionManager.Get(c.Request().Context(), "title").(string)
+	return s.sessionManager.GetString(c.Request().Context(), "title")
 }
 
 func (s *SessionService) SetLayout(c echo.Context, layout string) {
@@ -83,7 +83,7 @@ func (s *SessionService) GetLayout(c echo.Context) string {
 	if !s.sessionManager.Exists(c.Request().Context(), "layout") {
 		return "card"
 	}
-	return s.sessionManager.Get(c.Request().Context(), "layout").(string)
+	return s.sessionManager.GetString(c.Request().Context(), "layout")
 }
 
 func (s *SessionService) SetView(c echo.Context, view string) {
@@ -94,5 +94,5 @@ func (s *SessionService) GetView(c echo.Context) string {
 	if !s.sessionManager.Exists(c.Request().Context(), "view") {
 		return "read"
 	}
-	return s.sessionManager.Get(c.Request().Context(), "view").(string)
+	return s.sessionManager.GetString(c.Request().Context(), "view")
 }

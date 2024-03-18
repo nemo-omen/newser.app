@@ -117,11 +117,19 @@ func initApiHandlers(app *echo.Echo) {
 func initWebHandlers(app *echo.Echo) {
 	webHomeHandler := webhandler.NewWebHomeHandler(sessionService)
 	webAuthHandler := webhandler.NewAuthWebHandler(authService, sessionService)
+	webAppHandler := webhandler.NewWebAppHandler(sessionService, authService)
+
 	webHomeHandler.Routes(
 		app,
 		custommiddleware.AuthContext(sessionManager),
 	)
 	webAuthHandler.Routes(
+		app,
+		custommiddleware.CtxFlash(sessionManager),
+		custommiddleware.AuthContext(sessionManager),
+		custommiddleware.HTMX,
+	)
+	webAppHandler.Routes(
 		app,
 		custommiddleware.CtxFlash(sessionManager),
 		custommiddleware.AuthContext(sessionManager),

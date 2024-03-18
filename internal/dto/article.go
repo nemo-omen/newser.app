@@ -23,6 +23,10 @@ type ArticleDTO struct {
 	Categories      []CategoryDTO `json:"categories,omitempty"`
 	Read            bool          `json:"read,omitempty"`
 	Saved           bool          `json:"saved,omitempty"`
+	SiteURL         string        `json:"site_url,omitempty"`
+	FeedTitle       string        `json:"feed_title,omitempty"`
+	FeedImageURL    string        `json:"feed_image_url,omitempty"`
+	FeedImageTitle  string        `json:"feed_image_title,omitempty"`
 }
 
 func (a ArticleDTO) JSON() []byte {

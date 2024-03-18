@@ -1,0 +1,24 @@
+package component
+
+import (
+	"newser.app/internal/dto"
+)
+
+templ SaveForm(article *dto.ArticleDTO, showLabel bool) {
+	<form
+		action="/desk/articles/save"
+		method="POST"
+		hx-post="/desk/articles/save"
+		hx-push-url="false"
+		hx-target="closest .article-list-item"
+		hx-swap="outerHTML"
+	>
+		<input type="hidden" name="articleid" value={ article.ID.String() }/>
+		<button class="icon-link-button" type="submit">
+			@Icon("bookmark")
+			if showLabel {
+				<span role="status" class="icon-link-label">Save</span>
+			}
+		</button>
+	</form>
+}

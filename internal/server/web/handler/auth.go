@@ -93,7 +93,7 @@ func (h *WebAuthHandler) PostLogin(c echo.Context) error {
 	fmt.Println("POST /auth/login")
 	email := c.Request().FormValue("email")
 	password := c.Request().FormValue("password")
-	user, err := h.authService.Login(email, password)
+	_, err := h.authService.Login(email, password)
 	if err != nil {
 		appErr, ok := err.(*shared.AppError)
 		if ok {
@@ -108,7 +108,9 @@ func (h *WebAuthHandler) PostLogin(c echo.Context) error {
 			return renderOrRedirect(c, authview.LoginPageContent(), "/auth/login")
 		}
 	}
-	return c.JSON(http.StatusOK, user)
+	h.session.SetAuth(c, email)
+	h.session.SetUser(c, email)
+	return c.Redirect(http.StatusSeeOther, "/app")
 }
 
 func (h *WebAuthHandler) Logout(c echo.Context) error {

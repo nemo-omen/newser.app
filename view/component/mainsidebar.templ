@@ -1,0 +1,137 @@
+package component
+
+import (
+	"newser.app/internal/dto"
+	"strconv"
+)
+
+func getSidebarFeedInfo(ctx context.Context) []*dto.FeedInfoDTO {
+	feedInfos := ctx.Value("feedlinks")
+	if feedInfos != nil {
+		return feedInfos.([]*dto.FeedInfoDTO)
+	}
+	return []*dto.FeedInfoDTO{}
+}
+
+func getFeedLinkCount(nf *dto.FeedInfoDTO) string {
+	return strconv.Itoa(nf.UnreadCount)
+}
+
+templ MainSidebar() {
+	<aside class="sidebar" id="sidebar-main">
+		<nav aria-label="Secondary Navigation" hx-boost="true" hx-disinherit="*">
+			<ul>
+				<li>
+					@IconLink(
+						"/app/",
+						"list",
+						"All Posts",
+						templ.Attributes{
+							"class":       "icon-link",
+							"hx-get":      "/app/",
+							"hx-target":   "main",
+							"hx-swap":     "innerHTML",
+							"hx-push-url": "true",
+						},
+					)
+				</li>
+				<li>
+					@IconLink(
+						"/app/collections/unread",
+						"inbox",
+						"Unread",
+						templ.Attributes{
+							"class":       "icon-link",
+							"hx-get":      "/app/collections/unread",
+							"hx-target":   "main",
+							"hx-swap":     "innerHTML",
+							"hx-push-url": "true",
+						},
+					)
+				</li>
+				<li>
+					@IconLink(
+						"/app/collections/saved",
+						"bookmark",
+						"Saved",
+						templ.Attributes{
+							"class":       "icon-link",
+							"hx-get":      "/app/collections/saved",
+							"hx-target":   "main",
+							"hx-swap":     "innerHTML",
+							"hx-push-url": "true",
+						},
+					)
+				</li>
+				<li>
+					@IconLink(
+						"/app/notes",
+						"note",
+						"Notes",
+						templ.Attributes{
+							"class":       "icon-link",
+							"hx-get":      "/app/notes",
+							"hx-target":   "main",
+							"hx-swap":     "innerHTML",
+							"hx-push-url": "true",
+						},
+					)
+				</li>
+				<li>
+					@IconLink(
+						"/app/search",
+						"folder_add",
+						"Add Feed",
+						templ.Attributes{
+							"class":       "icon-link",
+							"hx-get":      "/app/search",
+							"hx-target":   "main",
+							"hx-swap":     "innerHTML",
+							"hx-push-url": "true",
+						},
+					)
+				</li>
+			</ul>
+		</nav>
+		if len(getSidebarFeedInfo(ctx)) > 0 {
+			<nav
+				class="nav-vertical"
+				aria-label="Subscriptions"
+				hx-get="/app/control/unreadcount"
+				hx-trigger="updateUnreadCount from:body"
+				hx-target="#main-feed-links"
+				hx-swap="outerHTML"
+				hx-push-url="false"
+			>
+				@MainFeedLinks()
+			</nav>
+		}
+	</aside>
+}
+
+templ MainFeedLinks() {
+	<ul id="main-feed-links">
+		for _, feedInfo := range getSidebarFeedInfo(ctx) {
+			<li>
+				<a
+					class="icon-link"
+					href={ templ.SafeURL("/app/feeds/" + feedInfo.FeedId) }
+					hx-get={ "/app/feeds/" + feedInfo.FeedId }
+					hx-target="main"
+					hx-swap="innerHTML"
+					hx-push-url="true"
+				>
+					<img src={ feedInfo.ImageUrl } alt="feedLink.ImageTitle" class="image-icon"/>
+					<span class="link-text">
+						{ feedInfo.FeedTitle }
+					</span>
+					if feedInfo.UnreadCount > 0 {
+						<span class="badge">
+							{ getFeedLinkCount(feedInfo) }
+						</span>
+					}
+				</a>
+			</li>
+		}
+	</ul>
+}
