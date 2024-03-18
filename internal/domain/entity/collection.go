@@ -6,10 +6,12 @@ import (
 )
 
 type Collection struct {
-	ID     ID
-	Title  value.Name
-	Slug   string
-	UserID ID
+	ID        ID
+	Title     value.Name
+	Slug      string
+	UserID    ID
+	Articles  []*ID
+	Newsfeeds []*ID
 }
 
 func NewCollection(title, userId string) (*Collection, error) {

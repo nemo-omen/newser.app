@@ -104,5 +104,9 @@ func (s *AuthService) GetUserById(userId int64) (*entity.User, error) {
 }
 
 func (s *AuthService) GetUserByEmail(email string) (*entity.User, error) {
-	return nil, nil
+	user, err := s.authRepo.FindByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }

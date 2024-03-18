@@ -46,6 +46,13 @@ func renderOrRedirect(c echo.Context, component templ.Component, redirectURL str
 }
 
 func (h *WebAuthHandler) GetRegister(c echo.Context) error {
+	authed, ok := c.Get("authenticated").(bool)
+	if !ok {
+		authed = false
+	}
+	if authed {
+		return c.Redirect(http.StatusSeeOther, "/app")
+	}
 	fmt.Println("GET /auth/register")
 	return render(c, authview.Register())
 }
@@ -86,6 +93,13 @@ func (h *WebAuthHandler) PostRegister(c echo.Context) error {
 
 func (h *WebAuthHandler) GetLogin(c echo.Context) error {
 	fmt.Println("GET /auth/login")
+	authed, ok := c.Get("authenticated").(bool)
+	if !ok {
+		authed = false
+	}
+	if authed {
+		return c.Redirect(http.StatusSeeOther, "/app")
+	}
 	return render(c, authview.Login())
 }
 
@@ -120,5 +134,12 @@ func (h *WebAuthHandler) Logout(c echo.Context) error {
 }
 
 func (h *WebAuthHandler) User(c echo.Context) error {
+	// authed, ok := c.Get("authenticated").(bool)
+	// if !ok {
+	// 	authed = false
+	// }
+	// if !authed {
+	// 	return c.Redirect(http.StatusSeeOther, "/auth/login")
+	// }
 	return c.String(http.StatusOK, "user")
 }

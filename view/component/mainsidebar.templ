@@ -23,12 +23,12 @@ templ MainSidebar() {
 			<ul>
 				<li>
 					@IconLink(
-						"/app/",
+						"/app",
 						"list",
 						"All Posts",
 						templ.Attributes{
 							"class":       "icon-link",
-							"hx-get":      "/app/",
+							"hx-get":      "/app",
 							"hx-target":   "main",
 							"hx-swap":     "innerHTML",
 							"hx-push-url": "true",

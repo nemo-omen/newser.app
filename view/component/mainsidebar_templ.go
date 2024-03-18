@@ -45,12 +45,12 @@ func MainSidebar() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = IconLink(
-			"/app/",
+			"/app",
 			"list",
 			"All Posts",
 			templ.Attributes{
 				"class":       "icon-link",
-				"hx-get":      "/app/",
+				"hx-get":      "/app",
 				"hx-target":   "main",
 				"hx-swap":     "innerHTML",
 				"hx-push-url": "true",

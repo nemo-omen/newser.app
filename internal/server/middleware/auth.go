@@ -10,12 +10,11 @@ import (
 func Auth(sm *scs.SessionManager) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			isAuthed := sm.GetBool(c.Request().Context(), "authenticated")
-			if !isAuthed {
+			authed := sm.GetBool(c.Request().Context(), "authenticated")
+			if !authed {
 				return c.Redirect(http.StatusSeeOther, "/auth/login")
-			} else {
-				return next(c)
 			}
+			return next(c)
 		}
 	}
 }

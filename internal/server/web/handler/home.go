@@ -2,6 +2,7 @@ package handler
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"newser.app/internal/usecase/session"
@@ -26,7 +27,13 @@ func (h *WebHomeHandler) Routes(app *echo.Echo, middleware ...echo.MiddlewareFun
 }
 
 func (h *WebHomeHandler) Home(c echo.Context) error {
-	authed := h.session.GetAuth(c)
-	fmt.Println("GET /", authed)
+	fmt.Println("GET /")
+	authed, ok := c.Get("authenticated").(bool)
+	if !ok {
+		authed = false
+	}
+	if authed {
+		return c.Redirect(http.StatusSeeOther, "/app")
+	}
 	return render(c, home.Index())
 }

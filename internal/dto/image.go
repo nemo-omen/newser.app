@@ -7,9 +7,9 @@ import (
 )
 
 type ImageDTO struct {
-	ID    entity.ID `json:"id,omitempty"`
-	URL   string    `json:"url,omitempty"`
-	Title string    `json:"title,omitempty"`
+	ID    entity.ID `json:"id,omitempty" db:"id"`
+	URL   string    `json:"url,omitempty" db:"url"`
+	Title string    `json:"title,omitempty" db:"title"`
 }
 
 func (i ImageDTO) JSON() []byte {

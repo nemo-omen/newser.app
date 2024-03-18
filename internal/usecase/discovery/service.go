@@ -15,13 +15,13 @@ import (
 	"newser.app/shared"
 )
 
-type FeedAPI struct {
+type DiscoveryService struct {
 	Client *http.Client
 }
 
-func NewFeedAPI(client *http.Client) *FeedAPI {
+func NewDiscoveryService(client *http.Client) DiscoveryService {
 	client.Timeout = 10 * time.Second
-	return &FeedAPI{
+	return DiscoveryService{
 		Client: client,
 	}
 }
@@ -30,7 +30,7 @@ func NewFeedAPI(client *http.Client) *FeedAPI {
 // a valid site by sending a HEAD request and
 // returning whether the response StatusCode == 200
 // If the request results in an error, the result is false.
-func (api FeedAPI) IsValidSite(siteUrl string) bool {
+func (api DiscoveryService) IsValidSite(siteUrl string) bool {
 	res, err := api.Client.Head(siteUrl)
 	if err != nil {
 		return false
@@ -51,7 +51,7 @@ func (api FeedAPI) IsValidSite(siteUrl string) bool {
 //
 // GetFeed uses github.com/mmcdole/gofeed to make the request
 // and parse the response body.
-func (api FeedAPI) GetFeed(feedUrl string) (*gofeed.Feed, error) {
+func (api DiscoveryService) GetFeed(feedUrl string) (*gofeed.Feed, error) {
 	feed := &gofeed.Feed{}
 	fp := gofeed.NewParser()
 
@@ -113,7 +113,7 @@ func (api FeedAPI) GetFeed(feedUrl string) (*gofeed.Feed, error) {
 	return feed, nil
 }
 
-func (api FeedAPI) GetFeedsConcurrent(feedUrls []string) ([]*gofeed.Feed, error) {
+func (api DiscoveryService) GetFeedsConcurrent(feedUrls []string) ([]*gofeed.Feed, error) {
 	feeds := []*gofeed.Feed{}
 	type Result struct {
 		Res   *gofeed.Feed
@@ -158,7 +158,7 @@ func (api FeedAPI) GetFeedsConcurrent(feedUrls []string) ([]*gofeed.Feed, error)
 	return feeds, nil
 }
 
-func (api FeedAPI) GetFaviconSrc(siteUrl string) string {
+func (api DiscoveryService) GetFaviconSrc(siteUrl string) string {
 	src := ""
 	res, err := api.Client.Get(siteUrl)
 	if err != nil {
@@ -198,7 +198,7 @@ func (api FeedAPI) GetFaviconSrc(siteUrl string) string {
 // FindFeedLinks searches the document at a given URL for
 // feed links.
 // siteUrl should be a valid URL (ie: https://whatever.com)
-func (api FeedAPI) FindFeedLinks(siteUrl string) ([]string, error) {
+func (api DiscoveryService) FindFeedLinks(siteUrl string) ([]string, error) {
 	// fmt.Println("Attempting to find feed links at", siteUrl)
 	links := []string{}
 
@@ -268,7 +268,7 @@ func (api FeedAPI) FindFeedLinks(siteUrl string) ([]string, error) {
 // URL (ie: https://siteurl.com).
 // Note, it should be called only after after api.FindFeedLinks
 // has failed
-func (api FeedAPI) GuessFeedLinks(siteUrl string) ([]string, error) {
+func (api DiscoveryService) GuessFeedLinks(siteUrl string) ([]string, error) {
 	confirmed := []string{}
 	guesses := []string{}
 

@@ -25,13 +25,18 @@ import (
 	webhandler "newser.app/internal/server/web/handler"
 	"newser.app/internal/usecase/auth"
 	"newser.app/internal/usecase/session"
+
+	"newser.app/internal/usecase/subscription"
+	// "newser.app/internal/usecase/newsfeed"
+	// "newser.app/internal/usecase/collection"
+	"newser.app/internal/usecase/discovery"
 )
 
 // repositories
 var (
 	authRepo repository.AuthRepository
 	// userRepo         repository.UserRepository
-	// subscriptionRepo repository.SubscriptionRepository
+	subscriptionRepo repository.SubscriptionRepository
 	// newsfeedRepo     repository.NewsfeedRepository
 	// articleRepo      repository.ArticleRepository
 	// collectionRepo   repository.CollectionRepository
@@ -41,12 +46,12 @@ var (
 
 // services
 var (
-	authService    auth.AuthService
-	sessionService session.SessionService
-	// api                 service.API
+	authService         auth.AuthService
+	sessionService      session.SessionService
+	subscriptionService subscription.SubscriptionService
 	// newsfeedService     service.NewsfeedService
-	// subscriptionService service.SubscriptionService
 	// collectionService   service.CollectionService
+	discoveryService discovery.DiscoveryService
 )
 
 // sessionManager
@@ -116,23 +121,45 @@ func initApiHandlers(app *echo.Echo) {
 
 func initWebHandlers(app *echo.Echo) {
 	webHomeHandler := webhandler.NewWebHomeHandler(sessionService)
-	webAuthHandler := webhandler.NewAuthWebHandler(authService, sessionService)
-	webAppHandler := webhandler.NewWebAppHandler(sessionService, authService)
+	webAuthHandler := webhandler.NewAuthWebHandler(
+		authService,
+		sessionService,
+	)
+	webAppHandler := webhandler.NewWebAppHandler(
+		sessionService,
+		authService,
+		subscriptionService,
+	)
+	webSearchHandler := webhandler.NewWebSearchHandler(
+		sessionService,
+		discoveryService,
+	)
 
 	webHomeHandler.Routes(
 		app,
 		custommiddleware.AuthContext(sessionManager),
 	)
+
 	webAuthHandler.Routes(
 		app,
 		custommiddleware.CtxFlash(sessionManager),
 		custommiddleware.AuthContext(sessionManager),
 		custommiddleware.HTMX,
 	)
+
 	webAppHandler.Routes(
 		app,
 		custommiddleware.CtxFlash(sessionManager),
 		custommiddleware.AuthContext(sessionManager),
+		// custommiddleware.Auth(sessionManager),
+		custommiddleware.HTMX,
+	)
+
+	webSearchHandler.Routes(
+		app,
+		custommiddleware.CtxFlash(sessionManager),
+		custommiddleware.AuthContext(sessionManager),
+		// custommiddleware.Auth(sessionManager),
 		custommiddleware.HTMX,
 	)
 }
@@ -140,75 +167,38 @@ func initWebHandlers(app *echo.Echo) {
 func initServices() {
 	authService = auth.NewAuthService(authRepo)
 	sessionService = session.NewSessionService(sessionManager)
+	subscriptionService = subscription.NewSubscriptionService(subscriptionRepo)
+	// newsfeedService = service.NewNewsfeedService(articleRepo, imageRepo, personRepo, newsfeedRepo, collectionRepo)
+	// collectionService = service.NewCollectionService(collectionRepo, articleRepo)
+	discoveryService = discovery.NewDiscoveryService(&http.Client{})
 }
 
 func initRepos(db *sqlx.DB) {
 	authRepo = sqlite.NewAuthSqliteRepo(db)
+	subscriptionRepo = sqlite.NewSubscriptionSqliteRepo(db)
 }
 
-// func initHandlers(app *echo.Echo, db *sqlx.DB, sessionManager *scs.SessionManager, isDev bool) {
-// 	userRepo = repository.NewUserSqliteRepo(db)
-// 	newsfeedRepo = repository.NewNewsfeedSqliteRepo(db)
-// 	articleRepo = repository.NewArticleSqliteRepo(db)
-// 	subscriptionRepo = repository.NewSubscriptionSqliteRepo(db)
-// 	collectionRepo = repository.NewCollectionSqliteRepo(db)
-// 	personRepo = repository.NewPersonSqliteRepository(db)
-// 	imageRepo = repository.NewImageSqliteRepo(db)
+func initSessions(app *echo.Echo, db *sql.DB) *scs.SessionManager {
+	app.Logger.Debug("Migrating sessions table...")
+	sessionQ := `
+	CREATE TABLE IF NOT EXISTS sessions(
+		token TEXT PRIMARY KEY,
+        data BLOB NOT NULL,
+        expiry REAL NOT NULL
+	);
+	`
+	_, err := db.Exec(sessionQ)
+	if err != nil {
+		app.Logger.Fatal("error migrating sessions table", err)
+	} else {
+		app.Logger.Debug("completed migrating sessions table")
+	}
+	sessionManager := scs.New()
+	sessionManager.Lifetime = (7 * 24) * time.Hour
 
-// 	userRepo.Migrate()
-// 	newsfeedRepo.Migrate()
-// 	articleRepo.Migrate()
-// 	subscriptionRepo.Migrate()
-// 	collectionRepo.Migrate()
-// 	personRepo.Migrate()
-// 	imageRepo.Migrate()
-
-// 	authService = service.NewAuthService(userRepo, collectionRepo)
-// 	api = service.NewAPI(&http.Client{})
-// 	subscriptionService = service.NewSubscriptionService(subscriptionRepo, newsfeedRepo, articleRepo, collectionRepo)
-// 	newsfeedService = service.NewNewsfeedService(articleRepo, imageRepo, personRepo, newsfeedRepo, collectionRepo)
-// 	collectionService = service.NewCollectionService(collectionRepo, articleRepo)
-
-// 	homeHandler := handler.NewHomeHandler(sessionManager)
-// 	authHandler := handler.NewAuthHandler(authService, sessionManager)
-// 	deskHandler := handler.NewDeskHandler(api, subscriptionService, authService, newsfeedService, collectionService, sessionManager)
-
-// 	app.GET("/", homeHandler.Home)
-// 	authGroup := app.Group("/auth")
-// 	authGroup.GET("/signup", authHandler.GetSignup)
-// 	authGroup.POST("/signup", authHandler.PostSignup)
-// 	authGroup.GET("/login", authHandler.GetLogin)
-// 	authGroup.POST("/login", authHandler.PostLogin)
-// 	authGroup.POST("/logout", authHandler.PostLogout)
-
-// 	deskGroup := app.Group("/desk")
-// 	deskGroup.Use(custommiddleware.Auth(sessionManager))
-// 	deskGroup.Use(custommiddleware.SidebarLinks(
-// 		sessionManager,
-// 		&subscriptionService,
-// 		&authService,
-// 	))
-// 	deskGroup.Use(custommiddleware.CtxCardState(sessionManager))
-// 	deskGroup.Use(custommiddleware.PageTitle(sessionManager))
-// 	deskGroup.Use(custommiddleware.ViewPreference(sessionManager))
-// 	deskGroup.Use(custommiddleware.ReadPreference(sessionManager))
-// 	deskGroup.GET("/", deskHandler.GetDeskIndex)
-// 	deskGroup.GET("/search", deskHandler.GetDeskSearch)
-// 	deskGroup.POST("/search", deskHandler.PostDeskSearch)
-// 	deskGroup.POST("/subscribe", deskHandler.PostDeskSubscribe)
-// 	deskGroup.GET("/articles/:articleid", deskHandler.GetDeskArticle)
-// 	deskGroup.GET("/articles/update/", deskHandler.GetDeskUpdateArticles)
-// 	deskGroup.GET("/feeds/:feedid", deskHandler.GetDeskNewsfeed)
-// 	deskGroup.GET("/collections/:collectionname", deskHandler.GetDeskCollection)
-// 	deskGroup.GET("/notes", deskHandler.GetDeskNotes)
-// 	deskGroup.GET("/control/unreadcount", deskHandler.GetDeskUnreadCount)
-// 	deskGroup.GET("/control/pagetitle", deskHandler.GetDeskPageTitle)
-// 	deskGroup.POST("/control/setview", deskHandler.PostDeskSetView)
-// 	deskGroup.POST("/control/setreadview", deskHandler.PostDeskSetReadView)
-// 	deskGroup.POST("/collections/read", deskHandler.PostDeskAddToRead)
-// 	deskGroup.POST("/collections/unread", deskHandler.PostDeskAddToUnread)
-// 	deskGroup.POST("/control/setcollapse", deskHandler.PostDeskCardCollapsed)
-// }
+	sessionManager.Store = sqlite3store.New(db)
+	return sessionManager
+}
 
 func openDB(dsn string) (*sqlx.DB, error) {
 	db, err := sqlx.Open("sqlite3", dsn)
@@ -234,26 +224,4 @@ func openSessionDB(dsn string) (*sql.DB, error) {
 		return nil, err
 	}
 	return db, nil
-}
-
-func initSessions(app *echo.Echo, db *sql.DB) *scs.SessionManager {
-	app.Logger.Debug("Migrating sessions table...")
-	sessionQ := `
-	CREATE TABLE IF NOT EXISTS sessions(
-		token TEXT PRIMARY KEY,
-        data BLOB NOT NULL,
-        expiry REAL NOT NULL
-	);
-	`
-	_, err := db.Exec(sessionQ)
-	if err != nil {
-		app.Logger.Fatal("error migrating sessions table", err)
-	} else {
-		app.Logger.Debug("completed migrating sessions table")
-	}
-	sessionManager := scs.New()
-	sessionManager.Lifetime = (7 * 24) * time.Hour
-
-	sessionManager.Store = sqlite3store.New(db)
-	return sessionManager
 }

@@ -3,16 +3,16 @@ package dto
 import "newser.app/internal/domain/entity"
 
 type NewsfeedDTO struct {
-	ID          string       `json:"id"`
-	Title       string       `json:"title"`
-	Description string       `json:"description"`
-	FeedLink    string       `json:"feedLink"`
-	SiteLink    string       `json:"siteLink"`
-	Author      PersonDTO    `json:"author"`
-	Language    string       `json:"language"`
-	Image       ImageDTO     `json:"image"`
-	Copyright   string       `json:"copyRight"`
-	Articles    []ArticleDTO `json:"articles"`
+	ID          string       `json:"id,omitempty" db:"id"`
+	Title       string       `json:"title,omitempty" db:"title"`
+	Description string       `json:"description,omitempty" db:"description"`
+	FeedLink    string       `json:"feedLink,omitempty" db:"feedLink"`
+	SiteLink    string       `json:"siteLink,omitempty" db:"siteLink"`
+	Author      PersonDTO    `json:"author,omitempty" db:"author"`
+	Language    string       `json:"language,omitempty" db:"language"`
+	Image       ImageDTO     `json:"image,omitempty" db:"image"`
+	Copyright   string       `json:"copyRight,omitempty" db:"copyRight"`
+	Articles    []ArticleDTO `json:"articles,omitempty" db:"articles"`
 }
 
 func (nf NewsfeedDTO) FromDomain(newsfeed entity.Newsfeed) NewsfeedDTO {
