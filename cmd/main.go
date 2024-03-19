@@ -120,34 +120,40 @@ func initApiHandlers(app *echo.Echo) {
 }
 
 func initWebHandlers(app *echo.Echo) {
-	webHomeHandler := webhandler.NewWebHomeHandler(sessionService)
-	webAuthHandler := webhandler.NewAuthWebHandler(
+	homeHandler := webhandler.NewWebHomeHandler(sessionService)
+	authHandler := webhandler.NewAuthWebHandler(
 		authService,
 		sessionService,
 	)
-	webAppHandler := webhandler.NewWebAppHandler(
+	appHandler := webhandler.NewWebAppHandler(
 		sessionService,
 		authService,
 		subscriptionService,
 	)
-	webSearchHandler := webhandler.NewWebSearchHandler(
+	searchHandler := webhandler.NewWebSearchHandler(
 		sessionService,
 		discoveryService,
 	)
+	subscriptionHandler := webhandler.NewWebSubscriptionHandler(
+		sessionService,
+		subscriptionService,
+		authService,
+		discoveryService,
+	)
 
-	webHomeHandler.Routes(
+	homeHandler.Routes(
 		app,
 		custommiddleware.AuthContext(sessionManager),
 	)
 
-	webAuthHandler.Routes(
+	authHandler.Routes(
 		app,
 		custommiddleware.CtxFlash(sessionManager),
 		custommiddleware.AuthContext(sessionManager),
 		custommiddleware.HTMX,
 	)
 
-	webAppHandler.Routes(
+	appHandler.Routes(
 		app,
 		custommiddleware.CtxFlash(sessionManager),
 		custommiddleware.AuthContext(sessionManager),
@@ -155,7 +161,14 @@ func initWebHandlers(app *echo.Echo) {
 		custommiddleware.HTMX,
 	)
 
-	webSearchHandler.Routes(
+	searchHandler.Routes(
+		app,
+		custommiddleware.CtxFlash(sessionManager),
+		custommiddleware.AuthContext(sessionManager),
+		// custommiddleware.Auth(sessionManager),
+		custommiddleware.HTMX,
+	)
+	subscriptionHandler.Routes(
 		app,
 		custommiddleware.CtxFlash(sessionManager),
 		custommiddleware.AuthContext(sessionManager),

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"newser.app/internal/domain/value"
+	"newser.app/shared"
 )
 
 type Person struct {
@@ -15,10 +16,18 @@ type Person struct {
 func NewPerson(name, email string) (*Person, error) {
 	validName, err := value.NewName(name)
 	if err != nil {
+		valErr, ok := err.(shared.AppError)
+		if ok {
+			valErr.Print()
+		}
 		return nil, err
 	}
 	validEmail, err := value.NewEmail(email)
 	if err != nil {
+		valErr, ok := err.(shared.AppError)
+		if ok {
+			valErr.Print()
+		}
 		return nil, err
 	}
 

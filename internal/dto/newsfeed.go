@@ -1,18 +1,22 @@
 package dto
 
-import "newser.app/internal/domain/entity"
+import (
+	"newser.app/internal/domain/entity"
+)
 
 type NewsfeedDTO struct {
 	ID          string       `json:"id,omitempty" db:"id"`
 	Title       string       `json:"title,omitempty" db:"title"`
 	Description string       `json:"description,omitempty" db:"description"`
-	FeedLink    string       `json:"feedLink,omitempty" db:"feedLink"`
-	SiteLink    string       `json:"siteLink,omitempty" db:"siteLink"`
-	Author      PersonDTO    `json:"author,omitempty" db:"author"`
+	FeedURL     string       `json:"feedURL,omitempty" db:"feed_url"`
+	SiteURL     string       `json:"siteURL,omitempty" db:"site_url"`
 	Language    string       `json:"language,omitempty" db:"language"`
-	Image       ImageDTO     `json:"image,omitempty" db:"image"`
-	Copyright   string       `json:"copyRight,omitempty" db:"copyRight"`
+	ImageTitle  string       `json:"image,omitempty" db:"feed_image_title"`
+	ImageURL    string       `json:"imageURL,omitempty" db:"feed_image_url"`
+	Copyright   string       `json:"copyRight,omitempty" db:"copyright"`
 	Articles    []ArticleDTO `json:"articles,omitempty" db:"articles"`
+	FeedType    string       `json:"feedType,omitempty" db:"feed_type"`
+	Slug        string       `json:"slug,omitempty" db:"slug"`
 }
 
 func (nf NewsfeedDTO) FromDomain(newsfeed entity.Newsfeed) NewsfeedDTO {
@@ -23,13 +27,15 @@ func (nf NewsfeedDTO) FromDomain(newsfeed entity.Newsfeed) NewsfeedDTO {
 	return NewsfeedDTO{
 		ID:          newsfeed.ID.String(),
 		Title:       newsfeed.Title,
+		SiteURL:     newsfeed.SiteURL.String(),
+		FeedURL:     newsfeed.FeedURL.String(),
 		Description: newsfeed.Description,
-		FeedLink:    newsfeed.FeedLink.String(),
-		SiteLink:    newsfeed.SiteLink.String(),
-		Author:      PersonDTO{}.FromDomain(newsfeed.Author),
-		Language:    newsfeed.Language,
-		Image:       ImageDTO{}.FromDomain(newsfeed.Image),
 		Copyright:   newsfeed.Copyright,
+		Language:    newsfeed.Language,
+		ImageTitle:  newsfeed.Image.Title,
+		ImageURL:    newsfeed.Image.URL.String(),
 		Articles:    articles,
+		FeedType:    newsfeed.FeedType,
+		Slug:        newsfeed.Slug.String(),
 	}
 }

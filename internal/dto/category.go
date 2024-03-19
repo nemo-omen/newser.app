@@ -7,9 +7,12 @@ type CategoryDTO struct {
 	Term string `json:"term" db:"term"`
 }
 
-func (d CategoryDTO) FromDomain(e *entity.Category) CategoryDTO {
+func (d CategoryDTO) FromDomain(c *entity.Category) CategoryDTO {
+	if c == nil {
+		return CategoryDTO{}
+	}
 	return CategoryDTO{
-		ID:   e.ID.String(),
-		Term: e.Term.String(),
+		ID:   c.ID.String(),
+		Term: c.Term.String(),
 	}
 }

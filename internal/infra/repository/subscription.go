@@ -10,4 +10,5 @@ type SubscriptionRepository interface {
 	GetAllArticles(userID string) ([]*dto.ArticleDTO, error)
 	GetAllFeeds(userID string) ([]*dto.NewsfeedDTO, error)
 	GetFeedsInfo(feedID string) (*dto.FeedInfoDTO, error)
+	Subscribe(userID string, feed dto.NewsfeedDTO) error
 }

@@ -22,6 +22,9 @@ func (i ImageDTO) String() string {
 }
 
 func (i ImageDTO) FromDomain(image *entity.Image) ImageDTO {
+	if image == nil {
+		return ImageDTO{}
+	}
 	return ImageDTO{
 		ID:    image.ID,
 		URL:   image.URL.String(),

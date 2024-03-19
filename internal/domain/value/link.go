@@ -1,6 +1,7 @@
 package value
 
 import (
+	"fmt"
 	"net/url"
 
 	"newser.app/shared"
@@ -13,6 +14,7 @@ type Link string
 func NewLink(link string) (Link, error) {
 	_, err := url.ParseRequestURI(link)
 	if err != nil {
+		fmt.Println("bad link input: ", link)
 		appErr := shared.NewAppError(
 			ErrInvalidInput,
 			"Not a valid URL",

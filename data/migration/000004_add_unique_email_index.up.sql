@@ -1,1 +1,0 @@
-CREATE UNIQUE INDEX unique_email ON users (email);

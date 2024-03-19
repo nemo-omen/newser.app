@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"newser.app/internal/domain/value"
+	"newser.app/shared"
 )
 
 type Image struct {
@@ -15,6 +16,10 @@ type Image struct {
 func NewImage(url, title string) *Image {
 	validLink, err := value.NewLink(url)
 	if err != nil {
+		valErr, ok := err.(shared.AppError)
+		if ok {
+			valErr.Print()
+		}
 		return nil
 	}
 	return &Image{

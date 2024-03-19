@@ -1,85 +1,78 @@
 package mapper
 
 import (
+	"fmt"
+
 	"github.com/mmcdole/gofeed"
 	"newser.app/internal/domain/entity"
-	"newser.app/internal/domain/value"
 )
 
 type GofeedMapper struct{}
 
-func (m GofeedMapper) ToNewsfeed(gfFeed *gofeed.Feed) *entity.Newsfeed {
-	nf := &entity.Newsfeed{
-		ID:          entity.NewID(),
-		Title:       gfFeed.Title,
-		Description: gfFeed.Description,
-		FeedLink:    value.Link(gfFeed.FeedLink),
-		SiteLink:    value.Link(gfFeed.Link),
-		Author:      m.ToPerson(gfFeed.Author),
-		Language:    gfFeed.Language,
-		Image:       m.ToImage(gfFeed.Image),
-		Copyright:   gfFeed.Copyright,
-		Articles:    []*entity.Article{},
+func (m GofeedMapper) ToNewsfeed(gfFeed *gofeed.Feed) (*entity.Newsfeed, error) {
+	nf, err := entity.NewNewsfeed(
+		gfFeed.Title,
+		gfFeed.Link,
+		gfFeed.FeedLink,
+		gfFeed.Description,
+		gfFeed.Copyright,
+		gfFeed.Language,
+		gfFeed.FeedType,
+		m.ToImage(gfFeed.Image),
+	)
+
+	if err != nil {
+		return nil, err
 	}
 
 	for _, gfItem := range gfFeed.Items {
-		nf.Articles = append(nf.Articles, m.ToArticle(gfItem))
+		article, err := m.ToArticle(gfItem)
+		if err != nil {
+			return nil, err
+		}
+		nf.Articles = append(nf.Articles, article)
 	}
-	return nf
+	return nf, nil
 }
 
-func (m GofeedMapper) ToArticle(gfItem *gofeed.Item) *entity.Article {
-	categories := []*entity.Category{}
-	for _, c := range gfItem.Categories {
-		categories = append(categories, m.ToCategory(c))
+func (m GofeedMapper) ToArticle(gfItem *gofeed.Item) (*entity.Article, error) {
+	article, err := entity.NewArticle(
+		gfItem.Title,
+		gfItem.Description,
+		gfItem.Content,
+		gfItem.Link,
+		gfItem.Updated,
+		gfItem.Published,
+		gfItem.GUID,
+		*gfItem.UpdatedParsed,
+		*gfItem.PublishedParsed,
+		m.ToPerson(gfItem.Author),
+		m.ToImage(gfItem.Image),
+		gfItem.Categories,
+	)
+	if err != nil {
+		fmt.Println("error creating article: ", err)
+		return nil, err
 	}
-	return &entity.Article{
-		Item: &entity.Item{
-			ID:          entity.NewID(),
-			Title:       gfItem.Title,
-			Description: gfItem.Description,
-			Content:     gfItem.Content,
-			Link:        value.Link(gfItem.Link),
-			Updated:     gfItem.Updated,
-			Published:   gfItem.Published,
-			Author:      m.ToPerson(gfItem.Author),
-			GUID:        gfItem.GUID,
-			Image:       m.ToImage(gfItem.Image),
-			Categories:  categories,
-		},
-		Read:  false,
-		Saved: false,
-	}
+	return article, nil
 }
 
 func (m GofeedMapper) ToImage(gfImage *gofeed.Image) *entity.Image {
-	validLink, err := value.NewLink(gfImage.URL)
-	if err != nil {
+	if gfImage == nil {
 		return nil
 	}
-	return &entity.Image{
-		ID:    entity.NewID(),
-		URL:   validLink,
-		Title: gfImage.Title,
-	}
+	return entity.NewImage(gfImage.URL, gfImage.Title)
 }
 
 func (m GofeedMapper) ToPerson(gfPerson *gofeed.Person) *entity.Person {
-	name, err := value.NewName(gfPerson.Name)
+	if gfPerson == nil {
+		return nil
+	}
+	ep, err := entity.NewPerson(gfPerson.Name, gfPerson.Email)
 	if err != nil {
 		return nil
 	}
-
-	email, err := value.NewEmail(gfPerson.Email)
-	if err != nil {
-		email, _ = value.NewEmail("unknown@unknown.unknown")
-	}
-
-	return &entity.Person{
-		ID:    entity.NewID(),
-		Name:  name,
-		Email: email,
-	}
+	return ep
 }
 
 func (m GofeedMapper) ToCategory(gfCategory string) *entity.Category {

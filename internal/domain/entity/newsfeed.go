@@ -4,41 +4,62 @@ import (
 	"encoding/json"
 
 	"newser.app/internal/domain/value"
+	"newser.app/shared"
 )
 
 type Newsfeed struct {
 	ID          ID         `json:"id"`
 	Title       string     `json:"title"`
+	SiteURL     value.Link `json:"siteLink"`
+	FeedURL     value.Link `json:"feedLink"`
 	Description string     `json:"description"`
-	FeedLink    value.Link `json:"feedLink"`
-	SiteLink    value.Link `json:"siteLink"`
-	Author      *Person    `json:"author"`
+	Copyright   string     `json:"copyRight"`
 	Language    string     `json:"language"`
 	Image       *Image     `json:"image"`
-	Copyright   string     `json:"copyRight"`
 	Articles    []*Article `json:"articles"`
+	FeedType    string     `json:"feedType"`
+	Slug        value.Slug `json:"slug"`
 }
 
-func NewNewsfeed(title, description, feedLink, siteLink, language, copyRight string, author *Person, image *Image) *Newsfeed {
+func NewNewsfeed(
+	title,
+	siteLink,
+	feedLink,
+	description,
+	copyright,
+	language,
+	feedType string,
+	image *Image,
+) (*Newsfeed, error) {
 	validFeedLink, err := value.NewLink(feedLink)
 	if err != nil {
-		return nil
+		validFeedLink = ""
 	}
 	validSiteLink, err := value.NewLink(siteLink)
 	if err != nil {
-		return nil
+		validSiteLink = ""
+	}
+	slug, err := value.NewSlug(title)
+	if err != nil {
+		valErr, ok := err.(shared.AppError)
+		if ok {
+			valErr.Print()
+		}
+		return nil, err
 	}
 	return &Newsfeed{
 		ID:          NewID(),
 		Title:       title,
+		SiteURL:     validSiteLink,
+		FeedURL:     validFeedLink,
 		Description: description,
-		FeedLink:    validFeedLink,
-		SiteLink:    validSiteLink,
-		Author:      author,
+		Copyright:   copyright,
 		Language:    language,
 		Image:       image,
 		Articles:    []*Article{},
-	}
+		FeedType:    feedType,
+		Slug:        slug,
+	}, nil
 }
 
 func (nf *Newsfeed) AddArticle(article *Article) {

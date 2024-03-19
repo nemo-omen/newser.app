@@ -29,6 +29,9 @@ func (p PersonDTO) String() string {
 }
 
 func (p PersonDTO) FromDomain(person *entity.Person) PersonDTO {
+	if person == nil {
+		return PersonDTO{}
+	}
 	return PersonDTO{
 		ID:    person.ID,
 		Name:  person.Name.String(),

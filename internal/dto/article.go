@@ -12,7 +12,7 @@ type ArticleDTO struct {
 	Title           string        `json:"title,omitempty" db:"title"`
 	Description     string        `json:"description,omitempty" db:"description"`
 	Content         string        `json:"content,omitempty" db:"content"`
-	Link            string        `json:"link,omitempty" db:"link"`
+	Link            string        `json:"link,omitempty" db:"article_link"`
 	Updated         string        `json:"updated,omitempty" db:"updated"`
 	UpdatedParsed   time.Time     `json:"updated_parsed,omitempty" db:"updated_parsed"`
 	Published       string        `json:"published,omitempty" db:"published"`
@@ -21,12 +21,15 @@ type ArticleDTO struct {
 	GUID            string        `json:"guid,omitempty" db:"guid"`
 	Image           ImageDTO      `json:"image,omitempty" db:"image"`
 	Categories      []CategoryDTO `json:"categories,omitempty" db:"categories"`
+	Slug            string        `json:"slug,omitempty" db:"slug"`
 	Read            bool          `json:"read,omitempty" db:"read"`
 	Saved           bool          `json:"saved,omitempty" db:"saved"`
-	SiteURL         string        `json:"site_url,omitempty" db:"site_url"`
+	SiteURL         string        `json:"site_url,omitempty" db:"feed_site_url"`
+	FeedID          string        `json:"feed_id,omitempty" db:"newsfeed_id"`
 	FeedTitle       string        `json:"feed_title,omitempty" db:"feed_title"`
 	FeedImageURL    string        `json:"feed_image_url,omitempty" db:"feed_image_url"`
 	FeedImageTitle  string        `json:"feed_image_title,omitempty" db:"feed_image_title"`
+	FeedSlug        string        `json:"feed_slug,omitempty" db:"feed_slug"`
 }
 
 func (a ArticleDTO) JSON() []byte {
@@ -52,6 +55,7 @@ func (a ArticleDTO) FromDomain(article *entity.Article) ArticleDTO {
 		Author:          PersonDTO{}.FromDomain(article.Author),
 		GUID:            article.GUID,
 		Image:           ImageDTO{}.FromDomain(article.Image),
+		Slug:            article.Slug.String(),
 		Categories:      []CategoryDTO{},
 		Read:            article.Read,
 		Saved:           article.Saved,

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"newser.app/internal/domain/value"
+	"newser.app/shared"
 )
 
 type Category struct {
@@ -14,6 +15,10 @@ type Category struct {
 func NewCategory(term string) *Category {
 	validTerm, err := value.NewTerm(term)
 	if err != nil {
+		valErr, ok := err.(shared.AppError)
+		if ok {
+			valErr.Print()
+		}
 		return nil
 	}
 	return &Category{

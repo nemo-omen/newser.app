@@ -58,7 +58,7 @@ templ FeedPreview(feed *gofeed.Feed) {
 		</div>
 		<div class="card-footer">
 			<form
-				action="/desk/subscribe"
+				action="/app/subscribe"
 				method="POST"
 			>
 				<input type="hidden" name="subscriptionurl" id="subscriptionurl" value={ feed.FeedLink }/>

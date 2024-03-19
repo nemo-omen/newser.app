@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
 	"newser.app/internal/usecase/auth"
 	"newser.app/internal/usecase/session"
@@ -51,17 +49,17 @@ func (h *WebAppHandler) GetApp(c echo.Context) error {
 		authed = false
 	}
 	if !authed {
-		return c.Redirect(http.StatusSeeOther, "/auth/login")
+		return redirectWithHX(c, "/auth/login")
 	}
 	// get all the subscribed articles
 	email, ok := c.Get("user").(string)
 	if !ok {
-		return c.Redirect(http.StatusSeeOther, "/auth/login")
+		return redirectWithHX(c, "/auth/login")
 	}
 
 	user, err := h.authService.GetUserByEmail(email)
 	if err != nil {
-		return c.Redirect(http.StatusSeeOther, "/auth/login")
+		return redirectWithHX(c, "/auth/login")
 	}
 
 	articles, err := h.subscriptionService.GetAllArticles(user.ID.String())
@@ -72,7 +70,7 @@ func (h *WebAppHandler) GetApp(c echo.Context) error {
 	// articles := []*dto.ArticleDTO{}
 	if len(articles) == 0 {
 		// renderOrRedirect(c, search.SearchPageContent([]*gofeed.Feed{}), "/app/search")
-		return c.Redirect(http.StatusSeeOther, "/app/search")
+		return redirectWithHX(c, "/app/search")
 	}
 
 	if isHxRequest(c) {

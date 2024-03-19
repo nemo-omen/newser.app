@@ -9,8 +9,10 @@ CREATE TABLE IF NOT EXISTS
 CREATE TABLE IF NOT EXISTS
     users (
         id TEXT PRIMARY KEY,
-        email TEXT NOT NULL,
-        name TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL
+        ON CONFLICT FAIL,
+        name TEXT UNIQUE NOT NULL
+        ON CONFLICT FAIL,
         password TEXT NOT NULL
     );
 
@@ -18,7 +20,8 @@ CREATE TABLE IF NOT EXISTS
     people (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
-        email TEXT NOT NULL DEFAULT ''
+        email TEXT UNIQUE NOT NULL
+        ON CONFLICT FAIL DEFAULT ''
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -34,44 +37,52 @@ CREATE TABLE IF NOT EXISTS
     images (
         id TEXT PRIMARY KEY,
         title TEXT NOT NULL DEFAULT '',
-        url TEXT NOT NULL DEFAULT ''
+        url TEXT UNIQUE NOT NULL
+        ON CONFLICT IGNORE DEFAULT ''
     );
 
 CREATE TABLE IF NOT EXISTS
-    categories (id TEXT PRIMARY KEY, term TEXT NOT NULL);
+    categories (
+        id TEXT PRIMARY KEY,
+        term TEXT UNIQUE NOT NULL
+        ON CONFLICT IGNORE
+    );
 
 CREATE TABLE IF NOT EXISTS
     subscriptions (
-        id text PRIMARY KEY,
-        user_id INT NOT NULL,
-        newsfeed_id INT NOT NULL,
+        user_id TEXT NOT NULL,
+        newsfeed_id TEXT NOT NULL,
         CONSTRAINT fk_users FOREIGN KEY (user_id) REFERENCES users (id),
-        CONSTRAINT fk_newsfeeds FOREIGN KEY (newsfeed_id) REFERENCES newsfeeds (id)
+        CONSTRAINT fk_newsfeeds FOREIGN KEY (newsfeed_id) REFERENCES newsfeeds (id) PRIMARY KEY (user_id, newsfeed_id)
     );
 
 CREATE TABLE IF NOT EXISTS
     articles (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id TEXT PRIMARY KEY,
         title TEXT NOT NULL,
         description TEXT,
         content TEXT,
-        article_link TEXT NOT NULL,
+        article_link TEXT UNIQUE NOT NULL
+        ON CONFLICT IGNORE,
         published TEXT NOT NULL,
         published_parsed DATETIME NOT NULL,
         updated TEXT NOT NULL,
         updated_parsed DATETIME NOT NULL,
-        guid TEXT,
+        guid TEXT UNIQUE NOT NULL
+        ON CONFLICT IGNORE,
         slug TEXT NOT NULL,
-        feed_id int NOT NULL,
-        CONSTRAINT fk_newsfeeds FOREIGN KEY (feed_id) REFERENCES newsfeeds (id)
+        newsfeed_id int NOT NULL,
+        CONSTRAINT fk_newsfeeds FOREIGN KEY (newsfeed_id) REFERENCES newsfeeds (id) ON DELETE CASCADE
     );
 
 CREATE TABLE IF NOT EXISTS
     newsfeeds (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id TEXT PRIMARY KEY
+        ON CONFLICT IGNORE,
         title TEXT NOT NULL,
         site_url NOT NULL,
-        feed_url TEXT UNIQUE NOT NULL,
+        feed_url TEXT UNIQUE NOT NULL
+        ON CONFLICT IGNORE,
         description TEXT,
         copyright TEXT,
         language TEXT,
@@ -113,7 +124,8 @@ CREATE TABLE IF NOT EXISTS
         article_id TEXT NOT NULL,
         category_id TEXT NOT NULL,
         CONSTRAINT fk_articles FOREIGN KEY (article_id) REFERENCES articles (id) ON DELETE CASCADE,
-        CONSTRAINT fk_categories FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE
+        CONSTRAINT fk_categories FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE PRIMARY KEY (article_id, category_id)
+        ON CONFLICT IGNORE
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -121,7 +133,8 @@ CREATE TABLE IF NOT EXISTS
         article_id TEXT NOT NULL,
         image_id TEXT NOT NULL,
         CONSTRAINT fk_articles FOREIGN KEY (article_id) REFERENCES articles (id) ON DELETE CASCADE,
-        CONSTRAINT fk_images FOREIGN KEY (image_id) REFERENCES images (id) ON DELETE CASCADE
+        CONSTRAINT fk_images FOREIGN KEY (image_id) REFERENCES images (id) ON DELETE CASCADE PRIMARY KEY (article_id, image_id)
+        ON CONFLICT IGNORE
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -129,7 +142,8 @@ CREATE TABLE IF NOT EXISTS
         article_id TEXT NOT NULL,
         person_id TEXT NOT NULL,
         CONSTRAINT fk_articles FOREIGN KEY (article_id) REFERENCES articles (id) ON DELETE CASCADE,
-        CONSTRAINT fk_people FOREIGN KEY (person_id) REFERENCES people (id) ON DELETE CASCADE
+        CONSTRAINT fk_people FOREIGN KEY (person_id) REFERENCES people (id) ON DELETE CASCADE PRIMARY KEY (article_id, person_id)
+        ON CONFLICT IGNORE
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -137,45 +151,42 @@ CREATE TABLE IF NOT EXISTS
         article_id TEXT NOT NULL,
         collection_id TEXT NOT NULL,
         CONSTRAINT fk_articles FOREIGN KEY (article_id) REFERENCES articles (id) ON DELETE CASCADE,
-        CONSTRAINT fk_collections FOREIGN KEY (collection_id) REFERENCES collections (id) ON DELETE CASCADE
+        CONSTRAINT fk_collections FOREIGN KEY (collection_id) REFERENCES collections (id) ON DELETE CASCADE PRIMARY KEY (article_id, collection_id)
+        ON CONFLICT IGNORE
     );
 
 CREATE TABLE IF NOT EXISTS
-    feed_subscriptions (
-        feed_id TEXT NOT NULL,
-        subscription_id TEXT NOT NULL,
-        CONSTRAINT fk_newsfeeds FOREIGN KEY (feed_id) REFERENCES newsfeeds (id) ON DELETE CASCADE,
-        CONSTRAINT fk_subscriptions FOREIGN KEY (subscription_id) REFERENCES subscriptions (id) ON DELETE CASCADE
-    );
-
-CREATE TABLE IF NOT EXISTS
-    feed_people (
-        feed_id TEXT NOT NULL,
+    newsfeed_people (
+        newsfeed_id TEXT NOT NULL,
         person_id TEXT NOT NULL,
-        CONSTRAINT fk_newsfeeds FOREIGN KEY (feed_id) REFERENCES newsfeeds (id) ON DELETE CASCADE,
-        CONSTRAINT fk_people FOREIGN KEY (person_id) REFERENCES people (id) ON DELETE CASCADE
+        CONSTRAINT fk_newsfeeds FOREIGN KEY (newsfeed_id) REFERENCES newsfeeds (id) ON DELETE CASCADE,
+        CONSTRAINT fk_people FOREIGN KEY (person_id) REFERENCES people (id) ON DELETE CASCADE PRIMARY KEY (newsfeed_id, person_id)
+        ON CONFLICT IGNORE
     );
 
 CREATE TABLE IF NOT EXISTS
-    feed_categories (
-        feed_id TEXT NOT NULL,
+    newsfeed_categories (
+        newsfeed_id TEXT NOT NULL,
         category_id TEXT NOT NULL,
-        CONSTRAINT fk_newsfeeds FOREIGN KEY (feed_id) REFERENCES newsfeeds (id) ON DELETE CASCADE,
-        CONSTRAINT fk_categories FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE
+        CONSTRAINT fk_newsfeeds FOREIGN KEY (newsfeed_id) REFERENCES newsfeeds (id) ON DELETE CASCADE,
+        CONSTRAINT fk_categories FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE PRIMARY KEY (newsfeed_id, category_id)
+        ON CONFLICT IGNORE
     );
 
 CREATE TABLE IF NOT EXISTS
-    feed_images (
-        feed_id TEXT NOT NULL,
+    newsfeed_images (
+        newsfeed_id TEXT NOT NULL,
         image_id TEXT NOT NULL,
-        CONSTRAINT fk_newsfeeds FOREIGN KEY (feed_id) REFERENCES newsfeeds (id) ON DELETE CASCADE,
-        CONSTRAINT fk_images FOREIGN KEY (image_id) REFERENCES images (id) ON DELETE CASCADE
+        CONSTRAINT fk_newsfeeds FOREIGN KEY (newsfeed_id) REFERENCES newsfeeds (id) ON DELETE CASCADE,
+        CONSTRAINT fk_images FOREIGN KEY (image_id) REFERENCES images (id) ON DELETE CASCADE PRIMARY KEY (newsfeed_id, image_id)
+        ON CONFLICT IGNORE
     );
 
 CREATE TABLE IF NOT EXISTS
-    collection_feeds (
+    collection_newsfeeds (
         collection_id TEXT NOT NULL,
-        feed_id TEXT NOT NULL,
+        newsfeed_id TEXT NOT NULL,
         CONSTRAINT fk_collections FOREIGN KEY (collection_id) REFERENCES collections (id) ON DELETE CASCADE,
-        CONSTRAINT fk_newsfeeds FOREIGN KEY (feed_id) REFERENCES newsfeeds (id) ON DELETE CASCADE
+        CONSTRAINT fk_newsfeeds FOREIGN KEY (newsfeed_id) REFERENCES newsfeeds (id) ON DELETE CASCADE PRIMARY KEY (collection_id, newsfeed_id)
+        ON CONFLICT IGNORE
     );

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"newser.app/internal/domain/value"
+	"newser.app/shared"
 )
 
 type Article struct {
@@ -26,14 +27,37 @@ type Item struct {
 	Author          *Person     `json:"author"`
 	GUID            string      `json:"guid"`
 	Image           *Image      `json:"image"`
+	Slug            value.Slug  `json:"slug"`
 	Categories      []*Category `json:"categories"`
 }
 
-func NewArticle(title, description, content, link, updated, published, guid string, updatedParsed, publishedParsed time.Time, author *Person, image *Image, categories []string) *Article {
+func NewArticle(
+	title,
+	description,
+	content,
+	link,
+	updated,
+	published,
+	guid string,
+	updatedParsed,
+	publishedParsed time.Time,
+	author *Person,
+	image *Image,
+	categories []string,
+) (*Article, error) {
 	validLink, err := value.NewLink(link)
 	if err != nil {
-		return nil
+		validLink = ""
 	}
+	slug, err := value.NewSlug(title)
+	if err != nil {
+		valErr, ok := err.(shared.AppError)
+		if ok {
+			valErr.Print()
+		}
+		return nil, err
+	}
+
 	a := &Article{
 		Item: &Item{
 			ID:              NewID(),
@@ -48,6 +72,7 @@ func NewArticle(title, description, content, link, updated, published, guid stri
 			Author:          author,
 			GUID:            guid,
 			Image:           image,
+			Slug:            slug,
 			Categories:      []*Category{},
 		},
 		Read:  false,
@@ -56,7 +81,7 @@ func NewArticle(title, description, content, link, updated, published, guid stri
 	for _, c := range categories {
 		a.Categories = append(a.Categories, NewCategory(c))
 	}
-	return a
+	return a, nil
 }
 
 func (a Article) JSON() []byte {

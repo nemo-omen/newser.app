@@ -61,6 +61,19 @@ func (api DiscoveryService) GetFeed(feedUrl string) (*gofeed.Feed, error) {
 		return feed, &usecase.ServiceError{Fn: "GetFeed", Err: err}
 	}
 
+	// ensure feed siteurl is present
+	if feed.Link == "" {
+		// we already know we're getting a valid
+		// url from the feedUrl, so we can use it
+		// to set the feed's siteurl
+		url, _ := url.Parse(feedUrl)
+		if url != nil {
+			scheme := url.Scheme
+			host := url.Host
+			feed.Link = scheme + "://" + host
+		}
+	}
+
 	// ensure feed description is free of html tags
 	feed.Description = strip.StripTags(feed.Description)
 

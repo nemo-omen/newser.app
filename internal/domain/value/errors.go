@@ -1,6 +1,7 @@
 package value
 
 import (
+	"encoding/json"
 	"errors"
 )
 
@@ -25,4 +26,13 @@ func NewValueError(err error, msg, errType string) *ValueError {
 
 func (v ValueError) Error() string {
 	return v.Err.Error()
+}
+
+func (v ValueError) Unwrap() error {
+	return v.Err
+}
+
+func (v ValueError) String() string {
+	j, _ := json.MarshalIndent(v, "", "  ")
+	return string(j)
 }
