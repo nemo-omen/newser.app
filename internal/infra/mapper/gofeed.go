@@ -2,6 +2,7 @@ package mapper
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/mmcdole/gofeed"
 	"newser.app/internal/domain/entity"
@@ -36,6 +37,14 @@ func (m GofeedMapper) ToNewsfeed(gfFeed *gofeed.Feed) (*entity.Newsfeed, error) 
 }
 
 func (m GofeedMapper) ToArticle(gfItem *gofeed.Item) (*entity.Article, error) {
+	var updateTime time.Time
+	var publishedTime time.Time
+	if gfItem.UpdatedParsed != nil {
+		updateTime = *gfItem.UpdatedParsed
+	}
+	if gfItem.PublishedParsed != nil {
+		publishedTime = *gfItem.PublishedParsed
+	}
 	article, err := entity.NewArticle(
 		gfItem.Title,
 		gfItem.Description,
@@ -44,8 +53,8 @@ func (m GofeedMapper) ToArticle(gfItem *gofeed.Item) (*entity.Article, error) {
 		gfItem.Updated,
 		gfItem.Published,
 		gfItem.GUID,
-		*gfItem.UpdatedParsed,
-		*gfItem.PublishedParsed,
+		updateTime,
+		publishedTime,
 		m.ToPerson(gfItem.Author),
 		m.ToImage(gfItem.Image),
 		gfItem.Categories,
