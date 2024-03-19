@@ -97,7 +97,7 @@ func ArticleCard(article *dto.ArticleDTO) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 templ.SafeURL = templ.SafeURL("/desk/articles/" + article.ID.String())
+		var templ_7745c5c3_Var3 templ.SafeURL = templ.SafeURL("/app/article/" + article.ID.String())
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var3)))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -149,7 +149,7 @@ func ArticleCard(article *dto.ArticleDTO) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var7 templ.SafeURL = templ.SafeURL("/desk/articles/" + article.ID.String())
+		var templ_7745c5c3_Var7 templ.SafeURL = templ.SafeURL("/app/article/" + article.ID.String())
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var7)))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -274,7 +274,7 @@ func CollapseForm(article *dto.ArticleDTO) templ.Component {
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/control/setcollapse\" method=\"POST\" hx-post=\"/desk/control/setcollapse\" hx-target=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/control/setcollapse\" method=\"POST\" hx-post=\"/app/control/setcollapse\" hx-target=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

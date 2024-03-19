@@ -33,7 +33,7 @@ templ ArticleCard(article *dto.ArticleDTO) {
 							if article.FeedImageURL != "" {
 								<image class="feed-logo" src={ article.FeedImageURL } alt={ util.GetImgAlt(article.FeedImageTitle, article.FeedTitle) }></image>
 							}
-							<a href={ templ.SafeURL("/desk/articles/" + article.ID.String()) } class="card-link">
+							<a href={ templ.SafeURL("/app/article/" + article.ID.String()) } class="card-link">
 								<h3>{ article.Title }</h3>
 							</a>
 						</div>
@@ -45,7 +45,7 @@ templ ArticleCard(article *dto.ArticleDTO) {
 					@FormattedDateTime(article.PublishedParsed)
 					<span class="card-feed-link"><a href={ templ.SafeURL(article.SiteURL) } target="_blank">{ article.FeedTitle }</a></span>
 				</div>
-				<a href={ templ.SafeURL("/desk/articles/" + article.ID.String()) } class="card-link">
+				<a href={ templ.SafeURL("/app/article/" + article.ID.String()) } class="card-link">
 					@templ.Raw(article.Description)
 				</a>
 			</div>
@@ -76,9 +76,9 @@ templ CardFooter(article *dto.ArticleDTO) {
 
 templ CollapseForm(article *dto.ArticleDTO) {
 	<form
-		action="/desk/control/setcollapse"
+		action="/app/control/setcollapse"
 		method="POST"
-		hx-post="/desk/control/setcollapse"
+		hx-post="/app/control/setcollapse"
 		hx-target={ "closest #card-" + article.ID.String() }
 		hx-swap="outerHTML"
 		hx-push-url="false"

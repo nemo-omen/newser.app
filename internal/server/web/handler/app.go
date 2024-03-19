@@ -40,6 +40,7 @@ func (h *WebAppHandler) Routes(app *echo.Echo, middleware ...echo.MiddlewareFunc
 		app.Use(m)
 	}
 	app.GET("/app", h.GetApp)
+	app.GET("/app/article/:id", h.GetArticle)
 }
 
 func (h *WebAppHandler) GetApp(c echo.Context) error {
@@ -78,4 +79,10 @@ func (h *WebAppHandler) GetApp(c echo.Context) error {
 	}
 
 	return render(c, app.Index(articles))
+}
+
+func (h *WebAppHandler) GetArticle(c echo.Context) error {
+	// get article by id
+	// render article page
+	return nil
 }

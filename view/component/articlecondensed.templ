@@ -12,7 +12,7 @@ templ ArticleCondensed(article *dto.ArticleDTO) {
 				if article.FeedImageURL != "" {
 					<image class="feed-logo-menu" src={ article.FeedImageURL } alt={ util.GetImgAlt(article.FeedImageTitle, article.FeedTitle) }></image>
 				}
-				<a href={ templ.SafeURL("/desk/articles/" + article.ID.String()) } class="card-link">
+				<a href={ templ.SafeURL("/app/article/" + article.ID.String()) } class="card-link">
 					<h3>{ article.Title }</h3>
 				</a>
 			</div>
