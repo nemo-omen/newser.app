@@ -11,6 +11,7 @@ import "io"
 import "bytes"
 
 import (
+	"fmt"
 	"newser.app/internal/dto"
 	"strconv"
 )
@@ -25,6 +26,22 @@ func getSidebarFeedInfo(ctx context.Context) []*dto.FeedInfoDTO {
 
 func getFeedLinkCount(nf *dto.FeedInfoDTO) string {
 	return strconv.Itoa(nf.UnreadCount)
+}
+
+func getCurrentPath(ctx context.Context) string {
+	currentPath := ctx.Value("currentPath")
+	if currentPath != nil {
+		return currentPath.(string)
+	}
+	return ""
+}
+
+func isCurrentString(ctx context.Context, path string) string {
+	fmt.Println("isCurrentString", path, getCurrentPath(ctx))
+	if getCurrentPath(ctx) == path {
+		return "page"
+	}
+	return ""
 }
 
 func MainSidebar() templ.Component {
@@ -49,11 +66,12 @@ func MainSidebar() templ.Component {
 			"list",
 			"All Posts",
 			templ.Attributes{
-				"class":       "icon-link",
-				"hx-get":      "/app",
-				"hx-target":   "main",
-				"hx-swap":     "innerHTML",
-				"hx-push-url": "true",
+				"class":        "icon-link",
+				"aria-current": isCurrentString(ctx, "/app"),
+				"hx-get":       "/app",
+				"hx-target":    "main",
+				"hx-swap":      "innerHTML",
+				"hx-push-url":  "true",
 			},
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -68,11 +86,12 @@ func MainSidebar() templ.Component {
 			"inbox",
 			"Unread",
 			templ.Attributes{
-				"class":       "icon-link",
-				"hx-get":      "/app/collections/unread",
-				"hx-target":   "main",
-				"hx-swap":     "innerHTML",
-				"hx-push-url": "true",
+				"class":        "icon-link",
+				"aria-current": isCurrentString(ctx, "/app/collections/unread"),
+				"hx-get":       "/app/collections/unread",
+				"hx-target":    "main",
+				"hx-swap":      "innerHTML",
+				"hx-push-url":  "true",
 			},
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -87,11 +106,12 @@ func MainSidebar() templ.Component {
 			"bookmark",
 			"Saved",
 			templ.Attributes{
-				"class":       "icon-link",
-				"hx-get":      "/app/collections/saved",
-				"hx-target":   "main",
-				"hx-swap":     "innerHTML",
-				"hx-push-url": "true",
+				"class":        "icon-link",
+				"aria-current": isCurrentString(ctx, "/app/collections/saved"),
+				"hx-get":       "/app/collections/saved",
+				"hx-target":    "main",
+				"hx-swap":      "innerHTML",
+				"hx-push-url":  "true",
 			},
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -106,11 +126,12 @@ func MainSidebar() templ.Component {
 			"note",
 			"Notes",
 			templ.Attributes{
-				"class":       "icon-link",
-				"hx-get":      "/app/notes",
-				"hx-target":   "main",
-				"hx-swap":     "innerHTML",
-				"hx-push-url": "true",
+				"class":        "icon-link",
+				"aria-current": isCurrentString(ctx, "/app/notes"),
+				"hx-get":       "/app/notes",
+				"hx-target":    "main",
+				"hx-swap":      "innerHTML",
+				"hx-push-url":  "true",
 			},
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -125,11 +146,12 @@ func MainSidebar() templ.Component {
 			"folder_add",
 			"Add Feed",
 			templ.Attributes{
-				"class":       "icon-link",
-				"hx-get":      "/app/search",
-				"hx-target":   "main",
-				"hx-swap":     "innerHTML",
-				"hx-push-url": "true",
+				"class":        "icon-link",
+				"aria-current": isCurrentString(ctx, "/app/search"),
+				"hx-get":       "/app/search",
+				"hx-target":    "main",
+				"hx-swap":      "innerHTML",
+				"hx-push-url":  "true",
 			},
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -140,7 +162,7 @@ func MainSidebar() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if len(getSidebarFeedInfo(ctx)) > 0 {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("         <nav class=\"nav-vertical\" aria-label=\"Subscriptions\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"nav-vertical\" aria-label=\"Subscriptions\" hx-get=\"/app/control/unreadcount\" hx-trigger=\"updateUnreadCount from:body\" hx-target=\"#main-feed-links\" hx-swap=\"outerHTML\" hx-push-url=\"false\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -191,7 +213,23 @@ func MainFeedLinks() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><img src=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" aria-current=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(isCurrentString(ctx, "/app/newsfeed/"+feedInfo.FeedId)))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-get=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("/app/newsfeed/" + feedInfo.FeedId))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-target=\"main\" hx-swap=\"innerHTML\" hx-push-url=\"true\"><img src=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -206,7 +244,7 @@ func MainFeedLinks() templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(feedInfo.FeedTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/mainsidebar.templ`, Line: 133, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/mainsidebar.templ`, Line: 152, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -224,7 +262,7 @@ func MainFeedLinks() templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(getFeedLinkCount(feedInfo))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/mainsidebar.templ`, Line: 137, Col: 35}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/mainsidebar.templ`, Line: 156, Col: 35}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -240,7 +278,7 @@ func MainFeedLinks() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul><script>\n\t\tconst sidebar = document.getElementById('sidebar-main');\n\t\tconst links = sidebar.querySelectorAll('a');\n\t\thtmx.on('htmx:afterSettle', function(evt) {\n\t\t\tconst currentUrl = new URL(window.location);\n\t\t\tconst currentPath = currentUrl.pathname;\n\t\t\tlinks.forEach(link => {\n\t\t\t\tconst linkUrl = new URL(link.href);\n\t\t\t\tconst linkPath = linkUrl.pathname;\n\t\t\t\tif (currentPath === linkPath) {\n\t\t\t\t\tlink.setAttribute('aria-current', 'page');\n\t\t\t\t} else {\n\t\t\t\t\tlink.setAttribute('aria-current', '');\n\t\t\t\t}\n\t\t\t});\n\t\t});\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

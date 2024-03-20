@@ -5,6 +5,7 @@ import (
 	"newser.app/internal/usecase/auth"
 	"newser.app/internal/usecase/session"
 	"newser.app/internal/usecase/subscription"
+	"newser.app/view/component"
 	"newser.app/view/pages/app"
 )
 
@@ -42,6 +43,8 @@ func (h *WebAppHandler) Routes(app *echo.Echo, middleware ...echo.MiddlewareFunc
 	app.GET("/app", h.GetApp)
 	app.GET("/app/newsfeed/:id", h.GetNewsfeed)
 	app.GET("/app/article/:id", h.GetArticle)
+	app.GET("/app/control/unreadcount", h.GetUpdatedSidebarCount)
+	app.GET("/app/control/currentpath", h.GetUpdatedSidebar)
 }
 
 func (h *WebAppHandler) GetApp(c echo.Context) error {
@@ -78,7 +81,7 @@ func (h *WebAppHandler) GetApp(c echo.Context) error {
 	if isHxRequest(c) {
 		return render(c, app.IndexPageContent(articles))
 	}
-
+	c.Response().Header().Set("HX-Trigger", "currentPath")
 	return render(c, app.Index(articles))
 }
 
@@ -112,4 +115,12 @@ func (h *WebAppHandler) GetArticle(c echo.Context) error {
 	// get article by id
 	// render article page
 	return nil
+}
+
+func (h *WebAppHandler) GetUpdatedSidebarCount(c echo.Context) error {
+	return render(c, component.MainFeedLinks())
+}
+
+func (h *WebAppHandler) GetUpdatedSidebar(c echo.Context) error {
+	return render(c, component.MainSidebar())
 }

@@ -446,10 +446,15 @@ main {
   }
 
   & nav ul a:hover,
-  nav ul a.current {
+  nav ul a[aria-current="page"] {
     color: var(--foreground);
     background-color: var(--hover-background);
   }
+}
+
+.sidebar-link[aria-current="page"] {
+  color: var(--hover);
+  background-color: var(--hover-background);
 }
 
 #sidebar-secondary {

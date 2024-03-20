@@ -121,6 +121,7 @@ func initApiHandlers(app *echo.Echo) {
 }
 
 func initWebHandlers(app *echo.Echo) {
+	app.Use(custommiddleware.SetCurrentPath)
 	app.Use(custommiddleware.SidebarLinks(
 		sessionManager,
 		&subscriptionService,

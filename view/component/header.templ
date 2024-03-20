@@ -3,14 +3,6 @@ package component
 import "strings"
 import "newser.app/view/util"
 
-func getCurrentPath(ctx context.Context) string {
-	currentPath := ctx.Value("currentPath")
-	if currentPath != nil {
-		return currentPath.(string)
-	}
-	return ""
-}
-
 func getEmail(ctx context.Context) string {
 	email := ctx.Value("user")
 	if email != nil {
