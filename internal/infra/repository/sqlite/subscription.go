@@ -464,6 +464,9 @@ func (r *SubscriptionSqliteRepo) GetAllFeeds(userID string) ([]*dto.NewsfeedDTO,
 func (r *SubscriptionSqliteRepo) GetFeedsInfo(userId string) ([]*dto.FeedInfoDTO, error) {
 	feedInfos := []*dto.FeedInfoDTO{}
 	err := r.db.Select(
+		// TODO: Update this query so we
+		// can limit the number of articles
+		// used for our unread count.
 		&feedInfos,
 		`SELECT
 			newsfeeds.id as feed_id,
@@ -490,7 +493,6 @@ func (r *SubscriptionSqliteRepo) GetFeedsInfo(userId string) ([]*dto.FeedInfoDTO
 			"entity.FeedInfo",
 		)
 	}
-	fmt.Println("feedInfos: ", feedInfos)
 
 	return feedInfos, nil
 }
