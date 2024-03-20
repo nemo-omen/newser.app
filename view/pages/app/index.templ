@@ -13,6 +13,9 @@ import (
 // When we do get an HTMX request,
 // we can just return the IndexPageContent
 // without the layout wrappers
+//
+// Index is reused for '/app', '/app/unread'
+// and 'app/saved'
 templ Index(articles []*dto.ArticleDTO) {
 	@layout.App() {
 		@IndexPageContent(articles)

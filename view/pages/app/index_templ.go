@@ -23,6 +23,9 @@ import (
 // When we do get an HTMX request,
 // we can just return the IndexPageContent
 // without the layout wrappers
+//
+// Index is reused for '/app', '/app/unread'
+// and 'app/saved'
 func Index(articles []*dto.ArticleDTO) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)

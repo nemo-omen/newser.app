@@ -17,12 +17,7 @@ templ App() {
 			>
 				{ children... }
 			</main>
-			<aside class="sidebar" id="sidebar-secondary">
-				<div class="sidebar-section">
-					<h3>Recent Posts</h3>
-					<p>Blah blah blah. Stuff and things.</p>
-				</div>
-			</aside>
+			@component.SecondarySidebar()
 		</div>
 	}
 }

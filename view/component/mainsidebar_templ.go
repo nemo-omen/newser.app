@@ -82,13 +82,13 @@ func MainSidebar() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = IconLink(
-			"/app/collections/unread",
+			"/app/collection/unread",
 			"inbox",
 			"Unread",
 			templ.Attributes{
 				"class":        "icon-link",
-				"aria-current": isCurrentString(ctx, "/app/collections/unread"),
-				"hx-get":       "/app/collections/unread",
+				"aria-current": isCurrentString(ctx, "/app/collection/unread"),
+				"hx-get":       "/app/collection/unread",
 				"hx-target":    "main",
 				"hx-swap":      "innerHTML",
 				"hx-push-url":  "true",
@@ -102,13 +102,13 @@ func MainSidebar() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = IconLink(
-			"/app/collections/saved",
+			"/app/collection/saved",
 			"bookmark",
 			"Saved",
 			templ.Attributes{
 				"class":        "icon-link",
-				"aria-current": isCurrentString(ctx, "/app/collections/saved"),
-				"hx-get":       "/app/collections/saved",
+				"aria-current": isCurrentString(ctx, "/app/collection/saved"),
+				"hx-get":       "/app/collection/saved",
 				"hx-target":    "main",
 				"hx-swap":      "innerHTML",
 				"hx-push-url":  "true",
@@ -128,7 +128,7 @@ func MainSidebar() templ.Component {
 			templ.Attributes{
 				"class":        "icon-link",
 				"aria-current": isCurrentString(ctx, "/app/notes"),
-				"hx-get":       "/app/notes",
+				"hx-get":       "/app/note",
 				"hx-target":    "main",
 				"hx-swap":      "innerHTML",
 				"hx-push-url":  "true",
