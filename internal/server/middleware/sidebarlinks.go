@@ -32,6 +32,7 @@ func SidebarLinks(
 				return next(c)
 			}
 
+			fmt.Println("feedLinks: ", feedLinks)
 			c.Set("feedlinks", feedLinks)
 
 			return next(c)

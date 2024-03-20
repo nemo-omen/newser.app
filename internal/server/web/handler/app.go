@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -136,7 +135,7 @@ func (h *WebAppHandler) GetUpdatedSidebar(c echo.Context) error {
 func (h *WebAppHandler) PageTitle(c echo.Context) error {
 	title := c.Get("title")
 	titleString, ok := title.(string)
-	fmt.Println("titleString: ", titleString)
+	// fmt.Println("titleString: ", titleString)
 	if !ok {
 		return c.String(http.StatusOK, "Newser")
 	}

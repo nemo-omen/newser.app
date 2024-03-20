@@ -478,7 +478,7 @@ func (r *SubscriptionSqliteRepo) GetFeedsInfo(userId string) ([]*dto.FeedInfoDTO
 			LEFT JOIN newsfeeds ON articles.newsfeed_id = newsfeeds.id
 			LEFT JOIN newsfeed_images ON newsfeeds.id = newsfeed_images.newsfeed_id
 			LEFT JOIN images ON newsfeed_images.image_id = images.id
-		WHERE collections.title = 'unread' AND user_id = '5604ea6e-55f3-4976-8d10-2428e8b27041'
+		WHERE collections.title = 'unread' AND user_id = ?
 		GROUP BY articles.newsfeed_id;`,
 		userId,
 	)
@@ -490,6 +490,7 @@ func (r *SubscriptionSqliteRepo) GetFeedsInfo(userId string) ([]*dto.FeedInfoDTO
 			"entity.FeedInfo",
 		)
 	}
+	fmt.Println("feedInfos: ", feedInfos)
 
 	return feedInfos, nil
 }
