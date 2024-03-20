@@ -94,14 +94,18 @@ templ MainSidebar() {
 			</ul>
 		</nav>
 		if len(getSidebarFeedInfo(ctx)) > 0 {
+			// <nav
+			// 	class="nav-vertical"
+			// 	aria-label="Subscriptions"
+			// 	hx-get="/app/control/unreadcount"
+			// 	hx-trigger="updateUnreadCount from:body"
+			// 	hx-target="#main-feed-links"
+			// 	hx-swap="outerHTML"
+			// 	hx-push-url="false"
+			// >
 			<nav
 				class="nav-vertical"
 				aria-label="Subscriptions"
-				hx-get="/app/control/unreadcount"
-				hx-trigger="updateUnreadCount from:body"
-				hx-target="#main-feed-links"
-				hx-swap="outerHTML"
-				hx-push-url="false"
 			>
 				@MainFeedLinks()
 			</nav>
@@ -113,13 +117,17 @@ templ MainFeedLinks() {
 	<ul id="main-feed-links">
 		for _, feedInfo := range getSidebarFeedInfo(ctx) {
 			<li>
+				// <a
+				// 	class="icon-link"
+				// 	href={ templ.SafeURL("/app/feeds/" + feedInfo.FeedId) }
+				// 	hx-get={ "/app/feeds/" + feedInfo.FeedId }
+				// 	hx-target="main"
+				// 	hx-swap="innerHTML"
+				// 	hx-push-url="true"
+				// >
 				<a
 					class="icon-link"
-					href={ templ.SafeURL("/app/feeds/" + feedInfo.FeedId) }
-					hx-get={ "/app/feeds/" + feedInfo.FeedId }
-					hx-target="main"
-					hx-swap="innerHTML"
-					hx-push-url="true"
+					href={ templ.SafeURL("/app/newsfeed/" + feedInfo.FeedId) }
 				>
 					<img src={ feedInfo.ImageUrl } alt="feedLink.ImageTitle" class="image-icon"/>
 					<span class="link-text">

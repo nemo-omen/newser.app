@@ -285,6 +285,39 @@ func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) 
 			)
 		}
 
+		collection := dto.CollectionDTO{}
+		err = r.db.Get(
+			&collection, `
+			SELECT *
+			FROM collections
+			WHERE user_id = ? AND title = "unread";
+		`,
+			userID,
+		)
+		if err != nil {
+			return shared.NewAppError(
+				err,
+				"Failed to get unread collection",
+				"SubscriptionSqliteRepo.Subscribe",
+				"entity.Collection",
+			)
+		}
+
+		collectionArticleQuery := `
+		INSERT INTO collection_articles (collection_id, article_id)
+		VALUES (?, ?);
+		`
+		_, err = tx.Exec(collectionArticleQuery, collection.ID, a.ID)
+		if err != nil {
+			fmt.Println("err line 312: ", err)
+			return shared.NewAppError(
+				err,
+				"Failed to insert collection article",
+				"SubscriptionSqliteRepo.Subscribe",
+				"entity.CollectionArticle",
+			)
+		}
+
 		for _, c := range a.Categories {
 			storedCategory := dto.CategoryDTO{}
 			err := r.db.Get(
@@ -428,6 +461,35 @@ func (r *SubscriptionSqliteRepo) GetAllFeeds(userID string) ([]*dto.NewsfeedDTO,
 	return feeds, nil
 }
 
-func (r *SubscriptionSqliteRepo) GetFeedsInfo(feedID string) (*dto.FeedInfoDTO, error) {
-	return nil, nil
+func (r *SubscriptionSqliteRepo) GetFeedsInfo(userId string) ([]*dto.FeedInfoDTO, error) {
+	feedInfos := []*dto.FeedInfoDTO{}
+	err := r.db.Select(
+		&feedInfos,
+		`SELECT
+			newsfeeds.id as feed_id,
+			newsfeeds.title as feed_title,
+			COALESCE(images.title, '') as image_title,
+			COALESCE(images.url, '') as image_url,
+			COUNT (articles.id) as unread_count
+		FROM
+			collections
+			LEFT JOIN collection_articles ON collection_id = collection_articles.collection_id
+			LEFT JOIN articles ON collection_articles.article_id = articles.id
+			LEFT JOIN newsfeeds ON articles.newsfeed_id = newsfeeds.id
+			LEFT JOIN newsfeed_images ON newsfeeds.id = newsfeed_images.newsfeed_id
+			LEFT JOIN images ON newsfeed_images.image_id = images.id
+		WHERE collections.title = 'unread' AND user_id = '5604ea6e-55f3-4976-8d10-2428e8b27041'
+		GROUP BY articles.newsfeed_id;`,
+		userId,
+	)
+	if err != nil {
+		return nil, shared.NewAppError(
+			err,
+			"Failed to get subscribed newsfeeds info",
+			"SubscriptionSqliteRepo.GetFeedsInfo",
+			"entity.FeedInfo",
+		)
+	}
+
+	return feedInfos, nil
 }

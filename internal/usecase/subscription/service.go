@@ -41,3 +41,7 @@ func (s *SubscriptionService) UnSubscribe(userID, subscriptionID string) error {
 func (s *SubscriptionService) GetNewsfeed(userID, feedID string) (*dto.NewsfeedDTO, error) {
 	return s.subscriptionRepo.GetNewsfeed(userID, feedID)
 }
+
+func (s *SubscriptionService) GetSidebarLinks(userID string) ([]*dto.FeedInfoDTO, error) {
+	return s.subscriptionRepo.GetFeedsInfo(userID)
+}

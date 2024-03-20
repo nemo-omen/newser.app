@@ -121,6 +121,12 @@ func initApiHandlers(app *echo.Echo) {
 }
 
 func initWebHandlers(app *echo.Echo) {
+	app.Use(custommiddleware.SidebarLinks(
+		sessionManager,
+		&subscriptionService,
+		&authService,
+	),
+	)
 	homeHandler := webhandler.NewWebHomeHandler(sessionService)
 	authHandler := webhandler.NewAuthWebHandler(
 		authService,
