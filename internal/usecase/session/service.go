@@ -1,6 +1,8 @@
 package session
 
 import (
+	"fmt"
+
 	"github.com/alexedwards/scs/v2"
 	"github.com/labstack/echo/v4"
 )
@@ -65,6 +67,7 @@ func (s *SessionService) RevokeAuth(c echo.Context) {
 }
 
 func (s *SessionService) SetTitle(c echo.Context, title string) {
+	fmt.Println("setting title: ", title)
 	s.sessionManager.Put(c.Request().Context(), "title", title)
 }
 

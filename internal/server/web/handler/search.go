@@ -61,9 +61,11 @@ func (h *WebSearchHandler) GetSearch(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, "/auth/login")
 	}
 
+	util.SetPageTitle(c, h.session, "Add a Feed")
 	if isHxRequest(c) {
 		return render(c, search.SearchPageContent([]*gofeed.Feed{}))
 	}
+
 	return render(c, search.Search([]*gofeed.Feed{}))
 }
 

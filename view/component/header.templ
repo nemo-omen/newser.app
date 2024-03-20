@@ -61,10 +61,14 @@ templ Header() {
 }
 
 templ PageTitle(title string) {
+	// hx-trigger="htmx:afterSettle"
+	// <h1
+	// 	class="header-title"
+	// >{ title }</h1>
 	<h1
 		class="header-title"
-		hx-get="/desk/control/pagetitle"
-		hx-trigger="load once, updatePageTitle from:body"
+		hx-get="/app/control/pagetitle"
+		hx-trigger="load once, pagetitle from:body"
 		hx-target="this"
 		hx-swap="innerHTML"
 	>{ title }</h1>

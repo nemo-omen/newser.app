@@ -2,6 +2,7 @@ package util
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 )
 
@@ -19,12 +20,17 @@ func IdToString(id int64) string {
 	return strconv.FormatInt(id, 10)
 }
 
+// GetPageTitle returns the title of the page
+// from the context. This works on page load.
+// HTMX is used on subsequent navigation
+// changes to replace the title on the page
 func GetPageTitle(ctx context.Context) string {
-	title := ctx.Value("title")
-	if title != nil {
-		return title.(string)
+	title, ok := ctx.Value("title").(string)
+	if !ok {
+		return ""
 	}
-	return ""
+	fmt.Println("title: ", title)
+	return title
 }
 
 func GetUserViewPreference(ctx context.Context) string {

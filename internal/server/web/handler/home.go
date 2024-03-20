@@ -6,6 +6,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"newser.app/internal/usecase/session"
+	"newser.app/shared/util"
 	"newser.app/view/pages/home"
 )
 
@@ -35,5 +36,7 @@ func (h *WebHomeHandler) Home(c echo.Context) error {
 	if authed {
 		return c.Redirect(http.StatusSeeOther, "/app")
 	}
+
+	util.SetPageTitle(c, h.session, "Newser")
 	return render(c, home.Index())
 }

@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"fmt"
+
 	"github.com/alexedwards/scs/v2"
 	"github.com/labstack/echo/v4"
 )
@@ -8,7 +10,9 @@ import (
 func PageTitle(sm *scs.SessionManager) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			c.Set("title", getPageTitle(c, sm))
+			pageTitle := getPageTitle(c, sm)
+			fmt.Println("middleware pageTitle: ", pageTitle)
+			c.Set("title", pageTitle)
 			return next(c)
 		}
 	}
@@ -17,5 +21,5 @@ func PageTitle(sm *scs.SessionManager) echo.MiddlewareFunc {
 // getFlash is a convenience function which pops
 // a flash message with a given key and returns its value
 func getPageTitle(c echo.Context, sm *scs.SessionManager) string {
-	return sm.PopString(c.Request().Context(), "pagetitle")
+	return sm.PopString(c.Request().Context(), "title")
 }

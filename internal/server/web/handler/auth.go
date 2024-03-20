@@ -9,6 +9,7 @@ import (
 	"newser.app/internal/usecase/auth"
 	"newser.app/internal/usecase/session"
 	"newser.app/shared"
+	"newser.app/shared/util"
 	authview "newser.app/view/pages/auth"
 )
 
@@ -88,6 +89,7 @@ func (h *WebAuthHandler) PostRegister(c echo.Context) error {
 		// TODO: Custom errors for the service/repository layer
 		// ErrIncorrectPassword
 	}
+	util.SetPageTitle(c, h.session, "Register")
 	return c.Redirect(http.StatusSeeOther, "/auth/login")
 }
 
@@ -100,6 +102,7 @@ func (h *WebAuthHandler) GetLogin(c echo.Context) error {
 	if authed {
 		return c.Redirect(http.StatusSeeOther, "/app")
 	}
+	util.SetPageTitle(c, h.session, "Login")
 	return render(c, authview.Login())
 }
 

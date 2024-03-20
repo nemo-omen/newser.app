@@ -1,10 +1,14 @@
 package handler
 
 import (
+	"fmt"
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	"newser.app/internal/usecase/auth"
 	"newser.app/internal/usecase/session"
 	"newser.app/internal/usecase/subscription"
+	"newser.app/shared/util"
 	"newser.app/view/component"
 	"newser.app/view/pages/app"
 )
@@ -45,6 +49,7 @@ func (h *WebAppHandler) Routes(app *echo.Echo, middleware ...echo.MiddlewareFunc
 	app.GET("/app/article/:id", h.GetArticle)
 	app.GET("/app/control/unreadcount", h.GetUpdatedSidebarCount)
 	app.GET("/app/control/currentpath", h.GetUpdatedSidebar)
+	app.GET("/app/control/pagetitle", h.PageTitle)
 }
 
 func (h *WebAppHandler) GetApp(c echo.Context) error {
@@ -78,10 +83,11 @@ func (h *WebAppHandler) GetApp(c echo.Context) error {
 		return redirectWithHX(c, "/app/search")
 	}
 
+	util.SetPageTitle(c, h.session, "Latest Articles")
+
 	if isHxRequest(c) {
 		return render(c, app.IndexPageContent(articles))
 	}
-	c.Response().Header().Set("HX-Trigger", "currentPath")
 	return render(c, app.Index(articles))
 }
 
@@ -104,6 +110,8 @@ func (h *WebAppHandler) GetNewsfeed(c echo.Context) error {
 		// set flash message
 		// render or redirect to error page? /app?
 	}
+	util.SetPageTitle(c, h.session, feed.Title)
+
 	if isHxRequest(c) {
 		return render(c, app.FeedPageContent(feed))
 	}
@@ -123,4 +131,14 @@ func (h *WebAppHandler) GetUpdatedSidebarCount(c echo.Context) error {
 
 func (h *WebAppHandler) GetUpdatedSidebar(c echo.Context) error {
 	return render(c, component.MainSidebar())
+}
+
+func (h *WebAppHandler) PageTitle(c echo.Context) error {
+	title := c.Get("title")
+	titleString, ok := title.(string)
+	fmt.Println("titleString: ", titleString)
+	if !ok {
+		return c.String(http.StatusOK, "Newser")
+	}
+	return c.String(http.StatusOK, titleString)
 }
