@@ -37,3 +37,7 @@ func (s *SubscriptionService) Subscribe(userID string, feed gofeed.Feed) error {
 func (s *SubscriptionService) UnSubscribe(userID, subscriptionID string) error {
 	return s.subscriptionRepo.Delete(subscriptionID)
 }
+
+func (s *SubscriptionService) GetNewsfeed(userID, feedID string) (*dto.NewsfeedDTO, error) {
+	return s.subscriptionRepo.GetNewsfeed(userID, feedID)
+}

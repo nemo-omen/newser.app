@@ -22,8 +22,8 @@ type ArticleDTO struct {
 	Image           ImageDTO      `json:"image,omitempty" db:"image"`
 	Categories      []CategoryDTO `json:"categories,omitempty" db:"categories"`
 	Slug            string        `json:"slug,omitempty" db:"slug"`
-	Read            bool          `json:"read,omitempty" db:"read"`
-	Saved           bool          `json:"saved,omitempty" db:"saved"`
+	Read            bool          `json:"read" db:"read"`
+	Saved           bool          `json:"saved" db:"saved"`
 	SiteURL         string        `json:"site_url,omitempty" db:"feed_site_url"`
 	FeedID          string        `json:"feed_id,omitempty" db:"newsfeed_id"`
 	FeedTitle       string        `json:"feed_title,omitempty" db:"feed_title"`
@@ -41,7 +41,7 @@ func (a ArticleDTO) String() string {
 	return string(a.JSON())
 }
 
-func (a ArticleDTO) FromDomain(article *entity.Article) ArticleDTO {
+func (a ArticleDTO) FromDomain(article *entity.Article) *ArticleDTO {
 	art := ArticleDTO{
 		ID:              article.ID,
 		Title:           article.Title,
@@ -63,5 +63,5 @@ func (a ArticleDTO) FromDomain(article *entity.Article) ArticleDTO {
 	for _, c := range article.Categories {
 		art.Categories = append(art.Categories, CategoryDTO{}.FromDomain(c))
 	}
-	return art
+	return &art
 }

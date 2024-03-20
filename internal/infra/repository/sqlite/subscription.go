@@ -28,6 +28,130 @@ func (r *SubscriptionSqliteRepo) Delete(subscriptionID string) error {
 	return nil
 }
 
+func (r *SubscriptionSqliteRepo) GetNewsfeed(userID, feedID string) (*dto.NewsfeedDTO, error) {
+	feed := &dto.NewsfeedDTO{}
+	err := r.db.Get(
+		feed, `
+			SELECT
+				newsfeeds.*,
+			COALESCE(images.title, '') as feed_image_title,
+			COALESCE(images.url, '') as feed_image_url
+			FROM
+				subscriptions
+			LEFT JOIN newsfeeds ON subscriptions.newsfeed_id = newsfeeds.id
+			LEFT JOIN newsfeed_images ON newsfeeds.id = newsfeed_images.newsfeed_id
+			LEFT JOIN images ON newsfeed_images.image_id = images.id
+			WHERE
+				subscriptions.newsfeed_id = ?
+			AND subscriptions.user_id = ?
+			LIMIT 1;
+		`,
+		feedID,
+		userID,
+	)
+	if err != nil {
+		return nil, shared.NewAppError(
+			err,
+			"Failed to get subscribed newsfeed",
+			"SubscriptionSqliteRepo.GetNewsfeed",
+			"entity.Article",
+		)
+	}
+
+	feedArticles := []*dto.ArticleDTO{}
+	err = r.db.Select(
+		&feedArticles, `
+			SELECT * FROM articles WHERE newsfeed_id = ? ORDER BY published_parsed DESC LIMIT 10;`,
+		feedID,
+	)
+	if err != nil || len(feedArticles) == 0 {
+		return nil, shared.NewAppError(
+			err,
+			"Failed to get subscribed newsfeed articles",
+			"SubscriptionSqliteRepo.GetNewsfeed",
+			"entity.Article",
+		)
+	}
+
+	for _, a := range feedArticles {
+		readCollection := dto.CollectionDTO{}
+		err := r.db.Get(
+			&readCollection, `
+			SELECT *
+			FROM collections
+			WHERE user_id = ? AND title = "read";
+		`,
+			userID,
+		)
+		if err != nil {
+			return nil, shared.NewAppError(
+				err,
+				"Failed to get read collection",
+				"SubscriptionSqliteRepo.GetNewsfeed",
+				"entity.Collection",
+			)
+		}
+		fmt.Println("readCollection: ", readCollection.ID)
+
+		readArticleId := ""
+		err = r.db.Get(
+			&readArticleId, `
+			SELECT article_id
+			FROM collection_articles
+			WHERE collection_id = ? AND article_id = ?;
+		`,
+			readCollection.ID,
+			a.ID,
+		)
+		if err != nil {
+			a.Read = false
+		} else {
+			a.Read = true
+		}
+
+		savedCollection := dto.CollectionDTO{}
+		err = r.db.Get(
+			&savedCollection, `
+			SELECT *
+			FROM collections
+			WHERE user_id = ? AND title = "saved";
+		`,
+			userID,
+		)
+		if err != nil {
+			return nil, shared.NewAppError(
+				err,
+				"Failed to get saved collection",
+				"SubscriptionSqliteRepo.GetNewsfeed",
+				"entity.Collection",
+			)
+		}
+		savedArticleId := ""
+		err = r.db.Get(
+			&savedArticleId, `
+			SELECT article_id
+			FROM collection_articles
+			WHERE collection_id = ? AND article_id = ?;
+		`,
+			savedCollection.ID,
+			a.ID,
+		)
+		if err != nil {
+			a.Saved = false
+		} else {
+			a.Saved = true
+		}
+		a.FeedID = feedID
+		a.FeedTitle = feed.Title
+		a.FeedImageURL = feed.ImageURL
+		a.FeedImageTitle = feed.ImageTitle
+		a.FeedSlug = feed.Slug
+
+	}
+	feed.Articles = feedArticles
+	return feed, nil
+}
+
 func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) error {
 	// check if feed exists
 	storedFeed := dto.NewsfeedDTO{}
@@ -242,10 +366,10 @@ func (r *SubscriptionSqliteRepo) GetAllArticles(userID string) ([]*dto.ArticleDT
 		err := r.db.Select(
 			&feedArticles, `
 			SELECT
+				articles.*,
 				newsfeeds.title as feed_title,
 				newsfeeds.site_url as feed_site_url,
 				newsfeeds.slug as feed_slug,
-				articles.*,
 				COALESCE(images.title, '') as feed_image_title,
 				COALESCE(images.url, '') as feed_image_url
 			FROM

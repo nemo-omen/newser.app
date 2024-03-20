@@ -12,7 +12,7 @@ type WebAppHandler struct {
 	session     session.SessionService
 	authService auth.AuthService
 	// collectionService collection.CollectionService
-	// newsfeedService newsfeed.NewsfeedService
+	// newsfeedService     newsfeed.NewsfeedService
 	subscriptionService subscription.SubscriptionService
 	// discoveryService discovery.DiscoveryService
 }
@@ -29,7 +29,7 @@ func NewWebAppHandler(
 		session:     sessionService,
 		authService: authService,
 		// collectionService: collectionService,
-		// newsfeedService: newsfeedService,
+		// newsfeedService:     newsfeedService,
 		subscriptionService: subscriptionService,
 		// discoveryService: discoveryService,
 	}
@@ -40,6 +40,7 @@ func (h *WebAppHandler) Routes(app *echo.Echo, middleware ...echo.MiddlewareFunc
 		app.Use(m)
 	}
 	app.GET("/app", h.GetApp)
+	app.GET("/app/newsfeed/:id", h.GetNewsfeed)
 	app.GET("/app/article/:id", h.GetArticle)
 }
 
@@ -79,6 +80,32 @@ func (h *WebAppHandler) GetApp(c echo.Context) error {
 	}
 
 	return render(c, app.Index(articles))
+}
+
+func (h *WebAppHandler) GetNewsfeed(c echo.Context) error {
+	// get newsfeed by id
+	// render newsfeed page
+	feedId := c.Param("id")
+	email, ok := c.Get("user").(string)
+	if !ok {
+		return redirectWithHX(c, "/auth/login")
+	}
+	user, err := h.authService.GetUserByEmail(email)
+	if err != nil {
+		return redirectWithHX(c, "/auth/login")
+	}
+	feed, err := h.subscriptionService.GetNewsfeed(user.ID.String(), feedId)
+	if err != nil {
+		h.session.SetFlash(c, "error", "Failed to get newsfeed")
+		return redirectWithHX(c, "/app")
+		// set flash message
+		// render or redirect to error page? /app?
+	}
+	if isHxRequest(c) {
+		return render(c, app.FeedPageContent(feed))
+	}
+
+	return render(c, app.Feed(feed))
 }
 
 func (h *WebAppHandler) GetArticle(c echo.Context) error {

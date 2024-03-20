@@ -74,6 +74,11 @@ func (api DiscoveryService) GetFeed(feedUrl string) (*gofeed.Feed, error) {
 		}
 	}
 
+	// ensure feed feedurl is present
+	if feed.FeedLink == "" {
+		feed.FeedLink = feedUrl
+	}
+
 	// ensure feed description is free of html tags
 	feed.Description = strip.StripTags(feed.Description)
 

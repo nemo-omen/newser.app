@@ -5,22 +5,22 @@ import (
 )
 
 type NewsfeedDTO struct {
-	ID          string       `json:"id,omitempty" db:"id"`
-	Title       string       `json:"title,omitempty" db:"title"`
-	Description string       `json:"description,omitempty" db:"description"`
-	FeedURL     string       `json:"feedURL,omitempty" db:"feed_url"`
-	SiteURL     string       `json:"siteURL,omitempty" db:"site_url"`
-	Language    string       `json:"language,omitempty" db:"language"`
-	ImageTitle  string       `json:"image,omitempty" db:"feed_image_title"`
-	ImageURL    string       `json:"imageURL,omitempty" db:"feed_image_url"`
-	Copyright   string       `json:"copyRight,omitempty" db:"copyright"`
-	Articles    []ArticleDTO `json:"articles,omitempty" db:"articles"`
-	FeedType    string       `json:"feedType,omitempty" db:"feed_type"`
-	Slug        string       `json:"slug,omitempty" db:"slug"`
+	ID          string        `json:"id,omitempty" db:"id"`
+	Title       string        `json:"title,omitempty" db:"title"`
+	Description string        `json:"description,omitempty" db:"description"`
+	FeedURL     string        `json:"feedURL,omitempty" db:"feed_url"`
+	SiteURL     string        `json:"siteURL,omitempty" db:"site_url"`
+	Language    string        `json:"language,omitempty" db:"language"`
+	ImageTitle  string        `json:"image,omitempty" db:"feed_image_title"`
+	ImageURL    string        `json:"imageURL,omitempty" db:"feed_image_url"`
+	Copyright   string        `json:"copyRight,omitempty" db:"copyright"`
+	Articles    []*ArticleDTO `json:"articles,omitempty" db:"articles"`
+	FeedType    string        `json:"feedType,omitempty" db:"feed_type"`
+	Slug        string        `json:"slug,omitempty" db:"slug"`
 }
 
 func (nf NewsfeedDTO) FromDomain(newsfeed entity.Newsfeed) NewsfeedDTO {
-	articles := []ArticleDTO{}
+	articles := []*ArticleDTO{}
 	for _, a := range newsfeed.Articles {
 		articles = append(articles, ArticleDTO{}.FromDomain(a))
 	}

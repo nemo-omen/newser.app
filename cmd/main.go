@@ -26,8 +26,9 @@ import (
 	"newser.app/internal/usecase/auth"
 	"newser.app/internal/usecase/session"
 
+	"newser.app/internal/usecase/newsfeed"
 	"newser.app/internal/usecase/subscription"
-	// "newser.app/internal/usecase/newsfeed"
+
 	// "newser.app/internal/usecase/collection"
 	"newser.app/internal/usecase/discovery"
 )
@@ -49,7 +50,7 @@ var (
 	authService         auth.AuthService
 	sessionService      session.SessionService
 	subscriptionService subscription.SubscriptionService
-	// newsfeedService     service.NewsfeedService
+	newsfeedService     newsfeed.NewsfeedService
 	// collectionService   service.CollectionService
 	discoveryService discovery.DiscoveryService
 )
