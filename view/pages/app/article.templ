@@ -1,0 +1,40 @@
+package app
+
+import (
+	"newser.app/internal/dto"
+	"newser.app/view/component"
+	"newser.app/view/layout"
+)
+
+// We're splitting the main page component
+// from the content so we can send back
+// the full page — Article — when the
+// request is not an HTMX request.
+// When we do get an HTMX request,
+// we can just return the ArticlePageContent
+// without the layout wrappers
+templ Article(a *dto.ArticleDTO) {
+	@layout.App() {
+		@ArticlePageContent(a)
+	}
+}
+
+templ ArticlePageContent(a *dto.ArticleDTO) {
+	<script src="/static/script/vendor/shiki/shiki.js" type="module"></script>
+	<div class="stack-header flex-row flex-align-center gap-2 text-med">
+		@component.Icon("checkbox_circle_outline")
+	</div>
+	<article class="container article stack">
+		<div class="article-header flex-row gap-1">
+			<h2>{ a.Title }</h2>
+		</div>
+		<div class="article-header flex-row gap-1">
+			@component.FormattedDateTime(a.PublishedParsed)
+			<a href={ templ.SafeURL(a.SiteURL) } target="_blank">{ a.FeedTitle }</a>
+			// <a href={ templ.SafeURL(a.SiteURL) } target="_blank">{ a.Person.Name }</a>
+		</div>
+		<section class="stack article-content">
+			@templ.Raw(a.Content)
+		</section>
+	</article>
+}

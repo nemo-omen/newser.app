@@ -119,9 +119,29 @@ func (h *WebAppHandler) GetNewsfeed(c echo.Context) error {
 }
 
 func (h *WebAppHandler) GetArticle(c echo.Context) error {
-	// get article by id
-	// render article page
-	return nil
+	articleId := c.Param("id")
+	_, ok := c.Get("user").(string)
+	if !ok {
+		return redirectWithHX(c, "/auth/login")
+	}
+	// user, err := h.authService.GetUserByEmail(email)
+	// if err != nil {
+	// 	return redirectWithHX(c, "/auth/login")
+	// }
+	article, err := h.subscriptionService.GetArticle(articleId)
+	if err != nil {
+		h.session.SetFlash(c, "error", "Failed to get newsfeed")
+		return redirectWithHX(c, "/app")
+		// set flash message
+		// render or redirect to error page? /app?
+	}
+	util.SetPageTitle(c, h.session, article.Title)
+
+	if isHxRequest(c) {
+		return render(c, app.ArticlePageContent(article))
+	}
+
+	return render(c, app.Article(article))
 }
 
 func (h *WebAppHandler) GetUpdatedSidebarCount(c echo.Context) error {
