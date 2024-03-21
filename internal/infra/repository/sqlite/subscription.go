@@ -152,9 +152,23 @@ func (r *SubscriptionSqliteRepo) GetNewsfeed(userID, feedID string) (*dto.Newsfe
 	return feed, nil
 }
 
-func (r *SubscriptionSqliteRepo) GetArticle(id string) (*dto.ArticleDTO, error) {
+func (r *SubscriptionSqliteRepo) GetArticle(userID, articleID string) (*dto.ArticleDTO, error) {
 	article := &dto.ArticleDTO{}
-	err := r.db.Get(article, "SELECT * FROM articles WHERE id = ?", id)
+	articleQuery := `
+	SELECT
+		articles.*,
+		newsfeeds.site_url as feed_site_url,
+		newsfeeds.title as newsfeed_title,
+		COALESCE(images.title, '') as feed_image_title,
+		COALESCE(images.url, '') as feed_image_url
+	FROM
+		articles
+		LEFT JOIN newsfeeds ON articles.newsfeed_id = newsfeeds.id
+		LEFT JOIN newsfeed_images ON newsfeeds.id = newsfeed_images.newsfeed_id
+		LEFT JOIN images ON newsfeed_images.image_id = images.id
+	WHERE articles.id = ?;
+	`
+	err := r.db.Get(article, articleQuery, articleID)
 	if err != nil {
 		return nil, shared.NewAppError(
 			err,
@@ -163,6 +177,94 @@ func (r *SubscriptionSqliteRepo) GetArticle(id string) (*dto.ArticleDTO, error) 
 			"entity.Article",
 		)
 	}
+
+	categories := []dto.CategoryDTO{}
+	err = r.db.Select(
+		&categories, `
+		SELECT
+			categories.*
+		FROM 
+			articles
+			LEFT JOIN article_categories ON articles.id = article_categories.article_id
+			LEFT JOIN categories ON article_categories.category_id = categories.id
+		WHERE articles.id = ? AND categories.term != '';`,
+		articleID)
+
+	if err == nil {
+		article.Categories = categories
+	}
+	
+	readCollection := dto.CollectionDTO{}
+	err = r.db.Get(
+		&readCollection, `
+		SELECT *
+		FROM collections
+		WHERE user_id = ? AND title = "read";
+	`,
+		userID,
+	)
+	if err != nil {
+		return nil, shared.NewAppError(
+			err,
+			"Failed to get read collection",
+			"SubscriptionSqliteRepo.GetArticle",
+			"entity.Collection",
+		)
+	}
+
+	type CollectionArticle struct {
+		ArticleID string `db:"article_id"`
+		CollectionId string `db:"collection_id"`
+	}
+
+	read := CollectionArticle{}
+
+	err = r.db.Get(
+		&read, `
+		SELECT *
+		FROM collection_articles
+		WHERE collection_id = ? AND article_id = ?;`
+		readCollection.ID,
+		articleID,
+	)
+	if err != nil {
+		article.Read = false
+	} else {
+		article.Read = true
+	}
+
+	savedCollection := dto.CollectionDTO{}
+	err = r.db.Get(
+		&savedCollection, `
+		SELECT *
+		FROM collections
+		WHERE user_id = ? AND title = "saved";
+	`,
+		userID,
+	)
+	if err != nil {
+		return nil, shared.NewAppError(
+			err,
+			"Failed to get saved collection",
+			"SubscriptionSqliteRepo.GetArticle",
+			"entity.Collection",
+		)
+	}
+	saved := CollectionArticle{}
+	err = r.db.Get(
+		&saved, `
+		SELECT *
+		FROM collection_articles
+		WHERE collection_id = ? AND article_id = ?;`,
+		savedCollection.ID,
+		articleID,
+	)
+	if err != nil {
+		article.Saved = false
+	} else {
+		article.Saved = true
+	}
+
 	return article, nil
 }
 

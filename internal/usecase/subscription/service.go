@@ -43,8 +43,8 @@ func (s *SubscriptionService) GetNewsfeed(userID, feedID string) (*dto.NewsfeedD
 	return s.subscriptionRepo.GetNewsfeed(userID, feedID)
 }
 
-func (s *SubscriptionService) GetArticle(articleId string) (*dto.ArticleDTO, error) {
-	return s.subscriptionRepo.GetArticle(articleId)
+func (s *SubscriptionService) GetArticle(userID, articleID string) (*dto.ArticleDTO, error) {
+	return s.subscriptionRepo.GetArticle(userID, articleID)
 }
 
 func (s *SubscriptionService) GetSidebarLinks(userID string) ([]*dto.FeedInfoDTO, error) {

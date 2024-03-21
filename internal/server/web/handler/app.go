@@ -120,15 +120,15 @@ func (h *WebAppHandler) GetNewsfeed(c echo.Context) error {
 
 func (h *WebAppHandler) GetArticle(c echo.Context) error {
 	articleId := c.Param("id")
-	_, ok := c.Get("user").(string)
+	email, ok := c.Get("user").(string)
 	if !ok {
 		return redirectWithHX(c, "/auth/login")
 	}
-	// user, err := h.authService.GetUserByEmail(email)
-	// if err != nil {
-	// 	return redirectWithHX(c, "/auth/login")
-	// }
-	article, err := h.subscriptionService.GetArticle(articleId)
+	user, err := h.authService.GetUserByEmail(email)
+	if err != nil {
+		return redirectWithHX(c, "/auth/login")
+	}
+	article, err := h.subscriptionService.GetArticle(user.ID, id)
 	if err != nil {
 		h.session.SetFlash(c, "error", "Failed to get newsfeed")
 		return redirectWithHX(c, "/app")
