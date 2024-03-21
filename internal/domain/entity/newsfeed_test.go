@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"newser.app/domain/value"
+	"newser.app/internal/domain/value"
 )
 
 func TestNewsfeed(t *testing.T) {
