@@ -10,7 +10,6 @@ import (
 	"newser.app/internal/usecase/session"
 	"newser.app/internal/usecase/subscription"
 	"newser.app/shared"
-	"newser.app/shared/util"
 	"newser.app/view/pages/app"
 )
 
@@ -84,7 +83,6 @@ func (h *WebSubscriptionHandler) PostSubscribe(c echo.Context) error {
 	}
 
 	h.session.SetFlash(c, "success", "Subscribed to feed")
-	util.SetPageTitle(c, h.session, feed.Title)
 	return renderOrRedirect(c, app.FeedPageContent(feed), fmt.Sprintf("/app/newsfeed/%s", feed.ID))
 }
 

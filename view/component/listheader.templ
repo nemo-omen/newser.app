@@ -6,63 +6,51 @@ import (
 
 templ ListHeader() {
 	<div class="stack-header flex-row flex-align-center flex-end gap-2">
-		if util.GetShowUnreadPreference(ctx) {
-			<form
-				action="/desk/control/setreadview"
-				method="POST"
-				hx-post="/desk/control/setreadview"
+		if util.GetViewPreference(ctx) == "read" {
+			<a
+				href="/app/control/viewunread"
+				hx-get="/app/control/viewunread"
+				class="icon-link-button text-med"
 				hx-target="closest main"
 				hx-swap="innerHtml"
-				id="view-unread-form"
+				style="padding-inline: 0;"
 			>
-				<input type="hidden" name="viewRead" value="false"/>
-				<button class="icon-link-button" type="submit" style="padding-inline: 0;">
-					@Icon("eye-off")
-				</button>
-			</form>
+				@Icon("eye-off")
+			</a>
 		} else {
-			<form
-				action="/desk/control/setreadview"
-				method="POST"
-				hx-post="/desk/control/setreadview"
+			<a
+				href="/app/control/viewread"
+				hx-get="/app/control/viewread"
 				hx-target="closest main"
 				hx-swap="innerHtml"
-				id="view-unread-form"
+				class="icon-link-button text-med"
+				style="padding-inline: 0;"
 			>
-				<input type="hidden" name="viewRead" value="true"/>
-				<button class="icon-link-button" type="submit" style="padding-inline: 0;">
-					@Icon("eye")
-				</button>
-			</form>
+			@Icon("eye")
+			</a>
 		}
-		if util.GetUserViewPreference(ctx) != "list" {
-			<form
-				action="/desk/control/setview"
-				method="POST"
-				hx-post="/desk/control/setview"
+		if util.GetLayoutPreference(ctx) != "expanded" {
+			<a
+				href="/app/control/viewcollapsed"
+				hx-get="/app/control/viewcollapsed"
 				hx-target="closest main"
 				hx-swap="innerHtml"
-				id="view-form"
+				class="icon-link-button text-med"
+				style="padding-inline: 0;"
 			>
-				<input type="hidden" name="view" value="list"/>
-				<button class="icon-link-button" type="submit" style="padding-inline: 0;">
-					@Icon("list")
-				</button>
-			</form>
+				@Icon("list")
+			</a>
 		} else {
-			<form
-				action="/desk/control/setview"
-				method="POST"
-				hx-post="/desk/control/setview"
+			<a
+				href="/app/control/viewexpanded"
+				hx-get="/app/control/viewexpanded"
 				hx-target="closest main"
 				hx-swap="innerHtml"
-				id="view-form"
+				class="icon-link-button text-med"
+				style="padding-inline: 0;"
 			>
-				<input type="hidden" name="view" value="card"/>
-				<button type="submit" class="icon-link-button" style="padding-inline: 0;">
-					@Icon("stack")
-				</button>
-			</form>
+				@Icon("stack")
+			</a>
 		}
 	</div>
 }

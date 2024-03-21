@@ -449,28 +449,21 @@ func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) 
 			INSERT INTO categories (id, term)
 			VALUES (?, ?) ON CONFLICT (term) DO NOTHING;`
 			_, err = tx.Exec(categoryQuery, c.ID, c.Term)
-			if err != nil {
-				return nil, shared.NewAppError(
-					err,
-					"Failed to insert category",
-					"SubscriptionSqliteRepo.Subscribe",
-					"entity.Category",
-				)
-			}
-
-			articleCategoryQuery := `
+			if err == nil {
+				articleCategoryQuery := `
 			INSERT INTO article_categories (article_id, category_id)
 			VALUES (?, ?);
 			`
-			_, err = tx.Exec(articleCategoryQuery, a.ID, c.ID)
-			if err != nil {
-				fmt.Println("err line 211: ", err)
-				return nil, shared.NewAppError(
-					err,
-					"Failed to insert article category",
-					"SubscriptionSqliteRepo.Subscribe",
-					"entity.ArticleCategory",
-				)
+				_, err = tx.Exec(articleCategoryQuery, a.ID, c.ID)
+				if err != nil {
+					fmt.Println("err line 211: ", err)
+					return nil, shared.NewAppError(
+						err,
+						"Failed to insert article category",
+						"SubscriptionSqliteRepo.Subscribe",
+						"entity.ArticleCategory",
+					)
+				}
 			}
 		}
 	}
@@ -543,6 +536,41 @@ func (r *SubscriptionSqliteRepo) GetAllArticles(userID string) ([]*dto.ArticleDT
 				"SubscriptionSqliteRepo.GetAllArticles",
 				"entity.Article",
 			)
+		}
+		for _, article := range feedArticles {
+			readCollection := dto.CollectionDTO{}
+			err := r.db.Get(
+				&readCollection, `
+				SELECT *
+				FROM collections
+				WHERE user_id = ? AND title = "read";
+			`,
+				userID,
+			)
+			if err != nil {
+				return nil, shared.NewAppError(
+					err,
+					"Failed to get read collection",
+					"SubscriptionSqliteRepo.GetAllArticles",
+					"entity.Collection",
+				)
+			}
+			readArticleId := ""
+			err = r.db.Get(
+				&readArticleId, `
+				SELECT article_id
+				FROM collection_articles
+				WHERE collection_id = ? AND article_id = ?;
+			`,
+				readCollection.ID,
+				article.ID,
+			)
+			if err != nil {
+				article.Read = false
+			} else {
+				article.Read = true
+			}
+			fmt.Println("read?: ", article.Read)
 		}
 		articles = append(articles, feedArticles...)
 	}

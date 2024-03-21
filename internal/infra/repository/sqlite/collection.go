@@ -1,8 +1,11 @@
 package sqlite
 
 import (
+	"fmt"
+
 	"github.com/jmoiron/sqlx"
 	"newser.app/internal/dto"
+	"newser.app/shared"
 )
 
 type CollectionSqliteRepo struct {
@@ -44,19 +47,95 @@ func (r *CollectionSqliteRepo) GetBySlug(slug, userId string) (*dto.CollectionDT
 func (r *CollectionSqliteRepo) All(userID string) ([]*dto.CollectionDTO, error) {
 	return nil, nil
 }
+
 func (r *CollectionSqliteRepo) AddArticle(collectionID, articleID string) error {
+	_, err := r.db.Exec(
+		`INSERT INTO collection_articles (
+			collection_id, article_id
+			) VALUES (?, ?) ON CONFLICT (collection_id, article_id) DO NOTHING`,
+		collectionID,
+		articleID,
+	)
+	if err != nil {
+		return err
+	}
 	return nil
 }
+
 func (r *CollectionSqliteRepo) RemoveArticle(collectionID, articleID string) error {
+	_, err := r.db.Exec("DELETE FROM collection_articles WHERE collection_id = ? AND article_id = ?", collectionID, articleID)
+	if err != nil {
+		return err
+	}
 	return nil
 }
+
+func (r *CollectionSqliteRepo) AddAndRemoveArticle(addCollectionID, removeCollectionID, articleID string) error {
+	tx, err := r.db.Beginx()
+	defer tx.Rollback()
+	if err != nil {
+		fmt.Println("Error starting transaction in AddAndRemoveArticle: ", err.Error())
+		return shared.NewAppError(
+			err,
+			"Error starting transaction",
+			"AddAndRemoveArticle",
+			"CollectionSqliteRepo",
+		)
+	}
+	_, err = tx.Exec(
+		`INSERT INTO collection_articles (
+			collection_id, article_id
+		) VALUES (?, ?) 
+			ON CONFLICT (
+				collection_id, article_id
+			) DO NOTHING`,
+		addCollectionID,
+		articleID,
+	)
+	if err != nil {
+		fmt.Println("Error adding article to collection in AddAndRemoveArticle: ", err.Error())
+		return shared.NewAppError(
+			err,
+			"Error adding article to collection",
+			"AddAndRemoveArticle",
+			"CollectionSqliteRepo",
+		)
+	}
+	_, err = tx.Exec(
+		`DELETE FROM collection_articles
+		WHERE collection_id = ? AND article_id = ?`,
+		removeCollectionID,
+		articleID,
+	)
+	if err != nil {
+		fmt.Println("Error removing article from collection in AddAndRemoveArticle: ", err.Error())
+		return shared.NewAppError(
+			err,
+			"Error removing article from collection",
+			"AddAndRemoveArticle",
+			"CollectionSqliteRepo",
+		)
+	}
+	err = tx.Commit()
+	if err != nil {
+		fmt.Println("Error committing transaction in AddAndRemoveArticle: ", err.Error())
+		return shared.NewAppError(
+			err,
+			"Error committing transaction",
+			"AddAndRemoveArticle",
+			"CollectionSqliteRepo",
+		)
+	}
+	return nil
+}
+
 func (r *CollectionSqliteRepo) AddNewsfeed(collectionID, newsfeedID string) error {
 	return nil
 }
 func (r *CollectionSqliteRepo) RemoveNewsfeed(collectionID, newsfeedID string) error {
 	return nil
 }
-func (r *CollectionSqliteRepo) GetCollectionArticles(collectionID string) ([]*dto.ArticleDTO, error) {
+func (r *CollectionSqliteRepo) GetCollectionArticles(collectionID, userID string) ([]*dto.ArticleDTO, error) {
 	articles := []*dto.ArticleDTO{}
 	err := r.db.Select(
 		&articles,
@@ -79,6 +158,41 @@ func (r *CollectionSqliteRepo) GetCollectionArticles(collectionID string) ([]*dt
 	)
 	if err != nil {
 		return nil, err
+	}
+	for _, article := range articles {
+		readCollection := dto.CollectionDTO{}
+		err := r.db.Get(
+			&readCollection, `
+				SELECT *
+				FROM collections
+				WHERE user_id = ? AND title = "read";
+			`,
+			userID,
+		)
+		if err != nil {
+			return nil, shared.NewAppError(
+				err,
+				"Failed to get read collection",
+				"SubscriptionSqliteRepo.GetAllArticles",
+				"entity.Collection",
+			)
+		}
+		readArticleId := ""
+		err = r.db.Get(
+			&readArticleId, `
+				SELECT article_id
+				FROM collection_articles
+				WHERE collection_id = ? AND article_id = ?;
+			`,
+			readCollection.ID,
+			article.ID,
+		)
+		if err != nil {
+			article.Read = false
+		} else {
+			article.Read = true
+		}
+		fmt.Println("read?: ", article.Read)
 	}
 	return articles, nil
 }

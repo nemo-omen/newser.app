@@ -31,8 +31,8 @@ func ListHeader() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if util.GetShowUnreadPreference(ctx) {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/control/setreadview\" method=\"POST\" hx-post=\"/desk/control/setreadview\" hx-target=\"closest main\" hx-swap=\"innerHtml\" id=\"view-unread-form\"><input type=\"hidden\" name=\"viewRead\" value=\"false\"> <button class=\"icon-link-button\" type=\"submit\" style=\"padding-inline: 0;\">")
+		if util.GetViewPreference(ctx) == "read" {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"/app/control/viewunread\" hx-get=\"/app/control/viewunread\" class=\"icon-link-button text-med\" hx-target=\"closest main\" hx-swap=\"innerHtml\" style=\"padding-inline: 0;\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -40,12 +40,12 @@ func ListHeader() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></form>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/control/setreadview\" method=\"POST\" hx-post=\"/desk/control/setreadview\" hx-target=\"closest main\" hx-swap=\"innerHtml\" id=\"view-unread-form\"><input type=\"hidden\" name=\"viewRead\" value=\"true\"> <button class=\"icon-link-button\" type=\"submit\" style=\"padding-inline: 0;\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"/app/control/viewread\" hx-get=\"/app/control/viewread\" hx-target=\"closest main\" hx-swap=\"innerHtml\" class=\"icon-link-button text-med\" style=\"padding-inline: 0;\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -53,13 +53,13 @@ func ListHeader() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></form>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		if util.GetUserViewPreference(ctx) != "list" {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/control/setview\" method=\"POST\" hx-post=\"/desk/control/setview\" hx-target=\"closest main\" hx-swap=\"innerHtml\" id=\"view-form\"><input type=\"hidden\" name=\"view\" value=\"list\"> <button class=\"icon-link-button\" type=\"submit\" style=\"padding-inline: 0;\">")
+		if util.GetLayoutPreference(ctx) != "expanded" {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"/app/control/viewcollapsed\" hx-get=\"/app/control/viewcollapsed\" hx-target=\"closest main\" hx-swap=\"innerHtml\" class=\"icon-link-button text-med\" style=\"padding-inline: 0;\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -67,12 +67,12 @@ func ListHeader() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></form>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/control/setview\" method=\"POST\" hx-post=\"/desk/control/setview\" hx-target=\"closest main\" hx-swap=\"innerHtml\" id=\"view-form\"><input type=\"hidden\" name=\"view\" value=\"card\"> <button type=\"submit\" class=\"icon-link-button\" style=\"padding-inline: 0;\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<a href=\"/app/control/viewexpanded\" hx-get=\"/app/control/viewexpanded\" hx-target=\"closest main\" hx-swap=\"innerHtml\" class=\"icon-link-button text-med\" style=\"padding-inline: 0;\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -80,7 +80,7 @@ func ListHeader() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></form>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

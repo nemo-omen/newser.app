@@ -76,24 +76,29 @@ func (s *SessionService) GetTitle(c echo.Context) string {
 	return s.sessionManager.GetString(c.Request().Context(), "title")
 }
 
+// "expanded" or "collapsed"
 func (s *SessionService) SetLayout(c echo.Context, layout string) {
 	s.sessionManager.Put(c.Request().Context(), "layout", layout)
 }
 
+// "expanded" or "collapsed"
 func (s *SessionService) GetLayout(c echo.Context) string {
 	if !s.sessionManager.Exists(c.Request().Context(), "layout") {
-		return "card"
+		return "expanded"
 	}
 	return s.sessionManager.GetString(c.Request().Context(), "layout")
 }
 
+// "read" or "unread"
 func (s *SessionService) SetView(c echo.Context, view string) {
 	s.sessionManager.Put(c.Request().Context(), "view", view)
 }
 
+// "read" or "unread"
+// "unread" is default
 func (s *SessionService) GetView(c echo.Context) string {
 	if !s.sessionManager.Exists(c.Request().Context(), "view") {
-		return "read"
+		return "unread"
 	}
 	return s.sessionManager.GetString(c.Request().Context(), "view")
 }

@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"newser.app/internal/usecase/auth"
+	"newser.app/internal/usecase/collection"
 	"newser.app/internal/usecase/session"
 	"newser.app/internal/usecase/subscription"
 	"newser.app/shared/util"
@@ -16,7 +18,7 @@ type WebAppHandler struct {
 	session             session.SessionService
 	authService         auth.AuthService
 	subscriptionService subscription.SubscriptionService
-	// collectionService collection.CollectionService
+	collectionService   collection.CollectionService
 	// newsfeedService     newsfeed.NewsfeedService
 	// discoveryService discovery.DiscoveryService
 }
@@ -25,7 +27,7 @@ func NewWebAppHandler(
 	sessionService session.SessionService,
 	authService auth.AuthService,
 	subscriptionService subscription.SubscriptionService,
-	// collectionService collection.CollectionService,
+	collectionService collection.CollectionService,
 	// newsfeedService newsfeed.NewsfeedService,
 	// discoveryService discovery.DiscoveryService,
 ) *WebAppHandler {
@@ -33,7 +35,7 @@ func NewWebAppHandler(
 		session:             sessionService,
 		authService:         authService,
 		subscriptionService: subscriptionService,
-		// collectionService: collectionService,
+		collectionService:   collectionService,
 		// newsfeedService:     newsfeedService,
 		// discoveryService: discoveryService,
 	}
@@ -49,6 +51,10 @@ func (h *WebAppHandler) Routes(app *echo.Echo, middleware ...echo.MiddlewareFunc
 	app.GET("/app/control/unreadcount", h.GetUpdatedSidebarCount)
 	app.GET("/app/control/currentpath", h.GetUpdatedSidebar)
 	app.GET("/app/control/pagetitle", h.PageTitle)
+	app.GET("/app/control/viewread", h.ViewRead)
+	app.GET("/app/control/viewunread", h.ViewUnread)
+	app.GET("/app/control/viewcondensed", h.ViewCondensed)
+	app.GET("/app/control/viewexpanded", h.ViewExpanded)
 }
 
 func (h *WebAppHandler) GetApp(c echo.Context) error {
@@ -135,6 +141,18 @@ func (h *WebAppHandler) GetArticle(c echo.Context) error {
 		// set flash message
 		// render or redirect to error page? /app?
 	}
+
+	fmt.Println("read?: ", article.Read)
+	if !article.Read {
+		article.Read = true
+		_ = h.collectionService.AddAndRemoveArticleFromCollection(
+			"read",
+			"unread",
+			article.ID.String(),
+			user.ID.String(),
+		)
+	}
+
 	util.SetPageTitle(c, h.session, article.Title)
 
 	if isHxRequest(c) {
@@ -160,4 +178,56 @@ func (h *WebAppHandler) PageTitle(c echo.Context) error {
 		return c.String(http.StatusOK, "Newser")
 	}
 	return c.String(http.StatusOK, titleString)
+}
+
+func (h *WebAppHandler) ViewUnread(c echo.Context) error {
+	email, ok := c.Get("user").(string)
+	if !ok {
+		return redirectWithHX(c, "/auth/login")
+	}
+	user, err := h.authService.GetUserByEmail(email)
+	if err != nil {
+		return redirectWithHX(c, "/auth/login")
+	}
+	articles, err := h.collectionService.GetArticlesBySlug("unread", user.ID.String())
+	h.session.SetView(c, "unread")
+	if isHxRequest(c) {
+		return render(c, app.IndexPageContent(articles))
+	}
+	return render(c, app.Index(articles))
+}
+
+func (h *WebAppHandler) ViewRead(c echo.Context) error {
+	email, ok := c.Get("user").(string)
+	if !ok {
+		return redirectWithHX(c, "/auth/login")
+	}
+	user, err := h.authService.GetUserByEmail(email)
+	if err != nil {
+		return redirectWithHX(c, "/auth/login")
+	}
+	articles, err := h.subscriptionService.GetAllArticles(user.ID.String())
+	h.session.SetView(c, "read")
+	if isHxRequest(c) {
+		return render(c, app.IndexPageContent(articles))
+	}
+	return render(c, app.Index(articles))
+}
+
+func (h *WebAppHandler) ViewCondensed(c echo.Context) error {
+	ref := c.Request().Referer()
+	h.session.SetView(c, "read")
+	if isHxRequest(c) {
+		c.Response().Header().Set("HX-Redirect", ref)
+	}
+	return c.Redirect(http.StatusSeeOther, ref)
+}
+
+func (h *WebAppHandler) ViewExpanded(c echo.Context) error {
+	ref := c.Request().Referer()
+	h.session.SetView(c, "unread")
+	if isHxRequest(c) {
+		c.Response().Header().Set("HX-Redirect", ref)
+	}
+	return c.Redirect(http.StatusSeeOther, ref)
 }

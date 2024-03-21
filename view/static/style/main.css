@@ -486,12 +486,16 @@ time {
   font-size: var(--step--1);
 }
 
-.stack {
+.stack,
+.article-content {
   display: flex;
   flex-direction: column;
   gap: var(--space-default);
-  padding-inline: var(--space-2xs);
   scroll-margin-block: var(--space-m);
+}
+
+.stack {
+  padding-inline: var(--space-2xs);
 }
 
 .container {

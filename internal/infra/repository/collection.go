@@ -13,8 +13,9 @@ type CollectionRepository interface {
 	All(userID string) ([]*dto.CollectionDTO, error)
 	AddArticle(collectionID, articleID string) error
 	RemoveArticle(collectionID, articleID string) error
+	AddAndRemoveArticle(addCollectionID, removeCollectionID, articleID string) error
 	AddNewsfeed(collectionID, newsfeedID string) error
 	RemoveNewsfeed(collectionID, newsfeedID string) error
-	GetCollectionArticles(collectionID string) ([]*dto.ArticleDTO, error)
+	GetCollectionArticles(collectionID, userID string) ([]*dto.ArticleDTO, error)
 	GetCollectionNewsfeeds(collectionID string) ([]*dto.NewsfeedDTO, error)
 }

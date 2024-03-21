@@ -138,6 +138,7 @@ func initWebHandlers(app *echo.Echo) {
 		sessionService,
 		authService,
 		subscriptionService,
+		collectionService,
 	)
 	searchHandler := webhandler.NewWebSearchHandler(
 		sessionService,

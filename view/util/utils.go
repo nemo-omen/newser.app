@@ -33,18 +33,20 @@ func GetPageTitle(ctx context.Context) string {
 	return title
 }
 
-func GetUserViewPreference(ctx context.Context) string {
-	viewPref := ctx.Value("view")
+// "expanded" or "collapsed"
+func GetLayoutPreference(ctx context.Context) string {
+	viewPref := ctx.Value("layout")
 	if viewPref != nil {
 		return viewPref.(string)
 	}
-	return "card"
+	return "expanded"
 }
 
-func GetShowUnreadPreference(ctx context.Context) bool {
-	unreadPref := ctx.Value("viewRead")
-	if unreadPref != nil {
-		return unreadPref.(bool)
+// "read" or "unread
+func GetViewPreference(ctx context.Context) string {
+	viewPref, ok := ctx.Value("view").(string)
+	if ok {
+		return viewPref
 	}
-	return false
+	return "unread"
 }

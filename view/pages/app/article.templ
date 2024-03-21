@@ -30,17 +30,26 @@ templ ArticlePageContent(a *dto.ArticleDTO) {
 		</div>
 		<div class="article-header flex-row gap-1">
 			@component.FormattedDateTime(a.PublishedParsed)
-			<a href={ templ.SafeURL(a.SiteURL) } target="_blank">{ a.FeedTitle }</a>
-			<a href={ templ.SafeURL(a.Link) } target="_blank">Original Article</a>
+			<a href={ templ.SafeURL(a.SiteURL) } target="_blank">
+				{ a.FeedTitle }
+			</a>
+			// <a href={ templ.SafeURL(a.Link) } target="_blank">
+			// 	Original Article
+			// </a>
 			// <a href={ templ.SafeURL(a.SiteURL) } target="_blank">{ a.Person.Name }</a>
 		</div>
-		<section class="stack article-content">
+		<section class="article-content">
 			if len(a.Content) > 0 {
 				@templ.Raw(a.Content)
 			} else {
 				@templ.Raw(a.Description)
 			}
-			<a href={ templ.SafeURL(a.Link) } target="_blank">Original Article</a>
+			<a href={ templ.SafeURL(a.Link) } target="_blank" class="flex-row flex-align-center text-small">
+				Original Article
+				<span class="flex-row flex-align-center">
+					@component.Icon("external_link")
+				</span>
+			</a>
 		</section>
 	</article>
 }

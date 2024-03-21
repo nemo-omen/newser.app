@@ -17,8 +17,8 @@ import (
 )
 
 func filterUnread(ctx context.Context, articles []*dto.ArticleDTO) []*dto.ArticleDTO {
-	viewRead := util.GetShowUnreadPreference(ctx)
-	if !viewRead {
+	viewRead := util.GetViewPreference(ctx)
+	if viewRead != "read" {
 		filtered := sharedUtil.Filter(articles, func(a *dto.ArticleDTO) bool {
 			return !a.Read
 		})
@@ -46,7 +46,7 @@ func ArticleList(articles []*dto.ArticleDTO) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			for _, article := range filterUnread(ctx, articles) {
-				if util.GetUserViewPreference(ctx) == "card" {
+				if util.GetLayoutPreference(ctx) == "expanded" {
 					templ_7745c5c3_Err = ArticleCard(article).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
