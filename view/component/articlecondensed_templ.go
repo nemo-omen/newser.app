@@ -11,11 +11,11 @@ import "io"
 import "bytes"
 
 import (
-	"newser.app/model"
+	"newser.app/internal/dto"
 	"newser.app/view/util"
 )
 
-func ArticleCondensed(article *model.Article) templ.Component {
+func ArticleCondensed(article *dto.ArticleDTO) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -45,7 +45,7 @@ func ArticleCondensed(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("item-" + util.IdToString(article.ID)))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("item-" + article.ID.String()))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -53,12 +53,12 @@ func ArticleCondensed(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if article.FeedImageUrl != "" {
+		if article.FeedImageURL != "" {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<image class=\"feed-logo-menu\" src=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(article.FeedImageUrl))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(article.FeedImageURL))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -79,7 +79,7 @@ func ArticleCondensed(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 templ.SafeURL = templ.SafeURL("/desk/articles/" + util.IdToString(article.ID))
+		var templ_7745c5c3_Var3 templ.SafeURL = templ.SafeURL("/app/article/" + article.ID.String())
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var3)))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

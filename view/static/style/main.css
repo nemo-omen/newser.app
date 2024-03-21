@@ -197,6 +197,10 @@ header {
   }
 }
 
+.error {
+  color: var(--secondary);
+}
+
 /* DROPDOWN MENU */
 .dropdown {
   list-style-type: none;
@@ -370,6 +374,7 @@ main {
   container-name: main;
   container-type: inline-size;
   overflow-y: auto;
+  padding-block-end: var(--space-l);
   /* padding: var(--space-2xs) var(--space-s); */
   /* view-transition-name: slide-it; */
 }
@@ -442,10 +447,15 @@ main {
   }
 
   & nav ul a:hover,
-  nav ul a.current {
+  nav ul a[aria-current="page"] {
     color: var(--foreground);
     background-color: var(--hover-background);
   }
+}
+
+.sidebar-link[aria-current="page"] {
+  color: var(--hover);
+  background-color: var(--hover-background);
 }
 
 #sidebar-secondary {
@@ -481,6 +491,7 @@ time {
   flex-direction: column;
   gap: var(--space-default);
   padding-inline: var(--space-2xs);
+  scroll-margin-block: var(--space-m);
 }
 
 .container {

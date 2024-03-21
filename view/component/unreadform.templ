@@ -1,11 +1,10 @@
 package component
 
 import (
-	"newser.app/model"
-	"newser.app/view/util"
+	"newser.app/internal/dto"
 )
 
-templ UnreadForm(article *model.Article, showLabel bool) {
+templ UnreadForm(article *dto.ArticleDTO, showLabel bool) {
 	if article.Read {
 		<form
 			action="/desk/collections/unread"
@@ -15,7 +14,7 @@ templ UnreadForm(article *model.Article, showLabel bool) {
 			hx-swap="outerHTML"
 			hx-push-url="false"
 		>
-			<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
+			<input type="hidden" name="articleid" value={ article.ID.String() }/>
 			<input type="hidden" name="responseType" value="condensed"/>
 			<button class="icon-link-button">
 				@Icon("checkbox_circle_fill")
@@ -33,7 +32,7 @@ templ UnreadForm(article *model.Article, showLabel bool) {
 			hx-swap="outerHTML"
 			hx-push-url="false"
 		>
-			<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
+			<input type="hidden" name="articleid" value={ article.ID.String() }/>
 			<input type="hidden" name="responseType" value="condensed"/>
 			<button class="icon-link-button">
 				@Icon("checkbox_circle_outline")

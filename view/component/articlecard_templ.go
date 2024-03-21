@@ -11,27 +11,29 @@ import "io"
 import "bytes"
 
 import (
-	"newser.app/model"
+	"newser.app/internal/dto"
 	"newser.app/view/util"
 	"slices"
 )
 
-func getIsCollapsed(ctx context.Context, articleId int64) bool {
-	collapsedCards := ctx.Value("collapsedCards")
-	if collapsedCards == nil {
+func getIsCollapsed(ctx context.Context, articleId string) bool {
+	var collapsedCards []string
+	collapsedCards, ok := ctx.Value("collapsedCards").([]string)
+	if !ok {
 		return false
 	}
-	return slices.Contains(collapsedCards.([]int64), articleId)
+
+	return slices.Contains(collapsedCards, articleId)
 }
 
-func getCollapsedString(ctx context.Context, articleId int64) string {
+func getCollapsedString(ctx context.Context, articleId string) string {
 	if getIsCollapsed(ctx, articleId) {
 		return "false"
 	}
 	return "true"
 }
 
-func ArticleCard(article *model.Article) templ.Component {
+func ArticleCard(article *dto.ArticleDTO) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -61,7 +63,7 @@ func ArticleCard(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("card-" + util.IdToString(article.ID)))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("card-" + article.ID.String()))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -69,12 +71,12 @@ func ArticleCard(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if article.FeedImageUrl != "" {
+		if article.FeedImageURL != "" {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<image class=\"feed-logo\" src=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(article.FeedImageUrl))
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(article.FeedImageURL))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -95,7 +97,7 @@ func ArticleCard(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 templ.SafeURL = templ.SafeURL("/desk/articles/" + util.IdToString(article.ID))
+		var templ_7745c5c3_Var3 templ.SafeURL = templ.SafeURL("/app/article/" + article.ID.String())
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var3)))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -107,7 +109,7 @@ func ArticleCard(article *model.Article) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(article.Title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/articlecard.templ`, Line: 34, Col: 27}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/articlecard.templ`, Line: 36, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -125,7 +127,7 @@ func ArticleCard(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var5 templ.SafeURL = templ.SafeURL(article.FeedSiteUrl)
+		var templ_7745c5c3_Var5 templ.SafeURL = templ.SafeURL(article.SiteURL)
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var5)))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -137,7 +139,7 @@ func ArticleCard(article *model.Article) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(article.FeedTitle)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/articlecard.templ`, Line: 43, Col: 116}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/articlecard.templ`, Line: 45, Col: 112}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -147,7 +149,7 @@ func ArticleCard(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var7 templ.SafeURL = templ.SafeURL("/desk/articles/" + util.IdToString(article.ID))
+		var templ_7745c5c3_Var7 templ.SafeURL = templ.SafeURL("/app/article/" + article.ID.String())
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var7)))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -179,7 +181,7 @@ func ArticleCard(article *model.Article) templ.Component {
 	})
 }
 
-func CardMenu(article *model.Article) templ.Component {
+func CardMenu(article *dto.ArticleDTO) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -219,7 +221,7 @@ func CardMenu(article *model.Article) templ.Component {
 	})
 }
 
-func CardFooter(article *model.Article) templ.Component {
+func CardFooter(article *dto.ArticleDTO) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -236,7 +238,7 @@ func CardFooter(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("card-footer-" + util.IdToString(article.ID)))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("card-footer-" + article.ID.String()))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -259,7 +261,7 @@ func CardFooter(article *model.Article) templ.Component {
 	})
 }
 
-func CollapseForm(article *model.Article) templ.Component {
+func CollapseForm(article *dto.ArticleDTO) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -272,11 +274,11 @@ func CollapseForm(article *model.Article) templ.Component {
 			templ_7745c5c3_Var10 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/control/setcollapse\" method=\"POST\" hx-post=\"/desk/control/setcollapse\" hx-target=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/control/setcollapse\" method=\"POST\" hx-post=\"/app/control/setcollapse\" hx-target=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("closest #card-" + util.IdToString(article.ID)))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("closest #card-" + article.ID.String()))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -284,7 +286,7 @@ func CollapseForm(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(util.IdToString(article.ID)))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(article.ID.String()))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -292,7 +294,7 @@ func CollapseForm(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("collapse-input-" + util.IdToString(article.ID)))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString("collapse-input-" + article.ID.String()))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -300,7 +302,7 @@ func CollapseForm(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(getCollapsedString(ctx, article.ID)))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(getCollapsedString(ctx, article.ID.String())))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -308,7 +310,7 @@ func CollapseForm(article *model.Article) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var11 = []any{"card-collapse icon-link-button", templ.KV("rotate--90", !getIsCollapsed(ctx, article.ID))}
+		var templ_7745c5c3_Var11 = []any{"card-collapse icon-link-button", templ.KV("rotate--90", !getIsCollapsed(ctx, article.ID.String()))}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var11...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

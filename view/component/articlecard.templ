@@ -1,37 +1,39 @@
 package component
 
 import (
-	"newser.app/model"
+	"newser.app/internal/dto"
 	"newser.app/view/util"
 	"slices"
 )
 
-func getIsCollapsed(ctx context.Context, articleId int64) bool {
-	collapsedCards := ctx.Value("collapsedCards")
-	if collapsedCards == nil {
+func getIsCollapsed(ctx context.Context, articleId string) bool {
+	var collapsedCards []string
+	collapsedCards, ok := ctx.Value("collapsedCards").([]string)
+	if !ok {
 		return false
 	}
-	return slices.Contains(collapsedCards.([]int64), articleId)
+
+	return slices.Contains(collapsedCards, articleId)
 }
 
-func getCollapsedString(ctx context.Context, articleId int64) string {
+func getCollapsedString(ctx context.Context, articleId string) string {
 	if getIsCollapsed(ctx, articleId) {
 		return "false"
 	}
 	return "true"
 }
 
-templ ArticleCard(article *model.Article) {
-	<li class={ "article-list-item", templ.KV("read", article.Read) } id={ "card-" + util.IdToString(article.ID) }>
+templ ArticleCard(article *dto.ArticleDTO) {
+	<li class={ "article-list-item", templ.KV("read", article.Read) } id={ "card-" + article.ID.String() }>
 		<article class="card">
 			<div class="card-header flex-column">
 				<div class="flex-column gap-1">
 					<div class="card-header-primary">
 						<div class="flex-row gap-1 flex-align-center">
-							if article.FeedImageUrl != "" {
-								<image class="feed-logo" src={ article.FeedImageUrl } alt={ util.GetImgAlt(article.FeedImageTitle, article.FeedTitle) }></image>
+							if article.FeedImageURL != "" {
+								<image class="feed-logo" src={ article.FeedImageURL } alt={ util.GetImgAlt(article.FeedImageTitle, article.FeedTitle) }></image>
 							}
-							<a href={ templ.SafeURL("/desk/articles/" + util.IdToString(article.ID)) } class="card-link">
+							<a href={ templ.SafeURL("/app/article/" + article.ID.String()) } class="card-link">
 								<h3>{ article.Title }</h3>
 							</a>
 						</div>
@@ -41,9 +43,9 @@ templ ArticleCard(article *model.Article) {
 			<div class="card-body flex-column gap-1">
 				<div class="flex-row gap-3">
 					@FormattedDateTime(article.PublishedParsed)
-					<span class="card-feed-link"><a href={ templ.SafeURL(article.FeedSiteUrl) } target="_blank">{ article.FeedTitle }</a></span>
+					<span class="card-feed-link"><a href={ templ.SafeURL(article.SiteURL) } target="_blank">{ article.FeedTitle }</a></span>
 				</div>
-				<a href={ templ.SafeURL("/desk/articles/" + util.IdToString(article.ID)) } class="card-link">
+				<a href={ templ.SafeURL("/app/article/" + article.ID.String()) } class="card-link">
 					@templ.Raw(article.Description)
 				</a>
 			</div>
@@ -52,7 +54,7 @@ templ ArticleCard(article *model.Article) {
 	</li>
 }
 
-templ CardMenu(article *model.Article) {
+templ CardMenu(article *dto.ArticleDTO) {
 	<ul class="card-menu flex-menu">
 		<li class="tooltip-container">
 			@SaveForm(article, true)
@@ -63,28 +65,28 @@ templ CardMenu(article *model.Article) {
 	</ul>
 }
 
-templ CardFooter(article *model.Article) {
+templ CardFooter(article *dto.ArticleDTO) {
 	<div
-		id={ "card-footer-" + util.IdToString(article.ID) }
+		id={ "card-footer-" + article.ID.String() }
 		class="card-footer"
 	>
 		@CardMenu(article)
 	</div>
 }
 
-templ CollapseForm(article *model.Article) {
+templ CollapseForm(article *dto.ArticleDTO) {
 	<form
-		action="/desk/control/setcollapse"
+		action="/app/control/setcollapse"
 		method="POST"
-		hx-post="/desk/control/setcollapse"
-		hx-target={ "closest #card-" + util.IdToString(article.ID) }
+		hx-post="/app/control/setcollapse"
+		hx-target={ "closest #card-" + article.ID.String() }
 		hx-swap="outerHTML"
 		hx-push-url="false"
 		class="card-header-toggle"
 	>
-		<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
-		<input id={ "collapse-input-" + util.IdToString(article.ID) } type="hidden" name="shouldcollapse" value={ getCollapsedString(ctx, article.ID) }/>
-		<button class={ "card-collapse icon-link-button", templ.KV("rotate--90", !getIsCollapsed(ctx, article.ID)) } type="submit">
+		<input type="hidden" name="articleid" value={ article.ID.String() }/>
+		<input id={ "collapse-input-" + article.ID.String() } type="hidden" name="shouldcollapse" value={ getCollapsedString(ctx, article.ID.String()) }/>
+		<button class={ "card-collapse icon-link-button", templ.KV("rotate--90", !getIsCollapsed(ctx, article.ID.String())) } type="submit">
 			@Icon("arrow_left")
 		</button>
 	</form>

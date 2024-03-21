@@ -3,14 +3,6 @@ package component
 import "strings"
 import "newser.app/view/util"
 
-func getCurrentPath(ctx context.Context) string {
-	currentPath := ctx.Value("currentPath")
-	if currentPath != nil {
-		return currentPath.(string)
-	}
-	return ""
-}
-
 func getEmail(ctx context.Context) string {
 	email := ctx.Value("user")
 	if email != nil {
@@ -40,6 +32,7 @@ templ Header() {
 				hx-get="/"
 				hx-replace-url="true"
 				hx-target="main"
+				hx-swap="innerHTML"
 				hx-disinherit="*"
 			>
 				<span>
@@ -57,7 +50,7 @@ templ Header() {
 				<ul>
 					if getIsAuthenticated(ctx) == false {
 						<li><a href="/auth/login">Log In</a></li>
-						<li><a href="/auth/signup">Sign Up</a></li>
+						<li><a href="/auth/register">Sign Up</a></li>
 					} else {
 						@UserDropdown(getEmail(ctx))
 					}
@@ -68,10 +61,14 @@ templ Header() {
 }
 
 templ PageTitle(title string) {
+	// hx-trigger="htmx:afterSettle"
+	// <h1
+	// 	class="header-title"
+	// >{ title }</h1>
 	<h1
 		class="header-title"
-		hx-get="/desk/control/pagetitle"
-		hx-trigger="load once, updatePageTitle from:body"
+		hx-get="/app/control/pagetitle"
+		hx-trigger="load once, pagetitle from:body"
 		hx-target="this"
 		hx-swap="innerHTML"
 	>{ title }</h1>
@@ -94,7 +91,7 @@ templ UserDropdown (email string) {
 			</li>
 			<li>
 				<form action="/auth/logout" method="post">
-					<button type="submit">Log Out</button>
+					<button type="submit" class="button-link">Log Out</button>
 				</form>
 			</li>
 		</ul>

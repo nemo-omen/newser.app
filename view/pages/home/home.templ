@@ -5,7 +5,13 @@ import "newser.app/view/layout"
 templ Index() {
 	@layout.Base() {
 		<main>
-			<h2>Home</h2>
+			@HomePageContent()
 		</main>
 	}
+}
+
+templ HomePageContent() {
+	<div class="container">
+		<h2>Home</h2>
+	</div>
 }

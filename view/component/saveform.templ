@@ -1,11 +1,10 @@
 package component
 
 import (
-	"newser.app/model"
-	"newser.app/view/util"
+	"newser.app/internal/dto"
 )
 
-templ SaveForm(article *model.Article, showLabel bool) {
+templ SaveForm(article *dto.ArticleDTO, showLabel bool) {
 	<form
 		action="/desk/articles/save"
 		method="POST"
@@ -14,7 +13,7 @@ templ SaveForm(article *model.Article, showLabel bool) {
 		hx-target="closest .article-list-item"
 		hx-swap="outerHTML"
 	>
-		<input type="hidden" name="articleid" value={ util.IdToString(article.ID) }/>
+		<input type="hidden" name="articleid" value={ article.ID.String() }/>
 		<button class="icon-link-button" type="submit">
 			@Icon("bookmark")
 			if showLabel {
