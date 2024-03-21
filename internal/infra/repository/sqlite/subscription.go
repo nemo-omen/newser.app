@@ -152,6 +152,20 @@ func (r *SubscriptionSqliteRepo) GetNewsfeed(userID, feedID string) (*dto.Newsfe
 	return feed, nil
 }
 
+func (r *SubscriptionSqliteRepo) GetArticle(id string) (*dto.ArticleDTO, error) {
+	article := &dto.ArticleDTO{}
+	err := r.db.Get(article, "SELECT * FROM articles WHERE id = ?", id)
+	if err != nil {
+		return nil, shared.NewAppError(
+			err,
+			"Failed to get article",
+			"SubscriptionSqliteRepo.GetArticle",
+			"entity.Article",
+		)
+	}
+	return article, nil
+}
+
 func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) (*dto.SubscriptionDTO, error) {
 	// check if feed exists
 	storedFeed := dto.NewsfeedDTO{}

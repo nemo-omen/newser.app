@@ -170,7 +170,7 @@ func UserDropdown(email string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></li><li><form action=\"/auth/logout\" method=\"post\"><button type=\"submit\">Log Out</button></form></li></ul></li>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></li><li><form action=\"/auth/logout\" method=\"post\"><button type=\"submit\" class=\"button-link\">Log Out</button></form></li></ul></li>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -13,28 +13,28 @@ import (
 )
 
 type WebAppHandler struct {
-	session     session.SessionService
-	authService auth.AuthService
+	session             session.SessionService
+	authService         auth.AuthService
+	subscriptionService subscription.SubscriptionService
 	// collectionService collection.CollectionService
 	// newsfeedService     newsfeed.NewsfeedService
-	subscriptionService subscription.SubscriptionService
 	// discoveryService discovery.DiscoveryService
 }
 
 func NewWebAppHandler(
 	sessionService session.SessionService,
 	authService auth.AuthService,
+	subscriptionService subscription.SubscriptionService,
 	// collectionService collection.CollectionService,
 	// newsfeedService newsfeed.NewsfeedService,
-	subscriptionService subscription.SubscriptionService,
 	// discoveryService discovery.DiscoveryService,
 ) *WebAppHandler {
 	return &WebAppHandler{
-		session:     sessionService,
-		authService: authService,
+		session:             sessionService,
+		authService:         authService,
+		subscriptionService: subscriptionService,
 		// collectionService: collectionService,
 		// newsfeedService:     newsfeedService,
-		subscriptionService: subscriptionService,
 		// discoveryService: discoveryService,
 	}
 }
