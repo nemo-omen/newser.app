@@ -23,15 +23,16 @@ func (s *SubscriptionService) GetAllArticles(userID string) ([]*dto.ArticleDTO, 
 	return s.subscriptionRepo.GetAllArticles(userID)
 }
 
-func (s *SubscriptionService) Subscribe(userID string, feed gofeed.Feed) error {
+func (s *SubscriptionService) Subscribe(userID string, feed gofeed.Feed) (*dto.SubscriptionDTO, error) {
 	fmt.Printf("Subscribing user %s to feed %s: ", userID, feed.Title)
 	feedMapper := mapper.GofeedMapper{}
 	newsfeed, err := feedMapper.ToNewsfeed(&feed)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	feedDTO := dto.NewsfeedDTO{}.FromDomain(*newsfeed)
-	return s.subscriptionRepo.Subscribe(userID, feedDTO)
+	subscription, err := s.subscriptionRepo.Subscribe(userID, feedDTO)
+	return subscription, err
 }
 
 func (s *SubscriptionService) UnSubscribe(userID, subscriptionID string) error {

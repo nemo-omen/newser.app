@@ -10,8 +10,9 @@ import (
 
 type Article struct {
 	*Item
-	Read  bool `json:"read"`
-	Saved bool `json:"saved"`
+	NewsfeedID ID   `json:"newsfeed_id"`
+	Read       bool `json:"read"`
+	Saved      bool `json:"saved"`
 }
 
 type Item struct {

@@ -2,9 +2,10 @@ package handler
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"newser.app/internal/dto"
+	"newser.app/internal/usecase/auth"
 	"newser.app/internal/usecase/collection"
 	"newser.app/internal/usecase/session"
 	"newser.app/shared/util"
@@ -14,15 +15,18 @@ import (
 type WebCollectionHandler struct {
 	session           session.SessionService
 	collectionService collection.CollectionService
+	authService       auth.AuthService
 }
 
 func NewWebCollectionHandler(
 	sessionService session.SessionService,
 	collectionService collection.CollectionService,
+	authService auth.AuthService,
 ) *WebCollectionHandler {
 	return &WebCollectionHandler{
 		session:           sessionService,
 		collectionService: collectionService,
+		authService:       authService,
 	}
 }
 
@@ -46,18 +50,50 @@ func (h *WebCollectionHandler) GetCollection(c echo.Context) error {
 }
 
 func (h *WebCollectionHandler) GetUnread(c echo.Context) error {
-	util.SetPageTitle(c, h.session, "Unread Articles")
-
-	if isHxRequest(c) {
-		return render(c, app.IndexPageContent([]*dto.ArticleDTO{}))
+	email, ok := c.Get("user").(string)
+	if !ok {
+		return c.Redirect(http.StatusSeeOther, "/app/login")
 	}
-	return render(c, app.Index([]*dto.ArticleDTO{}))
+	user, err := h.authService.GetUserByEmail(email)
+	if err != nil {
+		return c.Redirect(http.StatusSeeOther, "/app/login")
+	}
+
+	collectionArticles, err := h.collectionService.GetArticlesBySlug("unread", user.ID.String())
+	if err != nil {
+		fmt.Println("error fetching unread articles: ", err.Error())
+		h.session.SetFlash(c, "error", "Error fetching unread articles")
+		return redirectWithHX(c, "/app/collection/unread")
+	}
+
+	util.SetPageTitle(c, h.session, "Unread Articles")
+	if isHxRequest(c) {
+		return render(c, app.IndexPageContent(collectionArticles))
+	}
+	return render(c, app.Index(collectionArticles))
 }
 
 func (h *WebCollectionHandler) GetSaved(c echo.Context) error {
+	email, ok := c.Get("user").(string)
+	if !ok {
+		return c.Redirect(http.StatusSeeOther, "/app/login")
+	}
+	user, err := h.authService.GetUserByEmail(email)
+	if err != nil {
+		return c.Redirect(http.StatusSeeOther, "/app/login")
+	}
+
+	collectionArticles, err := h.collectionService.GetArticlesBySlug("saved", user.ID.String())
+	if err != nil {
+		h.session.SetFlash(c, "error", "Error fetching saved articles")
+		fmt.Println("error fetching saved articles: ", err.Error())
+		return redirectWithHX(c, "/app/collection/saved")
+	}
+	fmt.Println("saved collectionArticles:", collectionArticles)
+
 	util.SetPageTitle(c, h.session, "Saved Articles")
 	if isHxRequest(c) {
-		return render(c, app.IndexPageContent([]*dto.ArticleDTO{}))
+		return render(c, app.IndexPageContent(collectionArticles))
 	}
-	return render(c, app.Index([]*dto.ArticleDTO{}))
+	return render(c, app.Index(collectionArticles))
 }

@@ -152,7 +152,7 @@ func (r *SubscriptionSqliteRepo) GetNewsfeed(userID, feedID string) (*dto.Newsfe
 	return feed, nil
 }
 
-func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) error {
+func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) (*dto.SubscriptionDTO, error) {
 	// check if feed exists
 	storedFeed := dto.NewsfeedDTO{}
 	err := r.db.Get(
@@ -171,7 +171,7 @@ func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) 
 
 	tx, err := r.db.Beginx()
 	if err != nil {
-		return shared.NewAppError(
+		return nil, shared.NewAppError(
 			err,
 			"Failed to start transaction",
 			"SubscriptionSqliteRepo.Subscribe",
@@ -198,7 +198,7 @@ func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) 
 	)
 	if err != nil {
 		fmt.Println("err line 91: ", err)
-		return shared.NewAppError(
+		return nil, shared.NewAppError(
 			err,
 			"Failed to insert newsfeed",
 			"SubscriptionSqliteRepo.Subscribe",
@@ -215,7 +215,7 @@ func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) 
 	_, err = tx.Exec(imgQuery, img.ID, img.Title, img.URL)
 	if err != nil {
 		fmt.Println("err line 107: ", err)
-		return shared.NewAppError(
+		return nil, shared.NewAppError(
 			err,
 			"Failed to insert image",
 			"SubscriptionSqliteRepo.Subscribe",
@@ -231,7 +231,7 @@ func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) 
 	_, err = tx.Exec(newsfeedImageQuery, feed.ID, img.ID)
 	if err != nil {
 		fmt.Println("err line 123: ", err)
-		return shared.NewAppError(
+		return nil, shared.NewAppError(
 			err,
 			"Failed to insert newsfeed image",
 			"SubscriptionSqliteRepo.Subscribe",
@@ -277,7 +277,7 @@ func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) 
 		)
 		if err != nil {
 			fmt.Println("err line 170: ", err)
-			return shared.NewAppError(
+			return nil, shared.NewAppError(
 				err,
 				"Failed to insert article",
 				"SubscriptionSqliteRepo.Subscribe",
@@ -295,7 +295,7 @@ func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) 
 			userID,
 		)
 		if err != nil {
-			return shared.NewAppError(
+			return nil, shared.NewAppError(
 				err,
 				"Failed to get unread collection",
 				"SubscriptionSqliteRepo.Subscribe",
@@ -310,7 +310,7 @@ func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) 
 		_, err = tx.Exec(collectionArticleQuery, collection.ID, a.ID)
 		if err != nil {
 			fmt.Println("err line 312: ", err)
-			return shared.NewAppError(
+			return nil, shared.NewAppError(
 				err,
 				"Failed to insert collection article",
 				"SubscriptionSqliteRepo.Subscribe",
@@ -331,10 +331,10 @@ func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) 
 
 			categoryQuery := `
 			INSERT INTO categories (id, term)
-			VALUES (?, ?);`
+			VALUES (?, ?) ON CONFLICT (term) DO NOTHING;`
 			_, err = tx.Exec(categoryQuery, c.ID, c.Term)
 			if err != nil {
-				return shared.NewAppError(
+				return nil, shared.NewAppError(
 					err,
 					"Failed to insert category",
 					"SubscriptionSqliteRepo.Subscribe",
@@ -349,7 +349,7 @@ func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) 
 			_, err = tx.Exec(articleCategoryQuery, a.ID, c.ID)
 			if err != nil {
 				fmt.Println("err line 211: ", err)
-				return shared.NewAppError(
+				return nil, shared.NewAppError(
 					err,
 					"Failed to insert article category",
 					"SubscriptionSqliteRepo.Subscribe",
@@ -365,26 +365,31 @@ func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) 
 	`
 	_, err = tx.Exec(subscriptionQuery, userID, feed.ID)
 	if err != nil {
-		fmt.Println("err line 64: ", err)
-		return shared.NewAppError(
+		fmt.Println("err line 223: ", err)
+		return nil, shared.NewAppError(
 			err,
-			"Failed to insert subscription",
+			"Failed to prepare subscription statement",
 			"SubscriptionSqliteRepo.Subscribe",
 			"entity.Subscription",
 		)
+	}
+	subscription := &dto.SubscriptionDTO{
+		UserID: userID,
+		FeedID: feed.ID,
 	}
 
 	err = tx.Commit()
 	if err != nil {
 		fmt.Println("err line 223: ", err)
-		return shared.NewAppError(
+		return nil, shared.NewAppError(
 			err,
 			"Failed to commit transaction",
 			"SubscriptionSqliteRepo.Subscribe",
 			"entity.Subscription",
 		)
 	}
-	return nil
+
+	return subscription, nil
 }
 
 func (r *SubscriptionSqliteRepo) GetAllArticles(userID string) ([]*dto.ArticleDTO, error) {
@@ -400,7 +405,7 @@ func (r *SubscriptionSqliteRepo) GetAllArticles(userID string) ([]*dto.ArticleDT
 			&feedArticles, `
 			SELECT
 				articles.*,
-				newsfeeds.title as feed_title,
+				newsfeeds.title as newsfeed_title,
 				newsfeeds.site_url as feed_site_url,
 				newsfeeds.slug as feed_slug,
 				COALESCE(images.title, '') as feed_image_title,

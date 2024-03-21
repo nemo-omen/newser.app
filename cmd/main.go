@@ -152,6 +152,7 @@ func initWebHandlers(app *echo.Echo) {
 	collectionHandler := webhandler.NewWebCollectionHandler(
 		sessionService,
 		collectionService,
+		authService,
 	)
 
 	homeHandler.Routes(

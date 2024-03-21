@@ -3,7 +3,6 @@ package component
 import (
 	"newser.app/internal/dto"
 	"strconv"
-	"fmt"
 )
 
 func getSidebarFeedInfo(ctx context.Context) []*dto.FeedInfoDTO {
@@ -27,7 +26,7 @@ func getCurrentPath(ctx context.Context) string {
 }
 
 func isCurrentString(ctx context.Context, path string) string {
-	fmt.Println("isCurrentString", path, getCurrentPath(ctx))
+	// fmt.Println("isCurrentString", path, getCurrentPath(ctx))
 	if getCurrentPath(ctx) == path {
 		return "page"
 	}

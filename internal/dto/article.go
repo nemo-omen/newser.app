@@ -25,8 +25,8 @@ type ArticleDTO struct {
 	Read            bool          `json:"read" db:"read"`
 	Saved           bool          `json:"saved" db:"saved"`
 	SiteURL         string        `json:"site_url,omitempty" db:"feed_site_url"`
+	FeedTitle       string        `json:"feed_title,omitempty" db:"newsfeed_title"`
 	FeedID          string        `json:"feed_id,omitempty" db:"newsfeed_id"`
-	FeedTitle       string        `json:"feed_title,omitempty" db:"feed_title"`
 	FeedImageURL    string        `json:"feed_image_url,omitempty" db:"feed_image_url"`
 	FeedImageTitle  string        `json:"feed_image_title,omitempty" db:"feed_image_title"`
 	FeedSlug        string        `json:"feed_slug,omitempty" db:"feed_slug"`
@@ -56,6 +56,7 @@ func (a ArticleDTO) FromDomain(article *entity.Article) *ArticleDTO {
 		GUID:            article.GUID,
 		Image:           ImageDTO{}.FromDomain(article.Image),
 		Slug:            article.Slug.String(),
+		FeedID:          article.NewsfeedID.String(),
 		Categories:      []CategoryDTO{},
 		Read:            article.Read,
 		Saved:           article.Saved,

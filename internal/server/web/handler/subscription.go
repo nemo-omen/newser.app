@@ -10,6 +10,8 @@ import (
 	"newser.app/internal/usecase/session"
 	"newser.app/internal/usecase/subscription"
 	"newser.app/shared"
+	"newser.app/shared/util"
+	"newser.app/view/pages/app"
 )
 
 type WebSubscriptionHandler struct {
@@ -61,7 +63,7 @@ func (h *WebSubscriptionHandler) PostSubscribe(c echo.Context) error {
 		}
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("Error fetching feed: %v", err))
 	}
-	err = h.subscriptionService.Subscribe(userID, *gofeed)
+	subscription, err := h.subscriptionService.Subscribe(userID, *gofeed)
 
 	if err != nil {
 		appErr, ok := err.(shared.AppError)
@@ -71,10 +73,19 @@ func (h *WebSubscriptionHandler) PostSubscribe(c echo.Context) error {
 			fmt.Println("errMsg: ", appErr.Msg)
 			fmt.Println("errOrigin: ", appErr.Origin)
 		}
-		fmt.Println(err)
-		return c.JSON(http.StatusInternalServerError, err.Error())
+		h.session.SetFlash(c, "error", "Error subscribing to feed")
+		return c.Redirect(http.StatusSeeOther, "/app/search")
 	}
-	return c.JSON(http.StatusOK, fmt.Sprintf("Subscribed to %v", gofeed.Title))
+
+	feed, err := h.subscriptionService.GetNewsfeed(userID, subscription.FeedID)
+	if err != nil {
+		h.session.SetFlash(c, "error", "Error fetching feed")
+		return c.Redirect(http.StatusSeeOther, "/app/search")
+	}
+
+	h.session.SetFlash(c, "success", "Subscribed to feed")
+	util.SetPageTitle(c, h.session, feed.Title)
+	return renderOrRedirect(c, app.FeedPageContent(feed), fmt.Sprintf("/app/newsfeed/%s", feed.ID))
 }
 
 func (h *WebSubscriptionHandler) PostUnSubscribe(c echo.Context) error {

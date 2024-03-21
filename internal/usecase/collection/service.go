@@ -1,6 +1,7 @@
 package collection
 
 import (
+	"newser.app/internal/dto"
 	"newser.app/internal/infra/repository"
 )
 
@@ -12,4 +13,12 @@ func NewCollectionService(collectionRepo repository.CollectionRepository) Collec
 	return CollectionService{
 		collectionRepo: collectionRepo,
 	}
+}
+
+func (s *CollectionService) GetArticlesBySlug(slug, userId string) ([]*dto.ArticleDTO, error) {
+	collection, err := s.collectionRepo.GetBySlug(slug, userId)
+	if err != nil {
+		return nil, err
+	}
+	return s.collectionRepo.GetCollectionArticles(collection.ID)
 }
