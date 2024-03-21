@@ -193,7 +193,7 @@ func (r *SubscriptionSqliteRepo) GetArticle(userID, articleID string) (*dto.Arti
 	if err == nil {
 		article.Categories = categories
 	}
-	
+
 	readCollection := dto.CollectionDTO{}
 	err = r.db.Get(
 		&readCollection, `
@@ -213,7 +213,7 @@ func (r *SubscriptionSqliteRepo) GetArticle(userID, articleID string) (*dto.Arti
 	}
 
 	type CollectionArticle struct {
-		ArticleID string `db:"article_id"`
+		ArticleID    string `db:"article_id"`
 		CollectionId string `db:"collection_id"`
 	}
 
@@ -223,7 +223,7 @@ func (r *SubscriptionSqliteRepo) GetArticle(userID, articleID string) (*dto.Arti
 		&read, `
 		SELECT *
 		FROM collection_articles
-		WHERE collection_id = ? AND article_id = ?;`
+		WHERE collection_id = ? AND article_id = ?;`,
 		readCollection.ID,
 		articleID,
 	)

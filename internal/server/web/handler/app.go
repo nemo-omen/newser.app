@@ -128,7 +128,7 @@ func (h *WebAppHandler) GetArticle(c echo.Context) error {
 	if err != nil {
 		return redirectWithHX(c, "/auth/login")
 	}
-	article, err := h.subscriptionService.GetArticle(user.ID, id)
+	article, err := h.subscriptionService.GetArticle(user.ID.String(), articleId)
 	if err != nil {
 		h.session.SetFlash(c, "error", "Failed to get newsfeed")
 		return redirectWithHX(c, "/app")
