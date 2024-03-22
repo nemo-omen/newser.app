@@ -91,7 +91,6 @@ func (r *SubscriptionSqliteRepo) GetNewsfeed(userID, feedID string) (*dto.Newsfe
 				"entity.Collection",
 			)
 		}
-		fmt.Println("readCollection: ", readCollection.ID)
 
 		readArticleId := ""
 		err = r.db.Get(

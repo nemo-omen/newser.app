@@ -28,7 +28,7 @@ func UnreadForm(article *dto.ArticleDTO, showLabel bool) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if article.Read {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/collections/unread\" method=\"post\" hx-post=\"/desk/collections/unread\" hx-target=\"closest .article-list-item\" hx-swap=\"outerHTML\" hx-push-url=\"false\"><input type=\"hidden\" name=\"articleid\" value=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/collection/unread\" method=\"post\" hx-post=\"/app/collection/unread\" hx-target=\"closest .article-list-item\" hx-swap=\"outerHTML\" hx-push-url=\"false\"><input type=\"hidden\" name=\"articleid\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -36,7 +36,7 @@ func UnreadForm(article *dto.ArticleDTO, showLabel bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"> <input type=\"hidden\" name=\"responseType\" value=\"condensed\"> <button class=\"icon-link-button\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"> <button class=\"icon-link-button\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -55,7 +55,7 @@ func UnreadForm(article *dto.ArticleDTO, showLabel bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/desk/collections/read\" method=\"post\" hx-post=\"/desk/collections/read\" hx-target=\"closest .article-list-item\" hx-swap=\"outerHTML\" hx-push-url=\"false\"><input type=\"hidden\" name=\"articleid\" value=\"")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/collection/read\" method=\"post\" hx-post=\"/app/collection/read\" hx-target=\"closest .article-list-item\" hx-swap=\"outerHTML\" hx-push-url=\"false\"><input type=\"hidden\" name=\"articleid\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -63,7 +63,7 @@ func UnreadForm(article *dto.ArticleDTO, showLabel bool) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"> <input type=\"hidden\" name=\"responseType\" value=\"condensed\"> <button class=\"icon-link-button\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"> <button class=\"icon-link-button\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

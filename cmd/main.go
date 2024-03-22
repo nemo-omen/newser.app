@@ -88,7 +88,7 @@ func main() {
 	fmt.Println("dsn:", dsn)
 	// flag.Parse()
 
-	conf := custommiddleware.NewConfig(isDev, dsn)
+	conf := custommiddleware.NewConfig(isDev)
 
 	app := echo.New()
 	setLogLevel(app, isDev)

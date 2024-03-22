@@ -36,6 +36,9 @@ func (h *WebCollectionHandler) Routes(app *echo.Echo, middleware ...echo.Middlew
 	}
 	app.GET("/app/collection/unread", h.GetUnread)
 	app.GET("/app/collection/saved", h.GetSaved)
+	app.POST("/app/collection/unread", h.PostUnread)
+	app.POST("/app/collection/read", h.PostRead)
+	// app.POST("/app/collection/saved", h.PostSaved)
 
 	app.GET("/app/collection/:id", h.GetCollection)
 
@@ -96,4 +99,48 @@ func (h *WebCollectionHandler) GetSaved(c echo.Context) error {
 		return render(c, app.IndexPageContent(collectionArticles))
 	}
 	return render(c, app.Index(collectionArticles))
+}
+
+func (h *WebCollectionHandler) PostUnread(c echo.Context) error {
+	email, ok := c.Get("user").(string)
+	if !ok {
+		return c.Redirect(http.StatusSeeOther, "/app/login")
+	}
+	user, err := h.authService.GetUserByEmail(email)
+	if err != nil {
+		return c.Redirect(http.StatusSeeOther, "/app/login")
+	}
+	articleID := c.FormValue("articleid")
+	ref := c.Request().Referer()
+	if articleID == "" {
+		h.session.SetFlash(c, "error", "Article not found")
+		return redirectWithHX(c, ref)
+	}
+	err = h.collectionService.AddAndRemoveArticleFromCollection("unread", "read", articleID, user.ID.String())
+	if err != nil {
+		h.session.SetFlash(c, "error", "Error marking article as unread")
+	}
+	return redirectWithHX(c, ref)
+}
+
+func (h *WebCollectionHandler) PostRead(c echo.Context) error {
+	email, ok := c.Get("user").(string)
+	if !ok {
+		return c.Redirect(http.StatusSeeOther, "/app/login")
+	}
+	user, err := h.authService.GetUserByEmail(email)
+	if err != nil {
+		return c.Redirect(http.StatusSeeOther, "/app/login")
+	}
+	articleID := c.FormValue("articleid")
+	ref := c.Request().Referer()
+	if articleID == "" {
+		h.session.SetFlash(c, "error", "Article not found")
+		return redirectWithHX(c, ref)
+	}
+	err = h.collectionService.AddAndRemoveArticleFromCollection("read", "unread", articleID, user.ID.String())
+	if err != nil {
+		h.session.SetFlash(c, "error", "Error marking article as read")
+	}
+	return redirectWithHX(c, ref)
 }

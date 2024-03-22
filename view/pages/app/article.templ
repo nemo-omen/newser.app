@@ -1,9 +1,11 @@
 package app
 
 import (
+	"strings"
 	"newser.app/internal/dto"
 	"newser.app/view/component"
 	"newser.app/view/layout"
+	"github.com/PuerkitoBio/goquery"
 )
 
 // We're splitting the main page component
@@ -19,11 +21,35 @@ templ Article(a *dto.ArticleDTO) {
 	}
 }
 
+func makeImagesAbsolute(content, baseUrl string) string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(content))
+	if err != nil {
+		return content
+	}
+
+	doc.Find("img").Each(func(i int, s *goquery.Selection) {
+		src, _ := s.Attr("src")
+		if strings.HasPrefix(src, "/") {
+			s.SetAttr("src", baseUrl+src)
+		}
+	})
+
+	html, err := doc.Html()
+	if err != nil {
+		return content
+	}
+
+	return html
+}
+
+func getBaseUrl(url string) string {
+	parts := strings.Split(url, "/")
+	return parts[0] + "//" + parts[2]
+}
+
 templ ArticlePageContent(a *dto.ArticleDTO) {
 	<script src="/static/script/vendor/shiki/shiki.js" type="module"></script>
-	<div class="stack-header flex-row flex-align-center gap-2 text-med">
-		@component.Icon("checkbox_circle_outline")
-	</div>
+	@component.ArticleHeader(a)
 	<article class="container article stack">
 		<div class="article-header flex-row gap-1">
 			<h2>{ a.Title }</h2>
@@ -40,7 +66,7 @@ templ ArticlePageContent(a *dto.ArticleDTO) {
 		</div>
 		<section class="article-content">
 			if len(a.Content) > 0 {
-				@templ.Raw(a.Content)
+				@templ.Raw(makeImagesAbsolute(a.Content, getBaseUrl(a.Link)))
 			} else {
 				@templ.Raw(a.Description)
 			}

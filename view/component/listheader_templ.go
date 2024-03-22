@@ -45,7 +45,7 @@ func ListHeader() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/control/viewread\" method=\"POST\" hx-post=\"/app/control/viewread\" hx-target=\"closest main\" hx-swap=\"innerHtml\" style=\"padding-inline: 0;\"><button type=\"submit\" class=\"icon-link-button text-med\" style=\"padding-inline: 0;\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/control/viewread\" method=\"POST\" hx-post=\"/app/control/viewread\" hx-target=\"closest main\" hx-swap=\"innerHtml\"><button type=\"submit\" class=\"icon-link-button text-med\" style=\"padding-inline: 0;\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -59,7 +59,7 @@ func ListHeader() templ.Component {
 			}
 		}
 		if util.GetLayoutPreference(ctx) != "expanded" {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/control/viewexpanded\" method=\"POST\" hx-post=\"/app/control/viewexpanded\" hx-target=\"closest main\" hx-swap=\"innerHtml\" style=\"padding-inline: 0;\"><button type=\"submit\" class=\"icon-link-button text-med\" style=\"padding-inline: 0;\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/control/viewexpanded\" method=\"POST\" hx-post=\"/app/control/viewexpanded\" hx-target=\"closest main\" hx-swap=\"innerHtml\"><button type=\"submit\" class=\"icon-link-button text-med\" style=\"padding-inline: 0;\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -72,7 +72,7 @@ func ListHeader() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/control/viewcollapsed\" method=\"POST\" hx-post=\"/app/control/viewcollapsed\" hx-target=\"closest main\" hx-swap=\"innerHtml\" style=\"padding-inline: 0;\"><button type=\"submit\" class=\"icon-link-button text-med\" style=\"padding-inline: 0;\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/control/viewcollapsed\" method=\"POST\" hx-post=\"/app/control/viewcollapsed\" hx-target=\"closest main\" hx-swap=\"innerHtml\"><button type=\"submit\" class=\"icon-link-button text-med\" style=\"padding-inline: 0;\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

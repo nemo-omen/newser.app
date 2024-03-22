@@ -7,15 +7,14 @@ import (
 templ UnreadForm(article *dto.ArticleDTO, showLabel bool) {
 	if article.Read {
 		<form
-			action="/desk/collections/unread"
+			action="/app/collection/unread"
 			method="post"
-			hx-post="/desk/collections/unread"
+			hx-post="/app/collection/unread"
 			hx-target="closest .article-list-item"
 			hx-swap="outerHTML"
 			hx-push-url="false"
 		>
 			<input type="hidden" name="articleid" value={ article.ID.String() }/>
-			<input type="hidden" name="responseType" value="condensed"/>
 			<button class="icon-link-button">
 				@Icon("checkbox_circle_fill")
 				if showLabel {
@@ -25,15 +24,14 @@ templ UnreadForm(article *dto.ArticleDTO, showLabel bool) {
 		</form>
 	} else {
 		<form
-			action="/desk/collections/read"
+			action="/app/collection/read"
 			method="post"
-			hx-post="/desk/collections/read"
+			hx-post="/app/collection/read"
 			hx-target="closest .article-list-item"
 			hx-swap="outerHTML"
 			hx-push-url="false"
 		>
 			<input type="hidden" name="articleid" value={ article.ID.String() }/>
-			<input type="hidden" name="responseType" value="condensed"/>
 			<button class="icon-link-button">
 				@Icon("checkbox_circle_outline")
 				if showLabel {

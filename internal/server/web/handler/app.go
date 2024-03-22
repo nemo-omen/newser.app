@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -142,15 +141,15 @@ func (h *WebAppHandler) GetArticle(c echo.Context) error {
 		// render or redirect to error page? /app?
 	}
 
-	if !article.Read {
-		article.Read = true
-		_ = h.collectionService.AddAndRemoveArticleFromCollection(
-			"read",
-			"unread",
-			article.ID.String(),
-			user.ID.String(),
-		)
-	}
+	// if !article.Read {
+	// 	article.Read = true
+	// 	_ = h.collectionService.AddAndRemoveArticleFromCollection(
+	// 		"read",
+	// 		"unread",
+	// 		article.ID.String(),
+	// 		user.ID.String(),
+	// 	)
+	// }
 
 	util.SetPageTitle(c, h.session, article.Title)
 
@@ -190,7 +189,6 @@ func (h *WebAppHandler) ViewUnread(c echo.Context) error {
 
 func (h *WebAppHandler) ViewRead(c echo.Context) error {
 	ref := c.Request().Referer()
-
 	h.session.SetView(c, "read")
 	if isHxRequest(c) {
 		c.Response().Header().Set("HX-Redirect", ref)
@@ -200,7 +198,6 @@ func (h *WebAppHandler) ViewRead(c echo.Context) error {
 
 func (h *WebAppHandler) ViewCondensed(c echo.Context) error {
 	ref := c.Request().Referer()
-	fmt.Println("setting layout to condensed")
 	h.session.SetLayout(c, "condensed")
 	if isHxRequest(c) {
 		c.Response().Header().Set("HX-Redirect", ref)
@@ -210,7 +207,6 @@ func (h *WebAppHandler) ViewCondensed(c echo.Context) error {
 
 func (h *WebAppHandler) ViewExpanded(c echo.Context) error {
 	ref := c.Request().Referer()
-	fmt.Println("setting layout to expanded")
 	h.session.SetLayout(c, "expanded")
 	if isHxRequest(c) {
 		c.Response().Header().Set("HX-Redirect", ref)
