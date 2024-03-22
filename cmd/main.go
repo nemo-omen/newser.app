@@ -2,12 +2,14 @@ package main
 
 import (
 	"database/sql"
-	"flag"
+	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/alexedwards/scs/sqlite3store"
 	"github.com/alexedwards/scs/v2"
+	"github.com/joho/godotenv"
 	echosession "github.com/spazzymoto/echo-scs-session"
 
 	"github.com/jmoiron/sqlx"
@@ -53,27 +55,49 @@ var (
 	// newsfeedService     newsfeed.NewsfeedService
 	collectionService collection.CollectionService
 	discoveryService  discovery.DiscoveryService
+	addr              string
+	cookieDomain      string
+	dsn               string
 )
 
 // sessionManager
 var sessionManager *scs.SessionManager
 
 func main() {
-	addr := flag.String("addr", ":4321", "HTTP network address")
-	dev := flag.Bool("dev", false, "Whether to run the server in development mode")
-	dsn := flag.String("dsn", "data/newser.sqlite", "Sqlite data source name")
-	flag.Parse()
+	// addr := flag.String("addr", ":4321", "HTTP network address")
+	// dev := flag.Bool("dev", false, "Whether to run the server in development mode")
+	// dsn := flag.String("dsn", "data/newser.sqlite", "Sqlite data source name")
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	mode := os.Getenv("MODE")
+	isDev := mode == "dev"
 
-	conf := custommiddleware.NewConfig(*dev, *dsn)
+	if isDev {
+		addr = ":" + os.Getenv("DEV_ADDR")
+		cookieDomain = os.Getenv("DEV_COOKIE_DOMAIN")
+		dsn = os.Getenv("DEV_DSN")
+	} else {
+		addr = ":" + os.Getenv("PROD_ADDR")
+		cookieDomain = os.Getenv("PROD_COOKIE_DOMAIN")
+		dsn = os.Getenv("PROD_DSN")
+	}
+	fmt.Println("addr:", addr)
+	fmt.Println("cookieDomain:", cookieDomain)
+	fmt.Println("dsn:", dsn)
+	// flag.Parse()
+
+	conf := custommiddleware.NewConfig(isDev, dsn)
 
 	app := echo.New()
-	setLogLevel(app, *dev)
-	sessionDb, err := openSessionDB(*dsn)
+	setLogLevel(app, isDev)
+	sessionDb, err := openSessionDB(dsn)
 	if err != nil {
 		app.Logger.Fatal(err.Error())
 	}
 
-	db, err := openDB(*dsn)
+	db, err := openDB(dsn)
 	if err != nil {
 		app.Logger.Fatal(err.Error())
 	}
@@ -82,11 +106,12 @@ func main() {
 	sessionManager = initSessions(app, sessionDb)
 
 	app.Static("/static", "view/static")
+
 	app.Use(middleware.CSRFWithConfig(
 		middleware.CSRFConfig{
 			TokenLookup:    "cookie:_csrf",
 			CookiePath:     "/",
-			CookieDomain:   "localhost",
+			CookieDomain:   cookieDomain,
 			CookieSecure:   true,
 			CookieHTTPOnly: true,
 			CookieSameSite: http.SameSiteStrictMode,
@@ -101,7 +126,7 @@ func main() {
 	initApiHandlers(app)
 	initWebHandlers(app)
 
-	app.Logger.Fatal(app.Start(*addr))
+	app.Logger.Fatal(app.Start(addr))
 }
 
 func setLogLevel(app *echo.Echo, dev bool) {
@@ -231,6 +256,7 @@ func initSessions(app *echo.Echo, db *sql.DB) *scs.SessionManager {
 	}
 	sessionManager := scs.New()
 	sessionManager.Lifetime = (7 * 24) * time.Hour
+	sessionManager.Cookie.Domain = cookieDomain
 
 	sessionManager.Store = sqlite3store.New(db)
 	return sessionManager
