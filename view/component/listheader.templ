@@ -7,50 +7,57 @@ import (
 templ ListHeader() {
 	<div class="stack-header flex-row flex-align-center flex-end gap-2">
 		if util.GetViewPreference(ctx) == "read" {
-			<a
-				href="/app/control/viewunread"
-				hx-get="/app/control/viewunread"
-				class="icon-link-button text-med"
+			<form
+				action="/app/control/viewunread"
+				method="POST"
+				hx-post="/app/control/viewunread"
 				hx-target="closest main"
 				hx-swap="innerHtml"
-				style="padding-inline: 0;"
 			>
-				@Icon("eye-off")
-			</a>
+				<button type="submit" class="icon-link-button text-med" style="padding-inline: 0;">
+					@Icon("eye-off")
+				</button>
+			</form>
 		} else {
-			<a
-				href="/app/control/viewread"
-				hx-get="/app/control/viewread"
+			<form
+				action="/app/control/viewread"
+				method="POST"
+				hx-post="/app/control/viewread"
 				hx-target="closest main"
 				hx-swap="innerHtml"
-				class="icon-link-button text-med"
 				style="padding-inline: 0;"
 			>
-			@Icon("eye")
-			</a>
+				<button type="submit" class="icon-link-button text-med" style="padding-inline: 0;">
+					@Icon("eye")
+				</button>
+			</form>
 		}
 		if util.GetLayoutPreference(ctx) != "expanded" {
-			<a
-				href="/app/control/viewcollapsed"
-				hx-get="/app/control/viewcollapsed"
+			<form
+				action="/app/control/viewexpanded"
+				method="POST"
+				hx-post="/app/control/viewexpanded"
 				hx-target="closest main"
 				hx-swap="innerHtml"
-				class="icon-link-button text-med"
 				style="padding-inline: 0;"
 			>
-				@Icon("list")
-			</a>
+				<button type="submit" class="icon-link-button text-med" style="padding-inline: 0;">
+					@Icon("stack")
+				</button>
+			</form>
 		} else {
-			<a
-				href="/app/control/viewexpanded"
-				hx-get="/app/control/viewexpanded"
+			<form
+				action="/app/control/viewcollapsed"
+				method="POST"
+				hx-post="/app/control/viewcollapsed"
 				hx-target="closest main"
 				hx-swap="innerHtml"
-				class="icon-link-button text-med"
 				style="padding-inline: 0;"
 			>
-				@Icon("stack")
-			</a>
+				<button type="submit" class="icon-link-button text-med" style="padding-inline: 0;">
+					@Icon("list")
+				</button>
+			</form>
 		}
 	</div>
 }

@@ -570,7 +570,6 @@ func (r *SubscriptionSqliteRepo) GetAllArticles(userID string) ([]*dto.ArticleDT
 			} else {
 				article.Read = true
 			}
-			fmt.Println("read?: ", article.Read)
 		}
 		articles = append(articles, feedArticles...)
 	}

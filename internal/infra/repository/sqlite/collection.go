@@ -192,7 +192,6 @@ func (r *CollectionSqliteRepo) GetCollectionArticles(collectionID, userID string
 		} else {
 			article.Read = true
 		}
-		fmt.Println("read?: ", article.Read)
 	}
 	return articles, nil
 }

@@ -51,10 +51,10 @@ func (h *WebAppHandler) Routes(app *echo.Echo, middleware ...echo.MiddlewareFunc
 	app.GET("/app/control/unreadcount", h.GetUpdatedSidebarCount)
 	app.GET("/app/control/currentpath", h.GetUpdatedSidebar)
 	app.GET("/app/control/pagetitle", h.PageTitle)
-	app.GET("/app/control/viewread", h.ViewRead)
-	app.GET("/app/control/viewunread", h.ViewUnread)
-	app.GET("/app/control/viewcondensed", h.ViewCondensed)
-	app.GET("/app/control/viewexpanded", h.ViewExpanded)
+	app.POST("/app/control/viewread", h.ViewRead)
+	app.POST("/app/control/viewunread", h.ViewUnread)
+	app.POST("/app/control/viewcollapsed", h.ViewCondensed)
+	app.POST("/app/control/viewexpanded", h.ViewExpanded)
 }
 
 func (h *WebAppHandler) GetApp(c echo.Context) error {
@@ -142,7 +142,6 @@ func (h *WebAppHandler) GetArticle(c echo.Context) error {
 		// render or redirect to error page? /app?
 	}
 
-	fmt.Println("read?: ", article.Read)
 	if !article.Read {
 		article.Read = true
 		_ = h.collectionService.AddAndRemoveArticleFromCollection(
@@ -181,42 +180,28 @@ func (h *WebAppHandler) PageTitle(c echo.Context) error {
 }
 
 func (h *WebAppHandler) ViewUnread(c echo.Context) error {
-	email, ok := c.Get("user").(string)
-	if !ok {
-		return redirectWithHX(c, "/auth/login")
-	}
-	user, err := h.authService.GetUserByEmail(email)
-	if err != nil {
-		return redirectWithHX(c, "/auth/login")
-	}
-	articles, err := h.collectionService.GetArticlesBySlug("unread", user.ID.String())
+	ref := c.Request().Referer()
 	h.session.SetView(c, "unread")
 	if isHxRequest(c) {
-		return render(c, app.IndexPageContent(articles))
+		c.Response().Header().Set("HX-Redirect", ref)
 	}
-	return render(c, app.Index(articles))
+	return c.Redirect(http.StatusSeeOther, ref)
 }
 
 func (h *WebAppHandler) ViewRead(c echo.Context) error {
-	email, ok := c.Get("user").(string)
-	if !ok {
-		return redirectWithHX(c, "/auth/login")
-	}
-	user, err := h.authService.GetUserByEmail(email)
-	if err != nil {
-		return redirectWithHX(c, "/auth/login")
-	}
-	articles, err := h.subscriptionService.GetAllArticles(user.ID.String())
+	ref := c.Request().Referer()
+
 	h.session.SetView(c, "read")
 	if isHxRequest(c) {
-		return render(c, app.IndexPageContent(articles))
+		c.Response().Header().Set("HX-Redirect", ref)
 	}
-	return render(c, app.Index(articles))
+	return c.Redirect(http.StatusSeeOther, ref)
 }
 
 func (h *WebAppHandler) ViewCondensed(c echo.Context) error {
 	ref := c.Request().Referer()
-	h.session.SetView(c, "read")
+	fmt.Println("setting layout to condensed")
+	h.session.SetLayout(c, "condensed")
 	if isHxRequest(c) {
 		c.Response().Header().Set("HX-Redirect", ref)
 	}
@@ -225,7 +210,8 @@ func (h *WebAppHandler) ViewCondensed(c echo.Context) error {
 
 func (h *WebAppHandler) ViewExpanded(c echo.Context) error {
 	ref := c.Request().Referer()
-	h.session.SetView(c, "unread")
+	fmt.Println("setting layout to expanded")
+	h.session.SetLayout(c, "expanded")
 	if isHxRequest(c) {
 		c.Response().Header().Set("HX-Redirect", ref)
 	}

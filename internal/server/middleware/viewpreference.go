@@ -5,22 +5,17 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// "expanded" or "collapsed
-func ViewPreference(sm *scs.SessionManager) echo.MiddlewareFunc {
+// "read" or "unread"
+func VewPreference(sm *scs.SessionManager) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			c.Set("layout", getView(c, sm))
+			c.Set("view", getView(c, sm))
 			return next(c)
 		}
 	}
 }
 
-// "expanded" or "collapsed"
-// if the session value is empty, it will default to "expanded"
+// "read" or "unread"
 func getView(c echo.Context, sm *scs.SessionManager) string {
-	view := sm.GetString(c.Request().Context(), "layout")
-	if view == "" {
-		return "expanded"
-	}
-	return view
+	return sm.GetString(c.Request().Context(), "view")
 }

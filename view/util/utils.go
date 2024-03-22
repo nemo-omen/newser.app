@@ -35,9 +35,9 @@ func GetPageTitle(ctx context.Context) string {
 
 // "expanded" or "collapsed"
 func GetLayoutPreference(ctx context.Context) string {
-	viewPref := ctx.Value("layout")
-	if viewPref != nil {
-		return viewPref.(string)
+	layoutPref := ctx.Value("layout")
+	if layoutPref != nil {
+		return layoutPref.(string)
 	}
 	return "expanded"
 }

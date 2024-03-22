@@ -65,8 +65,8 @@ func (s *SessionService) RevokeAuth(c echo.Context) {
 }
 
 func (s *SessionService) SetTitle(c echo.Context, title string) {
-	// fmt.Println("setting title: ", title)
 	s.sessionManager.Put(c.Request().Context(), "title", title)
+	c.Set("title", title)
 }
 
 func (s *SessionService) GetTitle(c echo.Context) string {
@@ -79,6 +79,7 @@ func (s *SessionService) GetTitle(c echo.Context) string {
 // "expanded" or "collapsed"
 func (s *SessionService) SetLayout(c echo.Context, layout string) {
 	s.sessionManager.Put(c.Request().Context(), "layout", layout)
+	c.Set("layout", layout)
 }
 
 // "expanded" or "collapsed"
@@ -92,6 +93,7 @@ func (s *SessionService) GetLayout(c echo.Context) string {
 // "read" or "unread"
 func (s *SessionService) SetView(c echo.Context, view string) {
 	s.sessionManager.Put(c.Request().Context(), "view", view)
+	c.Set("view", view)
 }
 
 // "read" or "unread"
