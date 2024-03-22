@@ -109,12 +109,8 @@ func main() {
 
 	app.Use(middleware.CSRFWithConfig(
 		middleware.CSRFConfig{
-			TokenLookup:    "cookie:_csrf",
-			CookiePath:     "/",
-			CookieDomain:   cookieDomain,
-			CookieSecure:   false,
-			CookieHTTPOnly: true,
-			CookieSameSite: http.SameSiteLaxMode,
+			TokenLookup: "cookie:_csrf",
+			CookieName:  "_csrf",
 		},
 	))
 	app.Use(echosession.LoadAndSave(sessionManager))
