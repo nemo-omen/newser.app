@@ -109,8 +109,11 @@ func main() {
 
 	app.Use(middleware.CSRFWithConfig(
 		middleware.CSRFConfig{
-			TokenLookup: "cookie:_csrf",
-			CookieName:  "_csrf",
+			TokenLookup:    "cookie:_csrf",
+			CookieName:     "_csrf",
+			CookieSameSite: http.SameSiteStrictMode,
+			CookieHTTPOnly: true,
+			CookiePath:     "/",
 		},
 	))
 	app.Use(echosession.LoadAndSave(sessionManager))
@@ -252,8 +255,8 @@ func initSessions(app *echo.Echo, db *sql.DB) *scs.SessionManager {
 	}
 	sessionManager := scs.New()
 	sessionManager.Lifetime = (7 * 24) * time.Hour
-	sessionManager.Cookie.Domain = cookieDomain
-
+	// sessionManager.Cookie.Domain = cookieDomain
+	sessionManager.Cookie.SameSite = http.SameSiteStrictMode
 	sessionManager.Store = sqlite3store.New(db)
 	return sessionManager
 }
