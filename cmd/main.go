@@ -112,9 +112,9 @@ func main() {
 			TokenLookup:    "cookie:_csrf",
 			CookiePath:     "/",
 			CookieDomain:   cookieDomain,
-			CookieSecure:   true,
+			CookieSecure:   false,
 			CookieHTTPOnly: true,
-			CookieSameSite: http.SameSiteStrictMode,
+			CookieSameSite: http.SameSiteLaxMode,
 		},
 	))
 	app.Use(echosession.LoadAndSave(sessionManager))
