@@ -72,7 +72,9 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 	mode := os.Getenv("MODE")
+	do := os.Getenv("IS_DO")
 	isDev := mode == "dev"
+	isDo := do == "true"
 
 	if isDev {
 		addr = ":" + os.Getenv("DEV_ADDR")
@@ -82,6 +84,10 @@ func main() {
 		addr = ":" + os.Getenv("PROD_ADDR")
 		cookieDomain = os.Getenv("PROD_COOKIE_DOMAIN")
 		dsn = os.Getenv("PROD_DSN")
+	}
+
+	if isDo {
+		cookieDomain = os.Getenv("DO_COOKIE_DOMAIN")
 	}
 	fmt.Println("addr:", addr)
 	fmt.Println("cookieDomain:", cookieDomain)
