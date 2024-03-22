@@ -69,7 +69,7 @@ func main() {
 	// dsn := flag.String("dsn", "data/newser.sqlite", "Sqlite data source name")
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		fmt.Println("Error loading .env file")
 	}
 	mode := os.Getenv("MODE")
 	do := os.Getenv("IS_DO")
