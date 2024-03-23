@@ -5,23 +5,35 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
+
+	// "github.com/alexedwards/scs/sqlite3store"
+	// "github.com/alexedwards/scs/v2"
 
 	"github.com/alexedwards/scs/sqlite3store"
 	"github.com/alexedwards/scs/v2"
-	"github.com/joho/godotenv"
-	echosession "github.com/spazzymoto/echo-scs-session"
-
 	"github.com/jmoiron/sqlx"
+	"github.com/tursodatabase/go-libsql"
+
+	// "github.com/jmoiron/sqlx"
+	"github.com/joho/godotenv"
+
+	// _ "github.com/tursodatabase/libsql-client-go/libsql"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
-	_ "github.com/mattn/go-sqlite3"
+	echosession "github.com/spazzymoto/echo-scs-session"
+
+	// _ "github.com/mattn/go-sqlite3"
 
 	// "newser.app/infra/repository"
 	// "newser.app/server/handler"
+
 	"newser.app/internal/infra/repository"
 	"newser.app/internal/infra/repository/sqlite"
+
 	apihandler "newser.app/internal/server/api/handler"
 	custommiddleware "newser.app/internal/server/middleware"
 	webhandler "newser.app/internal/server/web/handler"
@@ -29,10 +41,8 @@ import (
 	"newser.app/internal/usecase/collection"
 	"newser.app/internal/usecase/session"
 
-	"newser.app/internal/usecase/subscription"
-
-	// "newser.app/internal/usecase/collection"
 	"newser.app/internal/usecase/discovery"
+	"newser.app/internal/usecase/subscription"
 )
 
 // repositories
@@ -88,23 +98,38 @@ func main() {
 	fmt.Println("dsn:", dsn)
 	// flag.Parse()
 
-	conf := custommiddleware.NewConfig(isDev)
+	// conf := custommiddleware.NewConfig(isDev)
 
 	app := echo.New()
 	setLogLevel(app, isDev)
-	sessionDb, err := openSessionDB(dsn)
-	if err != nil {
-		app.Logger.Fatal(err.Error())
-	}
+	// sessionDb, err := openSessionDB(dsn)
+	// if err != nil {
+	// 	app.Logger.Fatal(err.Error())
+	// }
 
-	db, err := openDB(dsn)
+	tursoUrl := os.Getenv("NEWSER_TURSO_URL")
+	tursoToken := os.Getenv("NEWSER_TURSO_TOKEN")
+	tursoName := os.Getenv("NEWSER_TURSO_LOCAL_NAME")
+
+	dir, err := os.MkdirTemp("", "libsql-*")
 	if err != nil {
 		app.Logger.Fatal(err.Error())
 	}
+	defer os.RemoveAll(dir)
+
+	dbPath := filepath.Join(dir, tursoName)
+	connector, err := libsql.NewEmbeddedReplicaConnector(
+		dbPath,
+		tursoUrl,
+		libsql.WithAuthToken(tursoToken),
+	)
+	if err != nil {
+		app.Logger.Fatal(err.Error())
+	}
+	defer connector.Close()
+	db := sql.OpenDB(connector)
 	defer db.Close()
-
-	sessionManager = initSessions(app, sessionDb)
-
+	sessionManager = initSessions(db)
 	app.Static("/static", "view/static")
 
 	app.Use(middleware.CSRFWithConfig(
@@ -117,10 +142,13 @@ func main() {
 		},
 	))
 	app.Use(echosession.LoadAndSave(sessionManager))
-	app.Use(custommiddleware.ContextValue)
-	app.Use(conf.SetConfig)
 
-	initRepos(db)
+	xDB := sqlx.NewDb(db, "sqlite3")
+	defer xDB.Close()
+	app.Use(custommiddleware.ContextValue)
+	// app.Use(conf.SetConfig)
+
+	initRepos(xDB)
 	initServices()
 	initApiHandlers(app)
 	initWebHandlers(app)
@@ -240,51 +268,25 @@ func initRepos(db *sqlx.DB) {
 	collectionRepo = sqlite.NewCollectionSqliteRepo(db)
 }
 
-func initSessions(app *echo.Echo, db *sql.DB) *scs.SessionManager {
-	app.Logger.Debug("Migrating sessions table...")
-	sessionQ := `
-	CREATE TABLE IF NOT EXISTS sessions(
-		token TEXT PRIMARY KEY,
-        data BLOB NOT NULL,
-        expiry REAL NOT NULL
-	);
-	`
-	_, err := db.Exec(sessionQ)
-	if err != nil {
-		app.Logger.Fatal("error migrating sessions table", err)
-	} else {
-		app.Logger.Debug("completed migrating sessions table")
-	}
+func initSessions(db *sql.DB) *scs.SessionManager {
+	// app.Logger.Debug("Migrating sessions table...")
+	// sessionQ := `
+	// CREATE TABLE IF NOT EXISTS sessions(
+	// 	token TEXT PRIMARY KEY,
+	//     data BLOB NOT NULL,
+	//     expiry REAL NOT NULL
+	// );
+	// `
+	// _, err := db.Exec(sessionQ)
+	// if err != nil {
+	// 	app.Logger.Fatal("error migrating sessions table", err)
+	// } else {
+	// 	app.Logger.Debug("completed migrating sessions table")
+	// }
 	sessionManager := scs.New()
 	sessionManager.Lifetime = (7 * 24) * time.Hour
 	// sessionManager.Cookie.Domain = cookieDomain
 	sessionManager.Cookie.SameSite = http.SameSiteStrictMode
 	sessionManager.Store = sqlite3store.New(db)
 	return sessionManager
-}
-
-func openDB(dsn string) (*sqlx.DB, error) {
-	db, err := sqlx.Open("sqlite3", dsn)
-	if err != nil {
-		return nil, err
-	}
-	err = db.Ping()
-	if err != nil {
-		db.Close()
-		return nil, err
-	}
-	return db, nil
-}
-
-func openSessionDB(dsn string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", dsn)
-	if err != nil {
-		return nil, err
-	}
-	err = db.Ping()
-	if err != nil {
-		db.Close()
-		return nil, err
-	}
-	return db, nil
 }

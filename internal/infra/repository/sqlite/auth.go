@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/mattn/go-sqlite3"
 	"newser.app/internal/domain/entity"
 	"newser.app/internal/dto"
 	"newser.app/shared"
@@ -45,27 +44,27 @@ func (r *AuthSqliteRepo) CreateUser(ud dto.UserDAO, collections []*entity.Collec
 	if err != nil {
 		fmt.Println("error: ", err)
 		// check err type so we can return a more specific error
-		if sqliteError, ok := err.(sqlite3.Error); ok {
-			if strings.Contains(sqliteError.Error(), "UNIQUE constraint failed") {
-				if strings.Contains(sqliteError.Error(), "users.email") {
-					return shared.NewAppError(
-						ErrDuplicateEmail,
-						"That email already exists",
-						"CreateUser",
-						"value.Email",
-					)
-				}
+		// if sqliteError, ok := err.(sqlite3.Error); ok {
+		// 	if strings.Contains(sqliteError.Error(), "UNIQUE constraint failed") {
+		// 		if strings.Contains(sqliteError.Error(), "users.email") {
+		// 			return shared.NewAppError(
+		// 				ErrDuplicateEmail,
+		// 				"That email already exists",
+		// 				"CreateUser",
+		// 				"value.Email",
+		// 			)
+		// 		}
 
-				if strings.Contains(sqliteError.Error(), "users.name") {
-					return shared.NewAppError(
-						ErrorDuplicateName,
-						"That name already exists",
-						"CreateUser",
-						"value.Name",
-					)
-				}
-			}
-		}
+		// 		if strings.Contains(sqliteError.Error(), "users.name") {
+		// 			return shared.NewAppError(
+		// 				ErrorDuplicateName,
+		// 				"That name already exists",
+		// 				"CreateUser",
+		// 				"value.Name",
+		// 			)
+		// 		}
+		// 	}
+		// }
 		return err
 	}
 

@@ -5,7 +5,6 @@ go 1.21
 require (
 	github.com/PuerkitoBio/goquery v1.9.0
 	github.com/a-h/templ v0.2.543
-	github.com/alexedwards/scs/sqlite3store v0.0.0-20240203174419-a38e822451b6
 	github.com/alexedwards/scs/v2 v2.7.0
 	github.com/google/uuid v1.6.0
 	github.com/gosimple/slug v1.14.0
@@ -14,7 +13,6 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/labstack/gommon v0.4.2
-	github.com/mattn/go-sqlite3 v1.14.6
 	github.com/mmcdole/gofeed v1.2.1
 	github.com/stretchr/testify v1.9.0
 	github.com/tursodatabase/go-libsql v0.0.0-20240322134723-08771dcdd2f1
@@ -22,6 +20,7 @@ require (
 )
 
 require (
+	github.com/alexedwards/scs/sqlite3store v0.0.0-20240316134038-7e11d57e8885 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/antlr/antlr4/runtime/Go/antlr/v4 v4.0.0-20230512164433-5d1fd1a340c9 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
