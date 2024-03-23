@@ -11,7 +11,6 @@ import (
 	// "github.com/alexedwards/scs/sqlite3store"
 	// "github.com/alexedwards/scs/v2"
 
-	"github.com/alexedwards/scs/sqlite3store"
 	"github.com/alexedwards/scs/v2"
 	"github.com/jmoiron/sqlx"
 	"github.com/tursodatabase/go-libsql"
@@ -21,6 +20,7 @@ import (
 
 	// _ "github.com/tursodatabase/libsql-client-go/libsql"
 
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
@@ -35,6 +35,7 @@ import (
 	"newser.app/internal/infra/repository/sqlite"
 
 	apihandler "newser.app/internal/server/api/handler"
+	"newser.app/internal/server/libsqlstore"
 	custommiddleware "newser.app/internal/server/middleware"
 	webhandler "newser.app/internal/server/web/handler"
 	"newser.app/internal/usecase/auth"
@@ -130,6 +131,7 @@ func main() {
 	db := sql.OpenDB(connector)
 	defer db.Close()
 	sessionManager = initSessions(db)
+	// sessionManager = initSessions(db)
 	app.Static("/static", "view/static")
 
 	app.Use(middleware.CSRFWithConfig(
@@ -145,6 +147,7 @@ func main() {
 
 	xDB := sqlx.NewDb(db, "sqlite3")
 	defer xDB.Close()
+
 	app.Use(custommiddleware.ContextValue)
 	// app.Use(conf.SetConfig)
 
@@ -269,6 +272,7 @@ func initRepos(db *sqlx.DB) {
 }
 
 func initSessions(db *sql.DB) *scs.SessionManager {
+	// func initSessions(db *sql.DB) *scs.SessionManager {
 	// app.Logger.Debug("Migrating sessions table...")
 	// sessionQ := `
 	// CREATE TABLE IF NOT EXISTS sessions(
@@ -287,6 +291,8 @@ func initSessions(db *sql.DB) *scs.SessionManager {
 	sessionManager.Lifetime = (7 * 24) * time.Hour
 	// sessionManager.Cookie.Domain = cookieDomain
 	sessionManager.Cookie.SameSite = http.SameSiteStrictMode
-	sessionManager.Store = sqlite3store.New(db)
+	sessionManager.Store = 
+	// sessionManager.Store = libsqlstore.New(db)
+	// sessionManager.Store = sqlite3store.New(db)
 	return sessionManager
 }

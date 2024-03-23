@@ -282,6 +282,7 @@ func (r *SubscriptionSqliteRepo) Subscribe(userID string, feed dto.NewsfeedDTO) 
 		// so we can use it to insert the subscription
 		// and avoid duplicate entries
 		feed.ID = storedFeed.ID
+		fmt.Println("feed: ", feed)
 	}
 
 	tx, err := r.db.Beginx()
