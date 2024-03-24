@@ -1,0 +1,2 @@
+#!/bin/sh
+goose -dir data/goose turso "libsql://newser-nemo-omen.turso.io?authToken=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3MTExMjIxNzIsImlkIjoiY2Q0YjJkZTgtOGU0Mi00NjRkLTk1NWQtOGVhNWFjY2FjMzkwIn0.fnQ7-rPLOBTMh-jPJHFREEJMTqD8K7AyMXOcgWnrdwUggWxcUOXOJ-Lcn6GAgS1jHG3bRrcFHXVOqTouJb2rBQ" down
