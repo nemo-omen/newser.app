@@ -8,14 +8,14 @@ import (
 )
 
 type UserDTO struct {
-	PersonDTO
+	Email     string    `json:"email,omitempty"`
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
 func (u UserDTO) FromDomain(user *entity.User) UserDTO {
 	return UserDTO{
-		PersonDTO: PersonDTO{}.FromDomain(user.Person),
+		Email:     user.Email.String(),
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}

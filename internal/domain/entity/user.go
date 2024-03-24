@@ -3,22 +3,25 @@ package entity
 import (
 	"encoding/json"
 	"time"
+
+	"newser.app/internal/domain/value"
 )
 
 type User struct {
-	*Person   `json:"person,omitempty"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	Email     value.Email `json:"email,omitempty"`
+	CreatedAt time.Time   `json:"created_at,omitempty"`
+	UpdatedAt time.Time   `json:"updated_at,omitempty"`
 }
 
 func NewUser(name, email string) (*User, error) {
-	person, err := NewPerson(name, email)
+	validEmail, err := value.NewEmail(email)
+
 	if err != nil {
 		return nil, err
 	}
 
 	return &User{
-		Person:    person,
+		Email:     validEmail,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}, nil
