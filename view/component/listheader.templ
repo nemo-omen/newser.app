@@ -5,7 +5,8 @@ import (
 )
 
 templ ListHeader() {
-	<div class="stack-header flex-row flex-align-center flex-end gap-2">
+	<div class="stack-header gap-2">
+		// <div class="stack-header flex-row flex-align-center flex-end gap-2">
 		if util.GetViewPreference(ctx) == "read" {
 			<form
 				action="/app/control/viewunread"
@@ -14,8 +15,9 @@ templ ListHeader() {
 				hx-target="closest main"
 				hx-swap="innerHtml"
 			>
-				<button type="submit" class="icon-link-button text-med" style="padding-inline: 0;">
+				<button type="submit" class="icon-link-button" style="padding-inline: 0;">
 					@Icon("eye-off")
+					<span class="label text-tiny">Hide Unread</span>
 				</button>
 			</form>
 		} else {
@@ -26,8 +28,9 @@ templ ListHeader() {
 				hx-target="closest main"
 				hx-swap="innerHtml"
 			>
-				<button type="submit" class="icon-link-button text-med" style="padding-inline: 0;">
+				<button type="submit" class="icon-link-button" style="padding-inline: 0;">
 					@Icon("eye")
+					<span class="label text-tiny">Show Unread</span>
 				</button>
 			</form>
 		}
@@ -39,8 +42,9 @@ templ ListHeader() {
 				hx-target="closest main"
 				hx-swap="innerHtml"
 			>
-				<button type="submit" class="icon-link-button text-med" style="padding-inline: 0;">
+				<button type="submit" class="icon-link-button" style="padding-inline: 0;">
 					@Icon("stack")
+					<span class="label text-tiny">Expand</span>
 				</button>
 			</form>
 		} else {
@@ -51,8 +55,9 @@ templ ListHeader() {
 				hx-target="closest main"
 				hx-swap="innerHtml"
 			>
-				<button type="submit" class="icon-link-button text-med" style="padding-inline: 0;">
+				<button type="submit" class="icon-link-button" style="padding-inline: 0;">
 					@Icon("list")
+					<span class="label text-tiny">Collapse</span>
 				</button>
 			</form>
 		}

@@ -180,6 +180,7 @@ func initWebHandlers(app *echo.Echo) {
 		sessionService,
 		collectionService,
 		authService,
+		subscriptionService,
 	)
 
 	homeHandler.Routes(

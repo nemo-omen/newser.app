@@ -15,8 +15,9 @@ templ ArticleHeader(article *dto.ArticleDTO) {
 				hx-swap="innerHtml"
 			>
 				<input type="hidden" name="articleid" value={ article.ID.String() }/>
-				<button type="submit" class="icon-link-button text-med" style="padding-inline: 0;">
+				<button type="submit" class="icon-link-button" style="padding-inline: 0;">
 					@Icon("checkbox_circle_fill")
+					<span class="icon-link-label">Mark Unread</span>
 				</button>
 			</form>
 		} else {
@@ -29,8 +30,9 @@ templ ArticleHeader(article *dto.ArticleDTO) {
 				hx-trigger="load once delay:5s, submit"
 			>
 				<input type="hidden" name="articleid" value={ article.ID.String() }/>
-				<button type="submit" class="icon-link-button text-med" style="padding-inline: 0;">
+				<button type="submit" class="icon-link-button" style="padding-inline: 0;">
 					@Icon("checkbox_circle_outline")
+					<span class="icon-link-label">Mark Read</span>
 				</button>
 			</form>
 		}

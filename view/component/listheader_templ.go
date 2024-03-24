@@ -27,12 +27,12 @@ func ListHeader() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"stack-header flex-row flex-align-center flex-end gap-2\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"stack-header gap-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if util.GetViewPreference(ctx) == "read" {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/control/viewunread\" method=\"POST\" hx-post=\"/app/control/viewunread\" hx-target=\"closest main\" hx-swap=\"innerHtml\"><button type=\"submit\" class=\"icon-link-button text-med\" style=\"padding-inline: 0;\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/control/viewunread\" method=\"POST\" hx-post=\"/app/control/viewunread\" hx-target=\"closest main\" hx-swap=\"innerHtml\"><button type=\"submit\" class=\"icon-link-button\" style=\"padding-inline: 0;\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -40,12 +40,12 @@ func ListHeader() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></form>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"label text-tiny\">Hide Unread</span></button></form>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/control/viewread\" method=\"POST\" hx-post=\"/app/control/viewread\" hx-target=\"closest main\" hx-swap=\"innerHtml\"><button type=\"submit\" class=\"icon-link-button text-med\" style=\"padding-inline: 0;\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/control/viewread\" method=\"POST\" hx-post=\"/app/control/viewread\" hx-target=\"closest main\" hx-swap=\"innerHtml\"><button type=\"submit\" class=\"icon-link-button\" style=\"padding-inline: 0;\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -53,13 +53,13 @@ func ListHeader() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></form>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"label text-tiny\">Show Unread</span></button></form>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if util.GetLayoutPreference(ctx) != "expanded" {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/control/viewexpanded\" method=\"POST\" hx-post=\"/app/control/viewexpanded\" hx-target=\"closest main\" hx-swap=\"innerHtml\"><button type=\"submit\" class=\"icon-link-button text-med\" style=\"padding-inline: 0;\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/control/viewexpanded\" method=\"POST\" hx-post=\"/app/control/viewexpanded\" hx-target=\"closest main\" hx-swap=\"innerHtml\"><button type=\"submit\" class=\"icon-link-button\" style=\"padding-inline: 0;\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -67,12 +67,12 @@ func ListHeader() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></form>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"label text-tiny\">Expand</span></button></form>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		} else {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/control/viewcollapsed\" method=\"POST\" hx-post=\"/app/control/viewcollapsed\" hx-target=\"closest main\" hx-swap=\"innerHtml\"><button type=\"submit\" class=\"icon-link-button text-med\" style=\"padding-inline: 0;\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/app/control/viewcollapsed\" method=\"POST\" hx-post=\"/app/control/viewcollapsed\" hx-target=\"closest main\" hx-swap=\"innerHtml\"><button type=\"submit\" class=\"icon-link-button\" style=\"padding-inline: 0;\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -80,7 +80,7 @@ func ListHeader() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</button></form>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"label text-tiny\">Collapse</span></button></form>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

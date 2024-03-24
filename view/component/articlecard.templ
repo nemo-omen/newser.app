@@ -56,11 +56,11 @@ templ ArticleCard(article *dto.ArticleDTO) {
 
 templ CardMenu(article *dto.ArticleDTO) {
 	<ul class="card-menu flex-menu">
-		<li class="tooltip-container">
-			@SaveForm(article, true)
+		<li>
+			@SaveForm(article, true, "expanded")
 		</li>
-		<li class="tooltip-container">
-			@UnreadForm(article, true)
+		<li>
+			@UnreadForm(article, true, "expanded")
 		</li>
 	</ul>
 }

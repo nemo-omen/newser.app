@@ -583,6 +583,8 @@ time {
   margin-block-end: var(--space-2xs);
   padding-inline: var(--space-2xs);
   border-bottom: 1px solid var(--foreground-muted);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
 
   & form button {
     font-size: var(--step-1);
@@ -632,6 +634,7 @@ time {
 .condensed {
   padding: var(--space-3xs);
   position: relative;
+  overflow: visible;
 
   & .card-info {
     overflow: hidden;
@@ -656,7 +659,8 @@ time {
   }
 
   & .item-control {
-    z-index: 10;
+    z-index: 100;
+    overflow: visible !important;
   }
 }
 
@@ -718,6 +722,8 @@ time {
 
 .tooltip-container {
   z-index: 200;
+  position: relative;
+  overflow: visible;
 
   & .tooltip {
     opacity: 0;
@@ -729,12 +735,13 @@ time {
     border-radius: 0.25em;
     position: absolute;
     white-space: nowrap;
-    top: calc(-100% - 1.75rem);
+    top: calc(-100% - 1rem);
     left: 50%;
     transform: translateX(-50%);
     transition: opacity var(--transition);
     transition-delay: 0.3s;
     box-shadow: 0 0 10px hsl(var(--light-alpha) / 20%);
+    z-index: 250;
   }
 }
 
@@ -954,7 +961,7 @@ button:hover,
   gap: 0.25em;
   /* font-size: var(--step-1) !important; */
   white-space: nowrap;
-  overflow: hidden;
+  /* overflow: hidden; */
   text-overflow: ellipsis;
 
   & svg {
@@ -966,6 +973,15 @@ button:hover,
 .icon-link-button:hover {
   background-color: transparent;
   color: var(--hover);
+}
+
+.button-stack {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 0;
+  width: 5rem;
 }
 
 .icon-link-label {

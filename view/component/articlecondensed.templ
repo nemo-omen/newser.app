@@ -18,8 +18,8 @@ templ ArticleCondensed(article *dto.ArticleDTO) {
 			</div>
 			<div class="flex-row flex-align-center flex-end gap-1">
 				<div class="item-control flex-row flex-align-center gap-1">
-					@SaveForm(article, false)
-					@UnreadForm(article, false)
+					@SaveForm(article, false, "condensed")
+					@UnreadForm(article, false, "condensed")
 				</div>
 				@FormattedDateTime(article.PublishedParsed, "short")
 			</div>

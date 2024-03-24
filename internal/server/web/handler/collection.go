@@ -8,25 +8,30 @@ import (
 	"newser.app/internal/usecase/auth"
 	"newser.app/internal/usecase/collection"
 	"newser.app/internal/usecase/session"
+	"newser.app/internal/usecase/subscription"
 	"newser.app/shared/util"
+	"newser.app/view/component"
 	"newser.app/view/pages/app"
 )
 
 type WebCollectionHandler struct {
-	session           session.SessionService
-	collectionService collection.CollectionService
-	authService       auth.AuthService
+	session             session.SessionService
+	collectionService   collection.CollectionService
+	authService         auth.AuthService
+	subscriptionService subscription.SubscriptionService
 }
 
 func NewWebCollectionHandler(
 	sessionService session.SessionService,
 	collectionService collection.CollectionService,
 	authService auth.AuthService,
+	subscriptionService subscription.SubscriptionService,
 ) *WebCollectionHandler {
 	return &WebCollectionHandler{
-		session:           sessionService,
-		collectionService: collectionService,
-		authService:       authService,
+		session:             sessionService,
+		collectionService:   collectionService,
+		authService:         authService,
+		subscriptionService: subscriptionService,
 	}
 }
 
@@ -111,16 +116,29 @@ func (h *WebCollectionHandler) PostUnread(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, "/app/login")
 	}
 	articleID := c.FormValue("articleid")
+	viewType := c.FormValue("viewtype")
 	ref := c.Request().Referer()
 	if articleID == "" {
 		h.session.SetFlash(c, "error", "Article not found")
-		return redirectWithHX(c, ref)
+		// return redirectWithHX(c, ref)
 	}
 	err = h.collectionService.AddAndRemoveArticleFromCollection("unread", "read", articleID, user.ID.String())
 	if err != nil {
 		h.session.SetFlash(c, "error", "Error marking article as unread")
 	}
-	return redirectWithHX(c, ref)
+	article, err := h.subscriptionService.GetArticle(user.ID.String(), articleID)
+	if err != nil {
+		h.session.SetFlash(c, "error", "Error fetching article")
+	}
+
+	if isHxRequest(c) {
+		if viewType == "condensed" {
+			return render(c, component.ArticleCondensed(article))
+		} else if viewType == "expanded" {
+			return render(c, component.ArticleCard(article))
+		}
+	}
+	return c.Redirect(http.StatusSeeOther, ref)
 }
 
 func (h *WebCollectionHandler) PostRead(c echo.Context) error {
@@ -133,14 +151,27 @@ func (h *WebCollectionHandler) PostRead(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, "/app/login")
 	}
 	articleID := c.FormValue("articleid")
+	viewType := c.FormValue("viewtype")
 	ref := c.Request().Referer()
 	if articleID == "" {
 		h.session.SetFlash(c, "error", "Article not found")
-		return redirectWithHX(c, ref)
+		// return redirectWithHX(c, ref)
 	}
 	err = h.collectionService.AddAndRemoveArticleFromCollection("read", "unread", articleID, user.ID.String())
 	if err != nil {
 		h.session.SetFlash(c, "error", "Error marking article as read")
 	}
-	return redirectWithHX(c, ref)
+	article, err := h.subscriptionService.GetArticle(user.ID.String(), articleID)
+	if err != nil {
+		h.session.SetFlash(c, "error", "Error fetching article")
+	}
+
+	if isHxRequest(c) {
+		if viewType == "condensed" {
+			return render(c, component.ArticleCondensed(article))
+		} else if viewType == "expanded" {
+			return render(c, component.ArticleCard(article))
+		}
+	}
+	return c.Redirect(http.StatusSeeOther, ref)
 }

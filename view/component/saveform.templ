@@ -4,7 +4,7 @@ import (
 	"newser.app/internal/dto"
 )
 
-templ SaveForm(article *dto.ArticleDTO, showLabel bool) {
+templ SaveForm(article *dto.ArticleDTO, showLabel bool, viewType string) {
 	<form
 		action="/desk/articles/save"
 		method="POST"
@@ -14,10 +14,13 @@ templ SaveForm(article *dto.ArticleDTO, showLabel bool) {
 		hx-swap="outerHTML"
 	>
 		<input type="hidden" name="articleid" value={ article.ID.String() }/>
-		<button class="icon-link-button" type="submit">
+		<input type="hidden" name="viewtype" value={ viewType }/>
+		<button class="icon-link-button tooltip-container" type="submit">
 			@Icon("bookmark")
 			if showLabel {
 				<span role="status" class="icon-link-label">Save</span>
+			} else {
+				<span class="tooltip">Save</span>
 			}
 		</button>
 	</form>
