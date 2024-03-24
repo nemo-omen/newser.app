@@ -14,13 +14,14 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/jmoiron/sqlx"
 	"github.com/tursodatabase/go-libsql"
+	_ "modernc.org/sqlite"
 
 	// "github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 
 	// _ "github.com/tursodatabase/libsql-client-go/libsql"
 
-	_ "github.com/golang-migrate/migrate/v4/source/file"
+	// _ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
@@ -30,12 +31,11 @@ import (
 
 	// "newser.app/infra/repository"
 	// "newser.app/server/handler"
-
 	"newser.app/internal/infra/repository"
 	"newser.app/internal/infra/repository/sqlite"
+	"newser.app/internal/sqlitestore"
 
 	apihandler "newser.app/internal/server/api/handler"
-	"newser.app/internal/server/libsqlstore"
 	custommiddleware "newser.app/internal/server/middleware"
 	webhandler "newser.app/internal/server/web/handler"
 	"newser.app/internal/usecase/auth"
@@ -291,7 +291,7 @@ func initSessions(db *sql.DB) *scs.SessionManager {
 	sessionManager.Lifetime = (7 * 24) * time.Hour
 	// sessionManager.Cookie.Domain = cookieDomain
 	sessionManager.Cookie.SameSite = http.SameSiteStrictMode
-	sessionManager.Store = 
+	sessionManager.Store = sqlitestore.New(db)
 	// sessionManager.Store = libsqlstore.New(db)
 	// sessionManager.Store = sqlite3store.New(db)
 	return sessionManager
