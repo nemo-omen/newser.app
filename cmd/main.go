@@ -183,6 +183,8 @@ func initWebHandlers(app *echo.Echo) {
 		subscriptionService,
 	)
 
+	noteHandler := webhandler.NewWebNoteHandler(sessionService)
+
 	homeHandler.Routes(
 		app,
 		custommiddleware.AuthContext(sessionManager),
@@ -218,6 +220,13 @@ func initWebHandlers(app *echo.Echo) {
 		custommiddleware.HTMX,
 	)
 	collectionHandler.Routes(
+		app,
+		custommiddleware.CtxFlash(sessionManager),
+		custommiddleware.AuthContext(sessionManager),
+		// custommiddleware.Auth(sessionManager),
+		custommiddleware.HTMX,
+	)
+	noteHandler.Routes(
 		app,
 		custommiddleware.CtxFlash(sessionManager),
 		custommiddleware.AuthContext(sessionManager),

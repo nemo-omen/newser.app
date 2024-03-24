@@ -55,6 +55,9 @@ func (h *WebAuthHandler) GetRegister(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, "/app")
 	}
 	fmt.Println("GET /auth/register")
+	if isHxRequest(c) {
+		return render(c, authview.RegisterPageContent())
+	}
 	return render(c, authview.Register())
 }
 
@@ -103,6 +106,9 @@ func (h *WebAuthHandler) GetLogin(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, "/app")
 	}
 	util.SetPageTitle(c, h.session, "Login")
+	if isHxRequest(c) {
+		return render(c, authview.LoginPageContent())
+	}
 	return render(c, authview.Login())
 }
 

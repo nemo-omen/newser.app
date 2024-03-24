@@ -1,0 +1,17 @@
+package note
+
+import (
+	"newser.app/view/layout"
+)
+
+templ Index() {
+	@layout.App() {
+		@IndexPageContent()
+	}
+}
+
+templ IndexPageContent() {
+	<div class="stack-header gap-2">
+		<h2>Notes</h2>
+	</div>
+}

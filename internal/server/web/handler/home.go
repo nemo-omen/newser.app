@@ -36,6 +36,9 @@ func (h *WebHomeHandler) Home(c echo.Context) error {
 	if authed {
 		return c.Redirect(http.StatusSeeOther, "/app")
 	}
+	if isHxRequest(c) {
+		return render(c, home.HomePageContent())
+	}
 
 	util.SetPageTitle(c, h.session, "Newser")
 	return render(c, home.Index())

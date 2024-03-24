@@ -81,26 +81,6 @@ func MainSidebar() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = IconLink(
-			"/app/collection/unread",
-			"inbox",
-			"Unread",
-			templ.Attributes{
-				"class":        "icon-link",
-				"aria-current": isCurrentString(ctx, "/app/collection/unread"),
-				"hx-get":       "/app/collection/unread",
-				"hx-target":    "main",
-				"hx-swap":      "innerHTML",
-				"hx-push-url":  "true",
-			},
-		).Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</li><li>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = IconLink(
 			"/app/collection/saved",
 			"bookmark",
 			"Saved",

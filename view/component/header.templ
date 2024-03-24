@@ -49,8 +49,26 @@ templ Header() {
 			<nav aria-label="Main">
 				<ul>
 					if getIsAuthenticated(ctx) == false {
-						<li><a href="/auth/login">Log In</a></li>
-						<li><a href="/auth/register">Sign Up</a></li>
+						<li>
+							<a
+								href="/auth/login"
+								hx-get="/auth/login"
+								hx-replace-url="true"
+								hx-target="main"
+								hx-swap="innerHTML"
+								hx-disinherit="*"
+							>Log In</a>
+						</li>
+						<li>
+							<a
+								href="/auth/register"
+								hx-get="/auth/register"
+								hx-replace-url="true"
+								hx-target="main"
+								hx-swap="innerHTML"
+								hx-disinherit="*"
+							>Sign Up</a>
+						</li>
 					} else {
 						@UserDropdown(getEmail(ctx))
 					}

@@ -7,7 +7,7 @@ import (
 
 templ ArticleCondensed(article *dto.ArticleDTO) {
 	<li class={ "article-list-item", templ.KV("read", article.Read) }>
-		<div class="condensed flex-row gap-1 flex-align-center flex-between" id={ "item-" + article.ID.String() }>
+		<article class="condensed flex-row gap-1 flex-align-center flex-between" id={ "item-" + article.ID.String() }>
 			<div class="flex-row gap-1 flex-align-center card-info">
 				if article.FeedImageURL != "" {
 					<image class="feed-logo-menu" src={ article.FeedImageURL } alt={ util.GetImgAlt(article.FeedImageTitle, article.FeedTitle) }></image>
@@ -23,6 +23,7 @@ templ ArticleCondensed(article *dto.ArticleDTO) {
 				</div>
 				@FormattedDateTime(article.PublishedParsed, "short")
 			</div>
-		</div>
+		</article>
+		<div class="card-border"></div>
 	</li>
 }
