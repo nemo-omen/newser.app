@@ -630,6 +630,7 @@ func (r *SubscriptionSqliteRepo) GetAllFeeds(userID string) ([]*dto.NewsfeedDTO,
 		LEFT JOIN images ON newsfeed_images.image_id = images.id
 		WHERE
 			subscriptions.user_id = ?
+		ORDER BY newsfeeds.title;
 	`,
 		userID,
 	)
@@ -692,7 +693,8 @@ func (r *SubscriptionSqliteRepo) GetFeedsInfo(userId string) ([]*dto.FeedInfoDTO
 		WHERE
 			collections.title = 'unread' AND collections.user_id = ?
 		GROUP BY
-			article_subquery.newsfeed_id;`,
+			article_subquery.newsfeed_id
+		ORDER BY feed_title;`,
 		userId,
 	)
 	if err != nil {
