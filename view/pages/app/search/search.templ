@@ -40,7 +40,9 @@ templ SearchPageContent(feeds []*gofeed.Feed) {
 					<span class="error">{ getSearchError(ctx) }</span>
 				}
 			</fieldset>
-			<button type="submit">Search</button>
+			<div class="flex-row flex-start container">
+				<button type="submit">Search</button>
+			</div>
 		</form>
 		if len(feeds) > 0 {
 			@component.FeedSearchResult(feeds)

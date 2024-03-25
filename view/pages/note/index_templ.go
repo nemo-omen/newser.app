@@ -11,6 +11,7 @@ import "io"
 import "bytes"
 
 import (
+	"newser.app/view/component"
 	"newser.app/view/layout"
 )
 
@@ -66,7 +67,7 @@ func IndexPageContent() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"stack-header gap-2\"><h2>Notes</h2></div>")
+		templ_7745c5c3_Err = component.NotesHeader().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -76,3 +77,7 @@ func IndexPageContent() templ.Component {
 		return templ_7745c5c3_Err
 	})
 }
+
+// 94 122
+// 104 540
+// 106 798

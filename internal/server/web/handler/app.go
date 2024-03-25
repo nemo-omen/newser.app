@@ -90,9 +90,9 @@ func (h *WebAppHandler) GetApp(c echo.Context) error {
 	util.SetPageTitle(c, h.session, "Latest Articles")
 
 	if isHxRequest(c) {
-		return render(c, app.IndexPageContent(articles))
+		return render(c, app.IndexPageContent(articles, "/app"))
 	}
-	return render(c, app.Index(articles))
+	return render(c, app.Index(articles, "/app"))
 }
 
 func (h *WebAppHandler) GetNewsfeed(c echo.Context) error {

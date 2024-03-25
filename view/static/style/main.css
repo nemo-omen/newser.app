@@ -508,6 +508,15 @@ time {
   margin: 0 auto;
 }
 
+.grid-stack {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  padding: var(--space-s);
+  gap: var(--space-s);
+}
+
+
+
 .flex-menu {
   list-style-type: none;
   margin: 0;
@@ -675,6 +684,38 @@ time {
   }
 }
 
+.grid-card {
+  min-height: 12rem;
+  aspect-ratio: 1 / 1;
+  background-color: var(--background);
+  box-shadow: 2px 2px 5px 2px var(--shadow-color);
+  transition:
+    box-shadow var(--transition),
+    background-color var(--transition),
+    border-color var(--transition);
+  border: 1px solid var(--hover-background);
+
+  & .card-header {
+    display: flex;
+    /* flex-direction: row; */
+    gap: var(--space-xs);
+
+    & .card-title {
+      line-height: 1.5;
+      white-space: nowrap;
+      max-width: 20ch;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+    }
+
+    & .feed-logo {
+      /* overflow: hidden; */
+      /* width: var(--space-m); */
+      /* height: var(--space-m); */
+    }
+  }
+}
+
 .card:has(.collapsed) {
   gap: unset;
 }
@@ -801,6 +842,12 @@ time {
   background-color: var(--hover-background);
 }
 
+.grid-card:hover {
+  box-shadow: 5px 5px 5px 5px var(--shadow-color);
+  background-color: var(--background);
+  border-color: var(--hover-background-offset);
+}
+
 .collapsed {
   height: 0;
   overflow: hidden;
@@ -851,7 +898,7 @@ fieldset label {
   background-color: var(--background);
 }
 
-.min-container form {
+.stack form {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -863,7 +910,8 @@ fieldset label {
   }
 }
 
-input {
+input,
+textarea {
   background-color: var(--background-0);
   border-radius: 0.25em;
   border: 1px solid var(--accent-4);
@@ -896,6 +944,11 @@ select:-webkit-autofill:focus {
   box-shadow: 0 0 0 100px var(--background) inset;
   overflow: hidden !important;
   -webkit-text-fill-color: var(--foreground);
+}
+
+textarea {
+  resize: none;
+  min-height: 10rem;
 }
 
 button,
@@ -959,6 +1012,10 @@ button:hover,
   align-items: center;
   width: 100%;
   max-width: 100%;
+}
+
+.sidebar-link {
+  padding-inline: var(--space-2xs);
 }
 
 .icon-link-button {

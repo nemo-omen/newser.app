@@ -19,6 +19,10 @@ func NewSubscriptionService(subscriptionRepo repository.SubscriptionRepository) 
 	}
 }
 
+func (s *SubscriptionService) GetAllFeeds(userID string) ([]*dto.NewsfeedDTO, error) {
+	return s.subscriptionRepo.GetAllFeeds(userID)
+}
+
 func (s *SubscriptionService) GetAllArticles(userID string) ([]*dto.ArticleDTO, error) {
 	return s.subscriptionRepo.GetAllArticles(userID)
 }

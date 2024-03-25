@@ -106,7 +106,7 @@ func SearchPageContent(feeds []*gofeed.Feed) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</fieldset><button type=\"submit\">Search</button></form>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</fieldset><div class=\"flex-row flex-start container\"><button type=\"submit\">Search</button></div></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

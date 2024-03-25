@@ -1,6 +1,7 @@
 package note
 
 import (
+	"newser.app/view/component"
 	"newser.app/view/layout"
 )
 
@@ -11,7 +12,9 @@ templ Index() {
 }
 
 templ IndexPageContent() {
-	<div class="stack-header gap-2">
-		<h2>Notes</h2>
-	</div>
+	@component.NotesHeader()
 }
+
+// 94 122
+// 104 540
+// 106 798

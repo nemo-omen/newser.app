@@ -2,7 +2,6 @@ package util
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 )
 
@@ -29,7 +28,6 @@ func GetPageTitle(ctx context.Context) string {
 	if !ok {
 		return ""
 	}
-	fmt.Println("title: ", title)
 	return title
 }
 

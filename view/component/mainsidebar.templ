@@ -56,21 +56,6 @@ templ MainSidebar() {
 						},
 					)
 				</li>
-				// <li>
-				// 	@IconLink(
-				// 		"/app/collection/unread",
-				// 		"inbox",
-				// 		"Unread",
-				// 		templ.Attributes{
-				// 			"class":        "icon-link",
-				// 			"aria-current": isCurrentString(ctx, "/app/collection/unread"),
-				// 			"hx-get":       "/app/collection/unread",
-				// 			"hx-target":    "main",
-				// 			"hx-swap":      "innerHTML",
-				// 			"hx-push-url":  "true",
-				// 		},
-				// 	)
-				// </li>
 				<li>
 					@IconLink(
 						"/app/collection/saved",
@@ -104,7 +89,7 @@ templ MainSidebar() {
 				<li>
 					@IconLink(
 						"/app/search",
-						"folder_add",
+						"add",
 						"Add Feed",
 						templ.Attributes{
 							"class":        "icon-link",
@@ -120,17 +105,48 @@ templ MainSidebar() {
 		</nav>
 		if len(getSidebarFeedInfo(ctx)) > 0 {
 			<nav
-				class="nav-vertical"
-				aria-label="Subscriptions"
+				class="nav-vertical gap-1"
+				aria-labelledby="#sidebar-subscriptions-heading"
 				hx-get="/app/control/unreadcount"
 				hx-trigger="updateUnreadCount from:body"
 				hx-target="#main-feed-links"
 				hx-swap="outerHTML"
 				hx-push-url="false"
 			>
+				<a href="/app/subscriptions" class="sidebar-link">
+					<h2 class="text-small" id="sidebar-subscriptions-heading">
+						Subscriptions
+					</h2>
+				</a>
 				@MainFeedLinks()
 			</nav>
 		}
+		<nav
+			class="nav-vertical gap-1"
+			aria-labelledby="#sidebar-collections-heading"
+		>
+			<a href="/app/collections" class="sidebar-link">
+				<h2 class="text-small">
+					Collections
+				</h2>
+			</a>
+			<ul id="main-collection-links">
+				<li>
+					<a
+						href="/app/collection/new"
+						class="icon-link"
+						aria-current={ isCurrentString(ctx, "/app/collection/new") }
+						hx-get="/app/collection/new"
+						hx-target="main"
+						hx-swap="innerHTML"
+						hx-push-url="true"
+					>
+						@Icon("folder_add")
+						<span class="link-text">New Collection</span>
+					</a>
+				</li>
+			</ul>
+		</nav>
 	</aside>
 }
 
@@ -161,6 +177,12 @@ templ MainFeedLinks() {
 		}
 	</ul>
 	<script>
+	/**
+	 * Set the aria-current attribute on the sidebar links
+	 * based on the current URL. This allows us to style the
+	 * current page link differently and gives an indication
+	 * to screen readers.
+	*/
 		const sidebar = document.getElementById('sidebar-main');
 		const links = sidebar.querySelectorAll('a');
 		htmx.on('htmx:afterSettle', function(evt) {

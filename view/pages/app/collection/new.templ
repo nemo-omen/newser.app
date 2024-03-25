@@ -1,0 +1,32 @@
+package collection
+
+import (
+	"newser.app/view/layout"
+)
+
+templ New() {
+	@layout.App() {
+		@NewPageContent()
+	}
+}
+
+templ NewPageContent() {
+	<div class="container stack" style="margin-top: var(--space-s);">
+		<form
+			action="/app/collection/new"
+			method="POST"
+		>
+			<fieldset>
+				<label for="name">Name</label>
+				<input type="text" name="name" id="name"/>
+			</fieldset>
+			<fieldset>
+				<label for="description">Description</label>
+				<textarea name="description" id="description"></textarea>
+			</fieldset>
+			<div class="flex-row flex-start container">
+				<button type="submit">Create</button>
+			</div>
+		</form>
+	</div>
+}

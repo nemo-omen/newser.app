@@ -16,17 +16,22 @@ import (
 //
 // Index is reused for '/app', '/app/unread'
 // and 'app/saved'
-templ Index(articles []*dto.ArticleDTO) {
+templ Index(articles []*dto.ArticleDTO, updatePath string) {
 	@layout.App() {
-		@IndexPageContent(articles)
+		@IndexPageContent(articles, updatePath)
 	}
 }
 
-templ IndexPageContent(articles []*dto.ArticleDTO) {
+templ IndexPageContent(articles []*dto.ArticleDTO, updatePath string) {
 	@component.ListHeader()
 	<div
 		class="container stack"
 		id="articles"
+		hx-get={ updatePath }
+		hx-push-url="false"
+		hx-target="closest main"
+		hx-swap="innerHTML"
+		hx-trigger="update-articles from:body"
 	>
 		// hx-ext="debug"
 		@component.ArticleList(articles)

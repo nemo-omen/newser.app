@@ -8,13 +8,7 @@ templ App() {
 	@Base() {
 		<div class="grid-container">
 			@component.MainSidebar()
-			<main
-				hx-get="/desk/articles/update/"
-				hx-push-url="false"
-				hx-target="this"
-				hx-swap="innerHTML"
-				hx-trigger="updateArticleList from:body"
-			>
+			<main>
 				{ children... }
 			</main>
 			@component.SecondarySidebar()

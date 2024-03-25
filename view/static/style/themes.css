@@ -100,6 +100,7 @@
   --background-offset: color-mix(in srgb, var(--accent), var(--background) 90%);
   --hover-background-offset: color-mix(in srgb, var(--accent), var(--background) 70%);
   --foreground-muted: color-mix(in srgb, var(--foreground), var(--background) 90%);
+  --shadow-color: color-mix(in srgb, var(--dark-0), var(--background) 80%);
   --scrollbar-size: 5px;
 }
 

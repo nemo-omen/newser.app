@@ -41,7 +41,7 @@ func App() templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main hx-get=\"/desk/articles/update/\" hx-push-url=\"false\" hx-target=\"this\" hx-swap=\"innerHTML\" hx-trigger=\"updateArticleList from:body\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

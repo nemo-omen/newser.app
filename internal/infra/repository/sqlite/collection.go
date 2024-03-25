@@ -159,8 +159,11 @@ func (r *CollectionSqliteRepo) GetCollectionArticles(collectionID, userID string
 	if err != nil {
 		return nil, err
 	}
+
 	for _, article := range articles {
 		readCollection := dto.CollectionDTO{}
+		savedCollection := dto.CollectionDTO{}
+		// check if article is read
 		err := r.db.Get(
 			&readCollection, `
 				SELECT *
@@ -191,6 +194,39 @@ func (r *CollectionSqliteRepo) GetCollectionArticles(collectionID, userID string
 			article.Read = false
 		} else {
 			article.Read = true
+		}
+
+		// check if article is saved
+		err = r.db.Get(
+			&savedCollection, `
+				SELECT *
+				FROM collections
+				WHERE user_id = ? AND title = "saved";
+			`,
+			userID,
+		)
+		if err != nil {
+			return nil, shared.NewAppError(
+				err,
+				"Failed to get saved collection",
+				"SubscriptionSqliteRepo.GetAllArticles",
+				"entity.Collection",
+			)
+		}
+		savedArticleId := ""
+		err = r.db.Get(
+			&savedArticleId, `
+				SELECT article_id
+				FROM collection_articles
+				WHERE collection_id = ? AND article_id = ?;
+			`,
+			savedCollection.ID,
+			article.ID,
+		)
+		if err != nil {
+			article.Saved = false
+		} else {
+			article.Saved = true
 		}
 	}
 	return articles, nil

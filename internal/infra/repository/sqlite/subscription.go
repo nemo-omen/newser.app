@@ -241,6 +241,7 @@ func (r *SubscriptionSqliteRepo) GetArticle(userID, articleID string) (*dto.Arti
 	`,
 		userID,
 	)
+
 	if err != nil {
 		return nil, shared.NewAppError(
 			err,
@@ -538,6 +539,8 @@ func (r *SubscriptionSqliteRepo) GetAllArticles(userID string) ([]*dto.ArticleDT
 		}
 		for _, article := range feedArticles {
 			readCollection := dto.CollectionDTO{}
+			savedCollection := dto.CollectionDTO{}
+			// check if article is read
 			err := r.db.Get(
 				&readCollection, `
 				SELECT *
@@ -568,6 +571,39 @@ func (r *SubscriptionSqliteRepo) GetAllArticles(userID string) ([]*dto.ArticleDT
 				article.Read = false
 			} else {
 				article.Read = true
+			}
+
+			// check if article is saved
+			err = r.db.Get(
+				&savedCollection, `
+				SELECT *
+				FROM collections
+				WHERE user_id = ? AND title = "saved";
+			`,
+				userID,
+			)
+			if err != nil {
+				return nil, shared.NewAppError(
+					err,
+					"Failed to get saved collection",
+					"SubscriptionSqliteRepo.GetAllArticles",
+					"entity.Collection",
+				)
+			}
+			savedArticleId := ""
+			err = r.db.Get(
+				&savedArticleId, `
+				SELECT article_id
+				FROM collection_articles
+				WHERE collection_id = ? AND article_id = ?;
+			`,
+				savedCollection.ID,
+				article.ID,
+			)
+			if err != nil {
+				article.Saved = false
+			} else {
+				article.Saved = true
 			}
 		}
 		articles = append(articles, feedArticles...)
@@ -615,21 +651,48 @@ func (r *SubscriptionSqliteRepo) GetFeedsInfo(userId string) ([]*dto.FeedInfoDTO
 		// can limit the number of articles
 		// used for our unread count.
 		&feedInfos,
+		// `SELECT
+		// 	newsfeeds.id as feed_id,
+		// 	newsfeeds.title as feed_title,
+		// 	COALESCE(images.title, '') as image_title,
+		// 	COALESCE(images.url, '') as image_url,
+		// 	COUNT (articles.id) as unread_count
+		// FROM
+		// 	collections
+		// 	LEFT JOIN collection_articles ON collection_id = collection_articles.collection_id
+		// 	LEFT JOIN articles ON collection_articles.article_id = articles.id
+		// 	LEFT JOIN newsfeeds ON articles.newsfeed_id = newsfeeds.id
+		// 	LEFT JOIN newsfeed_images ON newsfeeds.id = newsfeed_images.newsfeed_id
+		// 	LEFT JOIN images ON newsfeed_images.image_id = images.id
+		// WHERE collections.title = 'unread' AND user_id = ?
+		// GROUP BY articles.newsfeed_id;`,
 		`SELECT
 			newsfeeds.id as feed_id,
 			newsfeeds.title as feed_title,
 			COALESCE(images.title, '') as image_title,
 			COALESCE(images.url, '') as image_url,
-			COUNT (articles.id) as unread_count
+			COUNT(article_subquery.id) as unread_count
 		FROM
 			collections
-			LEFT JOIN collection_articles ON collection_id = collection_articles.collection_id
-			LEFT JOIN articles ON collection_articles.article_id = articles.id
-			LEFT JOIN newsfeeds ON articles.newsfeed_id = newsfeeds.id
+			LEFT JOIN (
+				SELECT collection_articles.collection_id, articles.id, articles.newsfeed_id
+				FROM collection_articles
+				INNER JOIN articles ON collection_articles.article_id = articles.id
+				INNER JOIN (
+					SELECT newsfeed_id, published_parsed, 
+						ROW_NUMBER() OVER (PARTITION BY newsfeed_id ORDER BY published_parsed DESC) as rn
+					FROM articles
+				) latest_articles ON articles.newsfeed_id = latest_articles.newsfeed_id 
+								AND articles.published_parsed = latest_articles.published_parsed
+				WHERE latest_articles.rn <= 10
+			) article_subquery ON collections.id = article_subquery.collection_id
+			LEFT JOIN newsfeeds ON article_subquery.newsfeed_id = newsfeeds.id
 			LEFT JOIN newsfeed_images ON newsfeeds.id = newsfeed_images.newsfeed_id
 			LEFT JOIN images ON newsfeed_images.image_id = images.id
-		WHERE collections.title = 'unread' AND user_id = ?
-		GROUP BY articles.newsfeed_id;`,
+		WHERE
+			collections.title = 'unread' AND collections.user_id = ?
+		GROUP BY
+			article_subquery.newsfeed_id;`,
 		userId,
 	)
 	if err != nil {

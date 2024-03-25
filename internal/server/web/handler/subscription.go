@@ -10,7 +10,9 @@ import (
 	"newser.app/internal/usecase/session"
 	"newser.app/internal/usecase/subscription"
 	"newser.app/shared"
+	"newser.app/shared/util"
 	"newser.app/view/pages/app"
+	subscriptionview "newser.app/view/pages/app/subscription"
 )
 
 type WebSubscriptionHandler struct {
@@ -38,8 +40,33 @@ func (h *WebSubscriptionHandler) Routes(app *echo.Echo, middleware ...echo.Middl
 	for _, m := range middleware {
 		app.Use(m)
 	}
+	app.GET("/app/subscriptions", h.GetSubscriptions)
 	app.POST("/app/subscribe", h.PostSubscribe)
 	app.POST("/app/unsubscribe", h.PostUnSubscribe)
+}
+
+func (h *WebSubscriptionHandler) GetSubscriptions(c echo.Context) error {
+	email, ok := c.Get("user").(string)
+	if !ok {
+		return redirectWithHX(c, "/app/login")
+	}
+	user, err := h.authService.GetUserByEmail(email)
+	if err != nil {
+		return redirectWithHX(c, "/app/login")
+	}
+	userID := user.ID.String()
+
+	feeds, err := h.subscriptionService.GetAllFeeds(userID)
+	if err != nil {
+		h.session.SetFlash(c, "error", "Error fetching feeds")
+	}
+	if isHxRequest(c) {
+		return render(c, subscriptionview.IndexPageContent(feeds))
+	}
+
+	util.SetPageTitle(c, h.session, "Your Subscriptions")
+
+	return render(c, subscriptionview.Index(feeds))
 }
 
 func (h *WebSubscriptionHandler) PostSubscribe(c echo.Context) error {

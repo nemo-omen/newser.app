@@ -26,7 +26,7 @@ import (
 //
 // Index is reused for '/app', '/app/unread'
 // and 'app/saved'
-func Index(articles []*dto.ArticleDTO) templ.Component {
+func Index(articles []*dto.ArticleDTO, updatePath string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -45,7 +45,7 @@ func Index(articles []*dto.ArticleDTO) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			templ_7745c5c3_Err = IndexPageContent(articles).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = IndexPageContent(articles, updatePath).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -65,7 +65,7 @@ func Index(articles []*dto.ArticleDTO) templ.Component {
 	})
 }
 
-func IndexPageContent(articles []*dto.ArticleDTO) templ.Component {
+func IndexPageContent(articles []*dto.ArticleDTO, updatePath string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -82,7 +82,15 @@ func IndexPageContent(articles []*dto.ArticleDTO) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container stack\" id=\"articles\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container stack\" id=\"articles\" hx-get=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(updatePath))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-push-url=\"false\" hx-target=\"closest main\" hx-swap=\"innerHTML\" hx-trigger=\"update-articles from:body\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

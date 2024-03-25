@@ -122,7 +122,7 @@ func MainSidebar() templ.Component {
 		}
 		templ_7745c5c3_Err = IconLink(
 			"/app/search",
-			"folder_add",
+			"add",
 			"Add Feed",
 			templ.Attributes{
 				"class":        "icon-link",
@@ -141,7 +141,7 @@ func MainSidebar() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if len(getSidebarFeedInfo(ctx)) > 0 {
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"nav-vertical\" aria-label=\"Subscriptions\" hx-get=\"/app/control/unreadcount\" hx-trigger=\"updateUnreadCount from:body\" hx-target=\"#main-feed-links\" hx-swap=\"outerHTML\" hx-push-url=\"false\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"nav-vertical gap-1\" aria-labelledby=\"#sidebar-subscriptions-heading\" hx-get=\"/app/control/unreadcount\" hx-trigger=\"updateUnreadCount from:body\" hx-target=\"#main-feed-links\" hx-swap=\"outerHTML\" hx-push-url=\"false\"><a href=\"/app/subscriptions\" class=\"sidebar-link\"><h2 class=\"text-small\" id=\"sidebar-subscriptions-heading\">Subscriptions</h2></a>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -154,7 +154,23 @@ func MainSidebar() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</aside>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<nav class=\"nav-vertical gap-1\" aria-labelledby=\"#sidebar-collections-heading\"><a href=\"/app/collections\" class=\"sidebar-link\"><h2 class=\"text-small\">Collections</h2></a><ul id=\"main-collection-links\"><li><a href=\"/app/collection/new\" class=\"icon-link\" aria-current=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(isCurrentString(ctx, "/app/collection/new")))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-get=\"/app/collection/new\" hx-target=\"main\" hx-swap=\"innerHTML\" hx-push-url=\"true\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = Icon("folder_add").Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"link-text\">New Collection</span></a></li></ul></nav></aside>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -223,7 +239,7 @@ func MainFeedLinks() templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(feedInfo.FeedTitle)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/mainsidebar.templ`, Line: 151, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/mainsidebar.templ`, Line: 167, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -241,7 +257,7 @@ func MainFeedLinks() templ.Component {
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(getFeedLinkCount(feedInfo))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/mainsidebar.templ`, Line: 155, Col: 35}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/component/mainsidebar.templ`, Line: 171, Col: 35}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
@@ -257,7 +273,7 @@ func MainFeedLinks() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul><script>\n\t\tconst sidebar = document.getElementById('sidebar-main');\n\t\tconst links = sidebar.querySelectorAll('a');\n\t\thtmx.on('htmx:afterSettle', function(evt) {\n\t\t\tconst currentUrl = new URL(window.location);\n\t\t\tconst currentPath = currentUrl.pathname;\n\t\t\tlinks.forEach(link => {\n\t\t\t\tconst linkUrl = new URL(link.href);\n\t\t\t\tconst linkPath = linkUrl.pathname;\n\t\t\t\tif (currentPath === linkPath) {\n\t\t\t\t\tlink.setAttribute('aria-current', 'page');\n\t\t\t\t} else {\n\t\t\t\t\tlink.setAttribute('aria-current', '');\n\t\t\t\t}\n\t\t\t});\n\t\t});\n\t</script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</ul><script>\n\t/**\n\t * Set the aria-current attribute on the sidebar links\n\t * based on the current URL. This allows us to style the\n\t * current page link differently and gives an indication\n\t * to screen readers.\n\t*/\n\t\tconst sidebar = document.getElementById('sidebar-main');\n\t\tconst links = sidebar.querySelectorAll('a');\n\t\thtmx.on('htmx:afterSettle', function(evt) {\n\t\t\tconst currentUrl = new URL(window.location);\n\t\t\tconst currentPath = currentUrl.pathname;\n\t\t\tlinks.forEach(link => {\n\t\t\t\tconst linkUrl = new URL(link.href);\n\t\t\t\tconst linkPath = linkUrl.pathname;\n\t\t\t\tif (currentPath === linkPath) {\n\t\t\t\t\tlink.setAttribute('aria-current', 'page');\n\t\t\t\t} else {\n\t\t\t\t\tlink.setAttribute('aria-current', '');\n\t\t\t\t}\n\t\t\t});\n\t\t});\n\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
