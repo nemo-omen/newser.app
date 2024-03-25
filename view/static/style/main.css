@@ -421,7 +421,8 @@ main {
     width: 100%;
   }
 
-  & nav ul a {
+  & nav ul a,
+  nav a {
     color: var(--foreground);
     padding: 0.5rem;
     border-radius: 0.5rem;
@@ -447,9 +448,15 @@ main {
   }
 
   & nav ul a:hover,
-  nav ul a[aria-current="page"] {
+  nav a:hover,
+  nav ul a[aria-current="page"],
+  nav a[aria-current="page"] {
     color: var(--foreground);
     background-color: var(--hover-background);
+  }
+
+  & nav>a {
+    margin-inline-end: var(--space-xs);
   }
 }
 
