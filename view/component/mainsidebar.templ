@@ -105,7 +105,7 @@ templ MainSidebar() {
 		</nav>
 		if len(getSidebarFeedInfo(ctx)) > 0 {
 			<nav
-				class="nav-vertical gap-1"
+				class="nav-vertical"
 				aria-labelledby="#sidebar-subscriptions-heading"
 				hx-get="/app/control/unreadcount"
 				hx-trigger="updateUnreadCount from:body"
@@ -113,8 +113,13 @@ templ MainSidebar() {
 				hx-swap="outerHTML"
 				hx-push-url="false"
 			>
-				<a href="/app/subscriptions" class="sidebar-link">
-					<h2 class="text-small" id="sidebar-subscriptions-heading">
+				<a
+					href="/app/subscriptions"
+					class="sidebar-link"
+					aria-current={ isCurrentString(ctx, "/app/subscriptions") }
+					style="padding-block: var(--space-2xs); border-radius: 0.5rem;"
+				>
+					<h2 class="text-small" id="sidebar-subscriptions-heading" padding-block="var(--space-2xs)">
 						Subscriptions
 					</h2>
 				</a>
@@ -122,10 +127,15 @@ templ MainSidebar() {
 			</nav>
 		}
 		<nav
-			class="nav-vertical gap-1"
+			class="nav-vertical"
 			aria-labelledby="#sidebar-collections-heading"
 		>
-			<a href="/app/collections" class="sidebar-link">
+			<a
+				href="/app/collections"
+				class="sidebar-link"
+				aria-current={ isCurrentString(ctx, "/app/collections") }
+				style="padding-block: var(--space-2xs); border-radius: 0.5rem;"
+			>
 				<h2 class="text-small">
 					Collections
 				</h2>
