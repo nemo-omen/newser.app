@@ -135,9 +135,9 @@ func IndexPageContent(feeds []*dto.NewsfeedDTO) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			if len(feed.Description) > 96 {
+			if len(feed.Description) > 60 {
 				var templ_7745c5c3_Var7 string
-				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(feed.Description[:96] + "...")
+				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(feed.Description[:60] + "...")
 				if templ_7745c5c3_Err != nil {
 					return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/pages/app/subscription/index.templ`, Line: 29, Col: 37}
 				}

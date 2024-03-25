@@ -26,8 +26,8 @@ templ IndexPageContent(feeds []*dto.NewsfeedDTO) {
 					}
 				</a>
 				<a class="card-body" href={ templ.SafeURL("/app/newsfeed/" + feed.ID) }>
-					if len(feed.Description) > 96 {
-						{ feed.Description[:96] + "..." }
+					if len(feed.Description) > 60 {
+						{ feed.Description[:60] + "..." }
 					} else {
 						{ feed.Description }
 					}
