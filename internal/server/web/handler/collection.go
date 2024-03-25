@@ -279,7 +279,6 @@ func (h *WebCollectionHandler) PostUnsaved(c echo.Context) error {
 
 func (h *WebCollectionHandler) PostCreateCollection(c echo.Context) error {
 	collectionName := c.FormValue("name")
-	collectionDescription := c.FormValue("description")
 	email, ok := c.Get("user").(string)
 	if !ok {
 		return c.Redirect(http.StatusSeeOther, "/auth/login")
@@ -289,6 +288,7 @@ func (h *WebCollectionHandler) PostCreateCollection(c echo.Context) error {
 		return c.Redirect(http.StatusSeeOther, "/auth/login")
 	}
 	// err := h.collectionService.
+	fmt.Println(collectionName)
 	fmt.Println(user)
 	return c.Redirect(http.StatusSeeOther, "/")
 }

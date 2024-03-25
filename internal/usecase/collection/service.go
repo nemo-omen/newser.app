@@ -15,12 +15,8 @@ func NewCollectionService(collectionRepo repository.CollectionRepository) Collec
 	}
 }
 
-func (s *CollectionService) CreateCollection() (dto.CollectionDTO, error) {
-	query := `
-	INSERT INTO collections VALUES(
-
-	)
-	`
+func (s *CollectionService) CreateCollection() (*dto.CollectionDTO, error) {
+	return nil, nil
 }
 
 func (s *CollectionService) GetArticlesBySlug(slug, userID string) ([]*dto.ArticleDTO, error) {
