@@ -50,6 +50,7 @@ func (h *WebCollectionHandler) Routes(app *echo.Echo, middleware ...echo.Middlew
 	app.POST("/app/collection/unsaved", h.PostUnsaved)
 	app.GET("/app/collection/:id", h.GetCollection)
 	app.GET("/app/collection/new", h.GetCreateCollection)
+	app.POST("/app/collection/new", h.PostCreateCollection)
 
 	// app.POST("/app/collection", h.PostCollection)
 	// app.POST("/app/collection/delete", h.PostDeleteCollection)
@@ -274,4 +275,20 @@ func (h *WebCollectionHandler) PostUnsaved(c echo.Context) error {
 		}
 	}
 	return c.Redirect(http.StatusSeeOther, ref)
+}
+
+func (h *WebCollectionHandler) PostCreateCollection(c echo.Context) error {
+	collectionName := c.FormValue("name")
+	collectionDescription := c.FormValue("description")
+	email, ok := c.Get("user").(string)
+	if !ok {
+		return c.Redirect(http.StatusSeeOther, "/auth/login")
+	}
+	user, err := h.authService.GetUserByEmail(email)
+	if err != nil {
+		return c.Redirect(http.StatusSeeOther, "/auth/login")
+	}
+	// err := h.collectionService.
+	fmt.Println(user)
+	return c.Redirect(http.StatusSeeOther, "/")
 }

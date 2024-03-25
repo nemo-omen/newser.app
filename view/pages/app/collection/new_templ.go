@@ -66,7 +66,7 @@ func NewPageContent() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container stack\" style=\"margin-top: var(--space-s);\"><form action=\"/app/collection/new\" method=\"POST\"><fieldset><label for=\"name\">Name</label> <input type=\"text\" name=\"name\" id=\"name\"></fieldset><fieldset><label for=\"description\">Description</label> <textarea name=\"description\" id=\"description\"></textarea></fieldset><div class=\"flex-row flex-start container\"><button type=\"submit\">Create</button></div></form></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"container stack\" style=\"margin-top: var(--space-s);\"><form action=\"/app/collection/new\" method=\"POST\"><fieldset><label for=\"name\">Name</label> <input type=\"text\" name=\"name\" id=\"name\"></fieldset><div class=\"flex-row flex-start container\"><button type=\"submit\">Create</button></div></form></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
