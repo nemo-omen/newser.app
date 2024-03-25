@@ -614,6 +614,14 @@ time {
   /* gap: var(--space-default); */
 }
 
+.search-results {
+  & li h4 {
+    line-height: 1.5;
+    margin-top: var(--space-2xs);
+    font-size: var(--step-0);
+  }
+}
+
 /* .article-list-item { */
 /* border-bottom: 1px solid var(--foreground-muted); */
 /* padding-block: var(--space-3xs); */
@@ -724,10 +732,11 @@ time {
     flex-direction: column;
     height: 100%;
   }
+}
 
-  & .card-footer {
-    margin-block-start: auto;
-  }
+.card-footer {
+  display: flex;
+  justify-content: flex-start;
 }
 
 .card:has(.collapsed) {

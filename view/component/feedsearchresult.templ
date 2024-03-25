@@ -19,7 +19,7 @@ templ FeedSearchResult(feeds []*gofeed.Feed) {
 	if feeds != nil {
 		<div class="stack">
 			<h3>{ getFeedsFoundMessage(feeds) }</h3>
-			<ul class="stack card-list">
+			<ul class="stack card-list search-results">
 				for _, feed := range feeds {
 					@FeedPreview(feed)
 				}
