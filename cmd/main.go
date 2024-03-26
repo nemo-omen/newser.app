@@ -27,6 +27,7 @@ import (
 	webhandler "newser.app/internal/server/web/handler"
 	"newser.app/internal/usecase/auth"
 	"newser.app/internal/usecase/collection"
+	"newser.app/internal/usecase/newsfeed"
 	"newser.app/internal/usecase/session"
 
 	"newser.app/internal/usecase/subscription"
@@ -40,7 +41,7 @@ var (
 	authRepo repository.AuthRepository
 	// userRepo         repository.UserRepository
 	subscriptionRepo repository.SubscriptionRepository
-	// newsfeedRepo     repository.NewsfeedRepository
+	newsfeedRepo     repository.NewsfeedRepository
 	// articleRepo      repository.ArticleRepository
 	collectionRepo repository.CollectionRepository
 	// personRepo       repository.PersonRepository
@@ -52,12 +53,12 @@ var (
 	authService         auth.AuthService
 	sessionService      session.SessionService
 	subscriptionService subscription.SubscriptionService
-	// newsfeedService     newsfeed.NewsfeedService
-	collectionService collection.CollectionService
-	discoveryService  discovery.DiscoveryService
-	addr              string
-	cookieDomain      string
-	dsn               string
+	newsfeedService     newsfeed.NewsfeedService
+	collectionService   collection.CollectionService
+	discoveryService    discovery.DiscoveryService
+	addr                string
+	cookieDomain        string
+	dsn                 string
 )
 
 // sessionManager
@@ -165,6 +166,8 @@ func initWebHandlers(app *echo.Echo) {
 		authService,
 		subscriptionService,
 		collectionService,
+		discoveryService,
+		newsfeedService,
 	)
 	searchHandler := webhandler.NewWebSearchHandler(
 		sessionService,
@@ -239,7 +242,7 @@ func initServices() {
 	authService = auth.NewAuthService(authRepo)
 	sessionService = session.NewSessionService(sessionManager)
 	subscriptionService = subscription.NewSubscriptionService(subscriptionRepo)
-	// newsfeedService = service.NewNewsfeedService(articleRepo, imageRepo, personRepo, newsfeedRepo, collectionRepo)
+	newsfeedService = newsfeed.NewNewsfeedService(newsfeedRepo)
 	collectionService = collection.NewCollectionService(collectionRepo)
 	discoveryService = discovery.NewDiscoveryService(&http.Client{})
 }

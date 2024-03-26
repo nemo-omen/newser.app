@@ -1,11 +1,16 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
+	"slices"
 
 	"github.com/labstack/echo/v4"
+	"newser.app/internal/dto"
 	"newser.app/internal/usecase/auth"
 	"newser.app/internal/usecase/collection"
+	"newser.app/internal/usecase/discovery"
+	"newser.app/internal/usecase/newsfeed"
 	"newser.app/internal/usecase/session"
 	"newser.app/internal/usecase/subscription"
 	"newser.app/shared/util"
@@ -18,7 +23,8 @@ type WebAppHandler struct {
 	authService         auth.AuthService
 	subscriptionService subscription.SubscriptionService
 	collectionService   collection.CollectionService
-	// newsfeedService     newsfeed.NewsfeedService
+	feedApi             discovery.DiscoveryService
+	newsfeedService     newsfeed.NewsfeedService
 	// discoveryService discovery.DiscoveryService
 }
 
@@ -27,7 +33,8 @@ func NewWebAppHandler(
 	authService auth.AuthService,
 	subscriptionService subscription.SubscriptionService,
 	collectionService collection.CollectionService,
-	// newsfeedService newsfeed.NewsfeedService,
+	feedApi discovery.DiscoveryService,
+	newsfeedService newsfeed.NewsfeedService,
 	// discoveryService discovery.DiscoveryService,
 ) *WebAppHandler {
 	return &WebAppHandler{
@@ -35,7 +42,8 @@ func NewWebAppHandler(
 		authService:         authService,
 		subscriptionService: subscriptionService,
 		collectionService:   collectionService,
-		// newsfeedService:     newsfeedService,
+		feedApi:             feedApi,
+		newsfeedService:     newsfeedService,
 		// discoveryService: discoveryService,
 	}
 }
@@ -93,6 +101,56 @@ func (h *WebAppHandler) GetApp(c echo.Context) error {
 		return render(c, app.IndexPageContent(articles, "/app"))
 	}
 	return render(c, app.Index(articles, "/app"))
+}
+
+func (h *WebAppHandler) UpdateFeeds(c echo.Context) error {
+	email, ok := c.Get("user").(string)
+	if !ok {
+		return c.Redirect(http.StatusSeeOther, "/auth/login")
+	}
+	user, err := h.authService.GetUserByEmail(email)
+	if err != nil {
+		return c.Redirect(http.StatusSeeOther, "/auth/login")
+	}
+
+	currentArticles, err := h.subscriptionService.GetAllArticles(user.ID.String())
+
+	if err != nil {
+		h.session.SetFlash(c, "error", "There was a problem getting stored articles")
+	}
+
+	feeds, err := h.subscriptionService.GetAllFeeds(user.ID.String())
+	if err != nil {
+		h.session.SetFlash(c, "error", "There was a problem updating your feeds.")
+	}
+	feedUrls := []string{}
+	articleUrls := []string{}
+
+	for _, feed := range feeds {
+		feedUrls = append(feedUrls, feed.FeedURL)
+		for _, article := range feed.Articles {
+			articleUrls = append(articleUrls, article.Link)
+		}
+	}
+	fmt.Println("currentArticles: ", currentArticles)
+
+	goFeeds, err := h.feedApi.GetFeedsConcurrent(feedUrls)
+
+	for _, goFeed := range goFeeds {
+		for _, item := range goFeed.Items {
+			if !slices.Contains(articleUrls, item.Link) {
+				err = h.newsfeedService.SaveArticle(item)
+				if err != nil {
+					h.session.SetFlash(c, "error", "There was a problem saving some articles.")
+				}
+			}
+		}
+	}
+
+	fmt.Println(goFeeds)
+	// TODO: we're going to need another, smaller component
+	// to send back that just has updated, sorted articles
+	return render(c, app.IndexPageContent([]*dto.ArticleDTO{}, "/app"))
 }
 
 func (h *WebAppHandler) GetNewsfeed(c echo.Context) error {

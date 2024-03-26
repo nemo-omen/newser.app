@@ -51,9 +51,6 @@ func (h *WebCollectionHandler) Routes(app *echo.Echo, middleware ...echo.Middlew
 	app.GET("/app/collection/:id", h.GetCollection)
 	app.GET("/app/collection/new", h.GetCreateCollection)
 	app.POST("/app/collection/new", h.PostCreateCollection)
-
-	// app.POST("/app/collection", h.PostCollection)
-	// app.POST("/app/collection/delete", h.PostDeleteCollection)
 }
 
 func (h *WebCollectionHandler) GetCollections(c echo.Context) error {
