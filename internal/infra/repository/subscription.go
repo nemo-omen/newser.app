@@ -9,6 +9,7 @@ type SubscriptionRepository interface {
 	Delete(subscriptionID string) error
 	GetNewsfeed(userID, feedID string) (*dto.NewsfeedDTO, error)
 	GetArticle(userId, id string) (*dto.ArticleDTO, error)
+	AddArticle(userID string, article *dto.ArticleDTO) error
 	GetAllArticles(userID string) ([]*dto.ArticleDTO, error)
 	GetAllFeeds(userID string) ([]*dto.NewsfeedDTO, error)
 	GetFeedsInfo(userId string) ([]*dto.FeedInfoDTO, error)
