@@ -1,0 +1,47 @@
+package component
+
+import "time"
+
+func formatDateTime(date time.Time, length string) string {
+	if length == "long" {
+		return date.Format("Monday, January 2, 2006")
+	}
+
+	if length == "med" {
+		return date.Format("January 2, 2006")
+	}
+
+	if length == "med-month" {
+		return date.Format("Jan. 2006")
+	}
+
+	if length == "med-month-day" {
+		return date.Format("Jan. 2, 2006")
+	}
+
+	if length == "short" {
+		return date.Format("01/02/2006")
+	}
+
+	return date.Format(time.RFC3339)
+}
+
+templ FormattedDateTime(date time.Time, args... string) {
+	if args != nil {
+		<time date={ formatDateTime(date, "dt") }>{ formatDateTime(date, args[0]) }</time>
+	} else {
+		<time date={ formatDateTime(date, "dt") }>{ formatDateTime(date, "med-month-day") }</time>
+	}
+}
+
+templ FormattedDateTimeRange(a time.Time, b time.Time) {
+	<time date={ formatDateTime(a, "dt") + "/" + formatDateTime(b, "dt") }>
+		{ formatDateTime(a, "med-month") } &ndash; { formatDateTime(b, "med-month") }
+	</time>
+}
+
+templ FormattedDateTimeRangeIndeterminate(a time.Time) {
+	<time date={ formatDateTime(a, "dt") }>
+		{ formatDateTime(a, "med-month") } &ndash; Ongoing
+	</time>
+}

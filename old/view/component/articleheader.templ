@@ -1,0 +1,40 @@
+package component
+
+import (
+	"newser.app/internal/dto"
+)
+
+templ ArticleHeader(article *dto.ArticleDTO) {
+	<div class="stack-header flex-row flex-align-center flex-end gap-2">
+		if article.Read {
+			<form
+				action="/app/collection/unread"
+				method="POST"
+				hx-post="/app/collection/unread"
+				hx-target="closest main"
+				hx-swap="innerHtml"
+			>
+				<input type="hidden" name="articleid" value={ article.ID.String() }/>
+				<button type="submit" class="icon-link-button" style="padding-inline: 0;">
+					@Icon("checkbox_circle_fill")
+					<span class="icon-link-label">Mark Unread</span>
+				</button>
+			</form>
+		} else {
+			<form
+				action="/app/collection/read"
+				method="POST"
+				hx-post="/app/collection/read"
+				hx-target="closest main"
+				hx-swap="innerHtml"
+				hx-trigger="load once delay:5s, submit"
+			>
+				<input type="hidden" name="articleid" value={ article.ID.String() }/>
+				<button type="submit" class="icon-link-button" style="padding-inline: 0;">
+					@Icon("checkbox_circle_outline")
+					<span class="icon-link-label">Mark Read</span>
+				</button>
+			</form>
+		}
+	</div>
+}

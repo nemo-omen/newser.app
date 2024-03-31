@@ -1,0 +1,29 @@
+package component
+
+import (
+	"newser.app/internal/dto"
+	"newser.app/view/util"
+)
+
+templ ArticleCondensed(article *dto.ArticleDTO) {
+	<li class={ "article-list-item", templ.KV("read", article.Read) }>
+		<article class="condensed flex-row gap-1 flex-align-center flex-between" id={ "item-" + article.ID.String() }>
+			<div class="flex-row gap-1 flex-align-center card-info">
+				if article.FeedImageURL != "" {
+					<image class="feed-logo-menu" src={ article.FeedImageURL } alt={ util.GetImgAlt(article.FeedImageTitle, article.FeedTitle) }></image>
+				}
+				<a href={ templ.SafeURL("/app/article/" + article.ID.String()) } class="card-link">
+					<h3>{ article.Title }</h3>
+				</a>
+			</div>
+			<div class="flex-row flex-align-center flex-end gap-1">
+				<div class="item-control flex-row flex-align-center gap-1">
+					@SaveForm(article, false, "condensed")
+					@UnreadForm(article, false, "condensed")
+				</div>
+				@FormattedDateTime(article.PublishedParsed, "short")
+			</div>
+		</article>
+		<div class="card-border"></div>
+	</li>
+}

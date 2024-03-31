@@ -1,5 +1,5 @@
 run:
-	@templ generate
+	# @templ generate
 	@air -c .air.toml
 
 clean:

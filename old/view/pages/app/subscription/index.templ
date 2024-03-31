@@ -1,0 +1,53 @@
+package subscription
+
+import (
+	"newser.app/view/layout"
+	"newser.app/view/util"
+	"newser.app/view/component"
+	"newser.app/internal/dto"
+)
+
+templ Index(feeds []*dto.NewsfeedDTO) {
+	@layout.App() {
+		@IndexPageContent(feeds)
+	}
+}
+
+templ IndexPageContent(feeds []*dto.NewsfeedDTO) {
+	<div class="grid-stack">
+		for _, feed := range feeds {
+			<article class="card grid-card">
+				<a class="card-header" href={ templ.SafeURL("/app/newsfeed/" + feed.ID) }>
+					<h3 class="card-title">
+						{ feed.Title }
+					</h3>
+					if feed.ImageURL != "" {
+						<image class="feed-logo" src={ feed.ImageURL } alt={ util.GetImgAlt(feed.ImageTitle, feed.Title) }></image>
+					}
+				</a>
+				<a class="card-body" href={ templ.SafeURL("/app/newsfeed/" + feed.ID) }>
+					if len(feed.Description) > 60 {
+						{ feed.Description[:60] + "..." }
+					} else {
+						{ feed.Description }
+					}
+				</a>
+				<div class="card-footer">
+					<form
+						action="/app/subscription/unsubscribe"
+						method="POST"
+						hx-post="/app/subscription/unsubscribe"
+						hx-target="closest main"
+						hx-swap="innerHtml"
+					>
+						<input type="hidden" name="feedid" value={ feed.ID }/>
+						<button type="submit" class="icon-link-button" style="padding-inline: 0;">
+							@component.Icon("close_large")
+							<span class="icon-link-label">Unsubscribe</span>
+						</button>
+					</form>
+				</div>
+			</article>
+		}
+	</div>
+}

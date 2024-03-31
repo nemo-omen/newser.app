@@ -1,0 +1,18 @@
+package component
+
+templ NotesHeader() {
+	<div class="stack-header flex-row flex-align-center flex-end gap-2">
+		<form
+			action="/app/collection/unread"
+			method="POST"
+			hx-post="/app/collection/unread"
+			hx-target="closest main"
+			hx-swap="innerHtml"
+		>
+			<button type="submit" class="icon-link-button" style="padding-inline: 0;">
+				@Icon("note_add")
+				<span class="icon-link-label">New Note</span>
+			</button>
+		</form>
+	</div>
+}

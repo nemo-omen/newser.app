@@ -1,0 +1,114 @@
+package component
+
+import (
+	"github.com/mmcdole/gofeed"
+	"fmt"
+)
+
+func getFeedsFoundMessage(feeds []*gofeed.Feed) string {
+	if len(feeds) < 1 {
+		return "No feeds found."
+	}
+	if len(feeds) == 1 {
+		return fmt.Sprintf("We found %v feed", len(feeds))
+	}
+	return fmt.Sprintf("We found %v feeds", len(feeds))
+}
+
+templ FeedSearchResult(feeds []*gofeed.Feed) {
+	if feeds != nil {
+		<div class="stack">
+			<h3>{ getFeedsFoundMessage(feeds) }</h3>
+			<ul class="stack card-list search-results">
+				for _, feed := range feeds {
+					@FeedPreview(feed)
+				}
+			</ul>
+		</div>
+	}
+}
+
+templ FeedPreview(feed *gofeed.Feed) {
+	<li class="card">
+		<div class="card-header flex-row flex-between">
+			<div class="flex-row flex-align-center gap-1">
+				if feed.Image != nil {
+					<img src={ feed.Image.URL } alt={ feed.Image.Title } class="feed-logo"/>
+				}
+				<h3>
+					{ feed.Title }
+				</h3>
+			</div>
+			<span>{ feed.FeedType }</span>
+		</div>
+		<div class="card-body">
+			<p>
+				{ feed.Description }
+			</p>
+			<ul class={ list() }>
+				if len(feed.Items) > 2 {
+					for _, item := range feed.Items[0:2] {
+						<li class={ listitem() }>
+							<h4>{ item.Title }</h4>
+							@templ.Raw(item.Description)
+						</li>
+					}
+				}
+			</ul>
+		</div>
+		<div class="card-footer">
+			<form
+				action="/app/subscribe"
+				method="POST"
+			>
+				<input type="hidden" name="subscriptionurl" id="subscriptionurl" value={ feed.FeedLink }/>
+				<button type="submit">Subscribe</button>
+				// <span>{ feed.FeedLink }</span>
+			</form>
+		</div>
+	</li>
+}
+
+css feedPreviewList() {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+css card() {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	padding: 0.5rem;
+	border: 1px solid var(--foreground);
+}
+
+css header() {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+}
+
+css heading() {
+	line-height: 1;
+	margin: 0;
+	padding: 0;
+}
+
+css list() {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+}
+
+css listitem() {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}

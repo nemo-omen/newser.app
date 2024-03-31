@@ -1,0 +1,65 @@
+package component
+
+import (
+	"newser.app/view/util"
+)
+
+templ ListHeader() {
+	<div class="stack-header gap-2">
+		// <div class="stack-header flex-row flex-align-center flex-end gap-2">
+		if util.GetViewPreference(ctx) == "read" {
+			<form
+				action="/app/control/viewunread"
+				method="POST"
+				hx-post="/app/control/viewunread"
+				hx-target="closest main"
+				hx-swap="innerHtml"
+			>
+				<button type="submit" class="icon-link-button" style="padding-inline: 0;">
+					@Icon("eye-off")
+					<span class="label text-tiny">Hide Read</span>
+				</button>
+			</form>
+		} else {
+			<form
+				action="/app/control/viewread"
+				method="POST"
+				hx-post="/app/control/viewread"
+				hx-target="closest main"
+				hx-swap="innerHtml"
+			>
+				<button type="submit" class="icon-link-button" style="padding-inline: 0;">
+					@Icon("eye")
+					<span class="label text-tiny">Show Read</span>
+				</button>
+			</form>
+		}
+		if util.GetLayoutPreference(ctx) != "expanded" {
+			<form
+				action="/app/control/viewexpanded"
+				method="POST"
+				hx-post="/app/control/viewexpanded"
+				hx-target="closest main"
+				hx-swap="innerHtml"
+			>
+				<button type="submit" class="icon-link-button" style="padding-inline: 0;">
+					@Icon("stack")
+					<span class="label text-tiny">Expand</span>
+				</button>
+			</form>
+		} else {
+			<form
+				action="/app/control/viewcollapsed"
+				method="POST"
+				hx-post="/app/control/viewcollapsed"
+				hx-target="closest main"
+				hx-swap="innerHtml"
+			>
+				<button type="submit" class="icon-link-button" style="padding-inline: 0;">
+					@Icon("list")
+					<span class="label text-tiny">Collapse</span>
+				</button>
+			</form>
+		}
+	</div>
+}

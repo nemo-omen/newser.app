@@ -1,0 +1,212 @@
+package component
+
+import (
+	"newser.app/internal/dto"
+	"strconv"
+)
+
+func getSidebarFeedInfo(ctx context.Context) []*dto.FeedInfoDTO {
+	feedInfos := ctx.Value("feedlinks")
+	if feedInfos != nil {
+		return feedInfos.([]*dto.FeedInfoDTO)
+	}
+	return []*dto.FeedInfoDTO{}
+}
+
+func getFeedLinkCount(nf *dto.FeedInfoDTO) string {
+	return strconv.Itoa(nf.UnreadCount)
+}
+
+func getCurrentPath(ctx context.Context) string {
+	currentPath := ctx.Value("currentPath")
+	if currentPath != nil {
+		return currentPath.(string)
+	}
+	return ""
+}
+
+func isCurrentString(ctx context.Context, path string) string {
+	// fmt.Println("isCurrentString", path, getCurrentPath(ctx))
+	if getCurrentPath(ctx) == path {
+		return "page"
+	}
+	return ""
+}
+
+templ MainSidebar() {
+	<aside class="sidebar" id="sidebar-main">
+		<nav
+			aria-label="Secondary Navigation"
+			hx-boost="true"
+			hx-disinherit="*"
+		>
+			<ul>
+				<li>
+					@IconLink(
+						"/app",
+						"list",
+						"All Posts",
+						templ.Attributes{
+							"class":        "icon-link",
+							"aria-current": isCurrentString(ctx, "/app"),
+							"hx-get":       "/app",
+							"hx-target":    "main",
+							"hx-swap":      "innerHTML",
+							"hx-push-url":  "true",
+						},
+					)
+				</li>
+				<li>
+					@IconLink(
+						"/app/collection/saved",
+						"bookmark",
+						"Saved",
+						templ.Attributes{
+							"class":        "icon-link",
+							"aria-current": isCurrentString(ctx, "/app/collection/saved"),
+							"hx-get":       "/app/collection/saved",
+							"hx-target":    "main",
+							"hx-swap":      "innerHTML",
+							"hx-push-url":  "true",
+						},
+					)
+				</li>
+				<li>
+					@IconLink(
+						"/app/notes",
+						"note",
+						"Notes",
+						templ.Attributes{
+							"class":        "icon-link",
+							"aria-current": isCurrentString(ctx, "/app/notes"),
+							"hx-get":       "/app/note",
+							"hx-target":    "main",
+							"hx-swap":      "innerHTML",
+							"hx-push-url":  "true",
+						},
+					)
+				</li>
+				<li>
+					@IconLink(
+						"/app/search",
+						"add",
+						"Add Feed",
+						templ.Attributes{
+							"class":        "icon-link",
+							"aria-current": isCurrentString(ctx, "/app/search"),
+							"hx-get":       "/app/search",
+							"hx-target":    "main",
+							"hx-swap":      "innerHTML",
+							"hx-push-url":  "true",
+						},
+					)
+				</li>
+			</ul>
+		</nav>
+		if len(getSidebarFeedInfo(ctx)) > 0 {
+			<nav
+				class="nav-vertical"
+				aria-labelledby="#sidebar-subscriptions-heading"
+				hx-get="/app/control/unreadcount"
+				hx-trigger="updateUnreadCount from:body"
+				hx-target="#main-feed-links"
+				hx-swap="outerHTML"
+				hx-push-url="false"
+			>
+				<a
+					href="/app/subscriptions"
+					class="sidebar-link"
+					aria-current={ isCurrentString(ctx, "/app/subscriptions") }
+					style="padding-block: var(--space-2xs); border-radius: 0.5rem;"
+				>
+					<h2 class="text-small" id="sidebar-subscriptions-heading" padding-block="var(--space-2xs)">
+						Subscriptions
+					</h2>
+				</a>
+				@MainFeedLinks()
+			</nav>
+		}
+		<nav
+			class="nav-vertical"
+			aria-labelledby="#sidebar-collections-heading"
+		>
+			<a
+				href="/app/collections"
+				class="sidebar-link"
+				aria-current={ isCurrentString(ctx, "/app/collections") }
+				style="padding-block: var(--space-2xs); border-radius: 0.5rem;"
+			>
+				<h2 class="text-small">
+					Collections
+				</h2>
+			</a>
+			<ul id="main-collection-links">
+				<li>
+					<a
+						href="/app/collection/new"
+						class="icon-link"
+						aria-current={ isCurrentString(ctx, "/app/collection/new") }
+						hx-get="/app/collection/new"
+						hx-target="main"
+						hx-swap="innerHTML"
+						hx-push-url="true"
+					>
+						@Icon("folder_add")
+						<span class="link-text">New Collection</span>
+					</a>
+				</li>
+			</ul>
+		</nav>
+	</aside>
+}
+
+templ MainFeedLinks() {
+	<ul id="main-feed-links">
+		for _, feedInfo := range getSidebarFeedInfo(ctx) {
+			<li>
+				<a
+					class="icon-link"
+					href={ templ.SafeURL("/app/newsfeed/" + feedInfo.FeedId) }
+					aria-current={ isCurrentString(ctx, "/app/newsfeed/"+feedInfo.FeedId) }
+					hx-get={ "/app/newsfeed/" + feedInfo.FeedId }
+					hx-target="main"
+					hx-swap="innerHTML"
+					hx-push-url="true"
+				>
+					<img src={ feedInfo.ImageUrl } alt="feedLink.ImageTitle" class="image-icon"/>
+					<span class="link-text">
+						{ feedInfo.FeedTitle }
+					</span>
+					if feedInfo.UnreadCount > 0 {
+						<span class="badge">
+							{ getFeedLinkCount(feedInfo) }
+						</span>
+					}
+				</a>
+			</li>
+		}
+	</ul>
+	<script>
+	/**
+	 * Set the aria-current attribute on the sidebar links
+	 * based on the current URL. This allows us to style the
+	 * current page link differently and gives an indication
+	 * to screen readers.
+	*/
+		const sidebar = document.getElementById('sidebar-main');
+		const links = sidebar.querySelectorAll('a');
+		htmx.on('htmx:afterSettle', function(evt) {
+			const currentUrl = new URL(window.location);
+			const currentPath = currentUrl.pathname;
+			links.forEach(link => {
+				const linkUrl = new URL(link.href);
+				const linkPath = linkUrl.pathname;
+				if (currentPath === linkPath) {
+					link.setAttribute('aria-current', 'page');
+				} else {
+					link.setAttribute('aria-current', '');
+				}
+			});
+		});
+	</script>
+}

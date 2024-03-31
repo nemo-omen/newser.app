@@ -1,0 +1,38 @@
+package auth
+
+import "newser.app/view/layout"
+
+templ Login() {
+	@layout.Base() {
+		<main>
+			@LoginPageContent()
+		</main>
+	}
+}
+
+templ LoginPageContent() {
+	<div class="min-container stack">
+		<h2>Login</h2>
+		<form action="/auth/login" method="POST">
+			<fieldset>
+				<label for="email">Email</label>
+				<input type="email" name="email" id="email"/>
+				if getEmailError(ctx) != "" {
+					<span class="error">{ getEmailError(ctx) }</span>
+				}
+			</fieldset>
+			<fieldset>
+				<label for="password">Password</label>
+				<input type="password" name="password" id="password"/>
+				if getPasswordError(ctx) != "" {
+					<span class="error">{ getPasswordError(ctx) }</span>
+				}
+			</fieldset>
+			<button type="submit">Log In</button>
+		</form>
+		<div>
+			<p class="text-center">Don't have an account?</p>
+			<p class="text-center text-normal"><a href="/auth/signup" class="link">Sign up instead</a></p>
+		</div>
+	</div>
+}

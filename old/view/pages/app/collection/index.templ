@@ -1,0 +1,17 @@
+package collection
+
+import (
+	"newser.app/internal/dto"
+	// "newser.app/view/component"
+	"newser.app/view/layout"
+)
+
+templ Index(collections []*dto.CollectionDTO) {
+	@layout.App() {
+		@IndexPageContent(collections)
+	}
+}
+
+templ IndexPageContent(collections []*dto.CollectionDTO) {
+	<h2>Collections</h2>
+}

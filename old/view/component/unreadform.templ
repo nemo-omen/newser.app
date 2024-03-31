@@ -1,0 +1,49 @@
+package component
+
+import (
+	"newser.app/internal/dto"
+)
+
+templ UnreadForm(article *dto.ArticleDTO, showLabel bool, viewType string) {
+	if article.Read {
+		<form
+			action="/app/collection/unread"
+			method="post"
+			hx-post="/app/collection/unread"
+			hx-target="closest .article-list-item"
+			hx-swap="outerHTML"
+			hx-push-url="false"
+		>
+			<input type="hidden" name="articleid" value={ article.ID.String() }/>
+			<input type="hidden" name="viewtype" value={ viewType }/>
+			<button class="icon-link-button tooltip-container">
+				@Icon("checkbox_circle_fill")
+				if showLabel {
+					<span role="status" class="icon-link-label">Mark Unread</span>
+				} else {
+					<span class="tooltip">Mark Unread</span>
+				}
+			</button>
+		</form>
+	} else {
+		<form
+			action="/app/collection/read"
+			method="post"
+			hx-post="/app/collection/read"
+			hx-target="closest .article-list-item"
+			hx-swap="outerHTML"
+			hx-push-url="false"
+		>
+			<input type="hidden" name="articleid" value={ article.ID.String() }/>
+			<input type="hidden" name="viewtype" value={ viewType }/>
+			<button class="icon-link-button tooltip-container">
+				@Icon("checkbox_circle_outline")
+				if showLabel {
+					<span role="status" class="icon-link-label">Mark Read</span>
+				} else {
+					<span class="tooltip">Mark Read</span>
+				}
+			</button>
+		</form>
+	}
+}

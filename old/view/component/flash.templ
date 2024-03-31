@@ -1,0 +1,39 @@
+package component
+
+func getErrorFlash(ctx context.Context) string {
+	errorFlash := ctx.Value("errorFlash")
+	if errorFlash != nil {
+		return errorFlash.(string)
+	}
+	return ""
+}
+
+func getSuccessFlash(ctx context.Context) string {
+	successFlash := ctx.Value("successFlash")
+	if successFlash != nil {
+		return successFlash.(string)
+	}
+	return ""
+}
+
+func getNotificationFlash(ctx context.Context) string {
+	notificationFlash := ctx.Value("notificationFlash")
+	if notificationFlash != nil {
+		return notificationFlash.(string)
+	}
+	return ""
+}
+
+templ Flash() {
+	<div class="flash">
+		if getErrorFlash(ctx) != "" {
+			<span class="message error-message">{ getErrorFlash(ctx) }</span>
+		}
+		if getSuccessFlash(ctx) != "" {
+			<span class="message success-message">{ getSuccessFlash(ctx) }</span>
+		}
+		if getNotificationFlash(ctx) != "" {
+			<span class="message notification-message">{ getNotificationFlash(ctx) }</span>
+		}
+	</div>
+}

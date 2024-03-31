@@ -1,0 +1,17 @@
+package layout
+
+import (
+	"newser.app/view/component"
+)
+
+templ App() {
+	@Base() {
+		<div class="grid-container">
+			@component.MainSidebar()
+			<main>
+				{ children... }
+			</main>
+			@component.SecondarySidebar()
+		</div>
+	}
+}

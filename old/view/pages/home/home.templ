@@ -1,0 +1,23 @@
+package home
+
+import (
+	"newser.app/view/layout"
+	"newser.app/view/component"
+)
+
+templ Index() {
+	@layout.Base() {
+		<main>
+			@HomePageContent()
+		</main>
+	}
+}
+
+templ HomePageContent() {
+	<div class="min-container flex-column flex-align-center">
+		<div class="logo" style="font-size: 7rem; color: var(--tertiary);">
+			@component.Icon("logo")
+		</div>
+		<h2 style="font-size: var(--step-5)">Newser</h2>
+	</div>
+}
