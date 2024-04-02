@@ -7,9 +7,9 @@ import (
 )
 
 type ImageDTO struct {
-	ID    entity.ID `json:"id,omitempty" db:"id"`
-	URL   string    `json:"url,omitempty" db:"url"`
-	Title string    `json:"title,omitempty" db:"title"`
+	ID    int64  `json:"id,omitempty" db:"id"`
+	URL   string `json:"url,omitempty" db:"url"`
+	Title string `json:"title,omitempty" db:"title"`
 }
 
 func (i ImageDTO) JSON() []byte {
@@ -29,5 +29,13 @@ func (i ImageDTO) FromDomain(image *entity.Image) ImageDTO {
 		ID:    image.ID,
 		URL:   image.URL.String(),
 		Title: image.Title,
+	}
+}
+
+func (i ImageDTO) ToDomain() *entity.Image {
+	return &entity.Image{
+		ID:    i.ID,
+		URL:   entity.NewURL(i.URL),
+		Title: i.Title,
 	}
 }

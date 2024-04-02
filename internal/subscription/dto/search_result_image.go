@@ -1,6 +1,6 @@
 package dto
 
-import "newser.app/internal/search/entity"
+import "newser.app/internal/subscription/entity"
 
 type SearchResultImageDTO struct {
 	URL   string `json:"url,omitempty"`

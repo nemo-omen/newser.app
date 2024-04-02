@@ -3,7 +3,7 @@ package dto
 import (
 	"time"
 
-	"newser.app/internal/search/entity"
+	"newser.app/internal/subscription/entity"
 )
 
 // SearchResultItemDTO is the object used to present fetched feeds to the

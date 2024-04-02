@@ -3,7 +3,7 @@ package dto
 import (
 	"time"
 
-	"newser.app/internal/search/entity"
+	"newser.app/internal/subscription/entity"
 )
 
 type SearchResultFeedDTO struct {
@@ -20,16 +20,24 @@ type SearchResultFeedDTO struct {
 	Language        string                   `json:"language,omitempty"`
 	Image           *SearchResultImageDTO    `json:"image,omitempty"`
 	Copyright       string                   `json:"copyright,omitempty"`
-	Generator       string                   `json:"generator,omitempty"`
 	Categories      []string                 `json:"categories,omitempty"`
 	Items           []*SearchResultItemDTO   `json:"items"`
 	FeedType        string                   `json:"feedType"`
-	FeedVersion     string                   `json:"feedVersion"`
 }
 
 func (f *SearchResultFeedDTO) ToDomain() *entity.SearchResultFeed {
 	if f == nil {
 		return nil
+	}
+
+	authors := []*entity.SearchResultPerson{}
+	for _, author := range f.Authors {
+		authors = append(authors, author.ToDomain())
+	}
+
+	items := []*entity.SearchResultItem{}
+	for _, item := range f.Items {
+		items = append(items, item.ToDomain())
 	}
 
 	return &entity.SearchResultFeed{
@@ -42,12 +50,11 @@ func (f *SearchResultFeedDTO) ToDomain() *entity.SearchResultFeed {
 		UpdatedParsed:   f.UpdatedParsed,
 		Published:       f.Published,
 		PublishedParsed: f.PublishedParsed,
-		Authors:         f.Authors.ToDomain(),
+		Authors:         authors,
 		Language:        f.Language,
 		Image:           f.Image.ToDomain(),
 		Categories:      f.Categories,
-		Items:           f.Items.ToDomain(),
+		Items:           items,
 		FeedType:        f.FeedType,
-		FeedVersion:     f.FeedVersion,
 	}
 }
