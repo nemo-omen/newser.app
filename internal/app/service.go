@@ -10,18 +10,43 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func (app *App) startService() error {
-	// init repos
-	searchRepo := searchRepo.NewGofeedRepository(&http.Client{})
-	// init services
-	searchService := searchUsecase.NewSearchService(searchRepo)
-	// init handlers
-	searchHandler := searchHttp.NewSearchHandler(searchService)
+// repos
+var (
+	searchRepository *searchRepo.GofeedRepository
+)
 
-	searchGroup := app.echo.Group("/search")
+// usecases
+var (
+	searchService *searchUsecase.SearchService
+)
+
+// handlers
+var (
+	apiSearchHandler *searchHttp.SearchHandler
+)
+
+func (app *App) startService() error {
+	initRepositories()
+	initServices()
+	initHandlers()
+
+	apiGroup := app.echo.Group("/api/v1")
+	apiSearchHandler.Routes(apiGroup)
+
 	app.echo.GET("/ping", func(c echo.Context) error {
 		return c.String(http.StatusOK, "pong ⚾")
 	})
-	searchHandler.Routes(searchGroup)
 	return nil
+}
+
+func initRepositories() {
+	searchRepository = searchRepo.NewGofeedRepository(&http.Client{})
+}
+
+func initServices() {
+	searchService = searchUsecase.NewSearchService(searchRepository)
+}
+
+func initHandlers() {
+	apiSearchHandler = searchHttp.NewSearchHandler(searchService)
 }

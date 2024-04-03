@@ -7,23 +7,25 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 	"github.com/vingarcia/ksql"
-	ksqlite "github.com/vingarcia/ksql/adapters/modernc-ksqlite"
+	"newser.app/config"
+	"newser.app/datasource"
 )
 
 type App struct {
 	echo *echo.Echo
 	db   *ksql.DB
+	cfg  config.Config
 }
 
-func NewApp(ctx context.Context) *App {
-	db, err := ksqlite.New(ctx, "file::memory:?cache=shared", ksql.Config{})
+func NewApp(ctx context.Context, cfg config.Config) *App {
+	db, err := datasource.NewDatabase(cfg.Database)
 	if err != nil {
-		log.Fatal("failed to create ksqlite DB: %w", err)
+		panic(err)
 	}
 
 	app := &App{
 		echo: echo.New(),
-		db:   &db,
+		db:   db,
 	}
 
 	app.echo.Logger.SetLevel(log.DEBUG)

@@ -17,6 +17,8 @@ var (
 	ErrInvalidUrl = errors.New("not a valid url")
 )
 
+// GetValidUrl attempts to transform and validate
+// a given string into a valid URL.
 func GetValidUrl(u string) (string, error) {
 	if IsFeedLink(u) {
 		return u, nil
@@ -37,11 +39,13 @@ func GetValidUrl(u string) (string, error) {
 	return parsed.String(), nil
 }
 
+// HasValidTLD checks if a given string has a valid TLD.
 func HasValidTLD(u string) bool {
 	_, err := publicsuffix.Parse(u)
 	return err == nil
 }
 
+// ParseURL parses a given string as a URL.
 func ParseURL(u string) (*url.URL, error) {
 	parsed, err := tld.Parse(u)
 	if err != nil {
@@ -53,6 +57,9 @@ func ParseURL(u string) (*url.URL, error) {
 	return parsed.URL, nil
 }
 
+// IsSite checks if a given URL is a valid site
+// by sending a HEAD request and checking if the
+// response StatusCode == 200.
 func IsSite(url string) bool {
 	client := http.Client{}
 	res, err := client.Head(url)
@@ -65,6 +72,8 @@ func IsSite(url string) bool {
 	return false
 }
 
+// HasCommonFeedPath checks if a given URL has a common
+// feed path suffix.
 func HasCommonFeedPath(u string) bool {
 	for _, path := range constant.CommonFeedPaths {
 		if strings.HasSuffix(u, path) {
@@ -74,6 +83,8 @@ func HasCommonFeedPath(u string) bool {
 	return false
 }
 
+// HasCommonFeedExtension checks if a given URL has a common
+// feed extension suffix.
 func HasCommonFeedExtension(u string) bool {
 	for _, ext := range constant.CommonFeedExtensions {
 		if strings.HasSuffix(u, ext) {
@@ -83,6 +94,9 @@ func HasCommonFeedExtension(u string) bool {
 	return false
 }
 
+// IsFeedLink checks if a given URL is a valid feed link
+// by sending a GET request and checking if the response
+// Content-Type is a valid feed type.
 func IsFeedLink(u string) bool {
 	res, err := http.Get(u)
 	if err != nil {

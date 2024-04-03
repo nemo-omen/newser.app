@@ -1,0 +1,16 @@
+Server:
+  Name: newser.app
+  ApiPort: 8080
+  WebPort: 8081
+  Debug: false
+  Env: local
+  ReadTimeout: 5s
+  WriteTimeout: 5s
+
+Database:
+  DSN: file::memory:?cache=shared
+
+Authentications:
+  Key: BigTimeSecretKey@?!%&
+  SecretKey: AnotherBigTimeSecretKey@?!%&
+  SaltKey: s4ltK3y!@#$
