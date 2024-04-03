@@ -1,6 +1,8 @@
 module newser.app
 
-go 1.21
+go 1.22.0
+
+toolchain go1.22.1
 
 require (
 	github.com/PuerkitoBio/goquery v1.9.0
@@ -47,6 +49,8 @@ require (
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	github.com/vingarcia/ksql v1.12.0 // indirect
 	github.com/vingarcia/ksql/adapters/modernc-ksqlite v1.12.0 // indirect
+	github.com/weppos/publicsuffix-go v0.30.2 // indirect
+	github.com/zomasec/tld v1.0.3 // indirect
 	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e // indirect
 	golang.org/x/mod v0.9.0 // indirect
 	golang.org/x/net v0.21.0 // indirect
