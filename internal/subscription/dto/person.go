@@ -3,15 +3,13 @@ package dto
 import (
 	"encoding/json"
 
-	"newser.app/internal/domain/entity"
+	"newser.app/internal/subscription/entity"
 )
 
 type PersonDTO struct {
-	ID        entity.ID   `json:"id,omitempty"`
-	Name      string      `json:"name,omitempty"`
-	Email     string      `json:"email,omitempty"`
-	Articles  []entity.ID `json:"articles,omitempty"`
-	Newsfeeds []entity.ID `json:"newsfeeds,omitempty"`
+	ID    int64  `json:"id,omitempty"`
+	Name  string `json:"name,omitempty"`
+	Email string `json:"email,omitempty"`
 }
 
 func (p PersonDTO) JSON() []byte {
@@ -28,13 +26,10 @@ func (p PersonDTO) String() string {
 	return string(p.JSON())
 }
 
-func (p PersonDTO) FromDomain(person *entity.Person) PersonDTO {
-	if person == nil {
-		return PersonDTO{}
-	}
-	return PersonDTO{
-		ID:    person.ID,
-		Name:  person.Name.String(),
-		Email: person.Email.String(),
+func (p PersonDTO) ToDomain() entity.Person {
+	return entity.Person{
+		ID:    p.ID,
+		Name:  p.Name,
+		Email: p.Email,
 	}
 }

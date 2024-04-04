@@ -1,9 +1,0 @@
-package collection
-
-import (
-	"errors"
-)
-
-var (
-	ErrNotFound = errors.New("not found")
-)

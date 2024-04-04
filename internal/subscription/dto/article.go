@@ -4,32 +4,32 @@ import (
 	"encoding/json"
 	"time"
 
-	"newser.app/internal/domain/entity"
+	"newser.app/internal/subscription/entity"
 )
 
 type ArticleDTO struct {
-	ID              entity.ID     `json:"id,omitempty" db:"id"`
-	Title           string        `json:"title,omitempty" db:"title"`
-	Description     string        `json:"description,omitempty" db:"description"`
-	Content         string        `json:"content,omitempty" db:"content"`
-	Link            string        `json:"link,omitempty" db:"article_link"`
-	Updated         string        `json:"updated,omitempty" db:"updated"`
-	UpdatedParsed   time.Time     `json:"updated_parsed,omitempty" db:"updated_parsed"`
-	Published       string        `json:"published,omitempty" db:"published"`
-	PublishedParsed time.Time     `json:"published_parsed,omitempty" db:"published_parsed"`
-	Author          PersonDTO     `json:"author,omitempty" db:"author"`
-	GUID            string        `json:"guid,omitempty" db:"guid"`
-	Image           ImageDTO      `json:"image,omitempty" db:"image"`
-	Categories      []CategoryDTO `json:"categories,omitempty" db:"categories"`
-	Slug            string        `json:"slug,omitempty" db:"slug"`
-	Read            bool          `json:"read" db:"read"`
-	Saved           bool          `json:"saved" db:"saved"`
-	SiteURL         string        `json:"site_url,omitempty" db:"feed_site_url"`
-	FeedTitle       string        `json:"feed_title,omitempty" db:"newsfeed_title"`
-	FeedID          string        `json:"feed_id,omitempty" db:"newsfeed_id"`
-	FeedImageURL    string        `json:"feed_image_url,omitempty" db:"feed_image_url"`
-	FeedImageTitle  string        `json:"feed_image_title,omitempty" db:"feed_image_title"`
-	FeedSlug        string        `json:"feed_slug,omitempty" db:"feed_slug"`
+	ID              int64     `json:"id,omitempty"`
+	Title           string    `json:"title,omitempty"`
+	Description     string    `json:"description,omitempty"`
+	Content         string    `json:"content,omitempty"`
+	Link            string    `json:"link,omitempty"`
+	Updated         string    `json:"updated,omitempty"`
+	UpdatedParsed   time.Time `json:"updated_parsed,omitempty"`
+	Published       string    `json:"published,omitempty"`
+	PublishedParsed time.Time `json:"published_parsed,omitempty"`
+	Author          PersonDTO `json:"author,omitempty"`
+	GUID            string    `json:"guid,omitempty"`
+	Image           ImageDTO  `json:"image,omitempty"`
+	Categories      []string  `json:"categories,omitempty"`
+	Slug            string    `json:"slug,omitempty"`
+	Read            bool      `json:"read" `
+	Saved           bool      `json:"saved" `
+	SiteURL         string    `json:"site_url,omitempty"`
+	FeedTitle       string    `json:"feed_title,omitempty"`
+	FeedID          string    `json:"feed_id,omitempty"`
+	FeedImageURL    string    `json:"feed_image_url,omitempty"`
+	FeedImageTitle  string    `json:"feed_image_title,omitempty"`
+	FeedSlug        string    `json:"feed_slug,omitempty"`
 }
 
 func (a ArticleDTO) JSON() []byte {
@@ -41,28 +41,22 @@ func (a ArticleDTO) String() string {
 	return string(a.JSON())
 }
 
-func (a ArticleDTO) FromDomain(article *entity.Article) *ArticleDTO {
-	art := ArticleDTO{
-		ID:              article.ID,
-		Title:           article.Title,
-		Description:     article.Description,
-		Content:         article.Content,
-		Link:            article.Link.String(),
-		Updated:         article.Updated,
-		UpdatedParsed:   article.UpdatedParsed,
-		Published:       article.Published,
-		PublishedParsed: article.PublishedParsed,
-		Author:          PersonDTO{}.FromDomain(article.Author),
-		GUID:            article.GUID,
-		Image:           ImageDTO{}.FromDomain(article.Image),
-		Slug:            article.Slug.String(),
-		FeedID:          article.NewsfeedID.String(),
-		Categories:      []CategoryDTO{},
-		Read:            article.Read,
-		Saved:           article.Saved,
+func (a ArticleDTO) ToDomain() entity.Article {
+	art := entity.Article{
+		ID:              a.ID,
+		Title:           a.Title,
+		Description:     a.Description,
+		Content:         a.Content,
+		Link:            a.Link,
+		Updated:         a.Updated,
+		UpdatedParsed:   a.UpdatedParsed,
+		Published:       a.Published,
+		PublishedParsed: a.PublishedParsed,
+		Author:          a.Author.ToDomain(),
+		GUID:            a.GUID,
+		Image:           a.Image.ToDomain(),
+		Categories:      a.Categories,
+		Slug:            a.Slug,
 	}
-	for _, c := range article.Categories {
-		art.Categories = append(art.Categories, CategoryDTO{}.FromDomain(c))
-	}
-	return &art
+	return art
 }

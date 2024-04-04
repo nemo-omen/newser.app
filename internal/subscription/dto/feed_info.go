@@ -1,9 +1,22 @@
 package dto
 
+import (
+	"encoding/json"
+)
+
 type FeedInfoDTO struct {
-	FeedId      string `json:"feedId" db:"feed_id"`
-	FeedTitle   string `json:"feedTitle" db:"feed_title"`
-	ImageUrl    string `json:"imageUrl" db:"image_url"`
-	ImageTitle  string `json:"imageTitle" db:"image_title"`
-	UnreadCount int    `json:"unreadCount" db:"unread_count"`
+	FeedId      string `json:"feedId"`
+	FeedTitle   string `json:"feedTitle"`
+	ImageUrl    string `json:"imageUrl"`
+	ImageTitle  string `json:"imageTitle"`
+	UnreadCount int    `json:"unreadCount"`
+}
+
+func (f FeedInfoDTO) JSON() []byte {
+	j, _ := json.MarshalIndent(f, "", "  ")
+	return j
+}
+
+func (f FeedInfoDTO) String() string {
+	return string(f.JSON())
 }

@@ -3,13 +3,13 @@ package dto
 import (
 	"encoding/json"
 
-	"newser.app/internal/domain/entity"
+	"newser.app/internal/subscription/entity"
 )
 
 type ImageDTO struct {
-	ID    int64  `json:"id,omitempty" db:"id"`
-	URL   string `json:"url,omitempty" db:"url"`
-	Title string `json:"title,omitempty" db:"title"`
+	ID    int64  `json:"id,omitempty"`
+	URL   string `json:"url,omitempty"`
+	Title string `json:"title,omitempty"`
 }
 
 func (i ImageDTO) JSON() []byte {
@@ -21,21 +21,10 @@ func (i ImageDTO) String() string {
 	return string(i.JSON())
 }
 
-func (i ImageDTO) FromDomain(image *entity.Image) ImageDTO {
-	if image == nil {
-		return ImageDTO{}
-	}
-	return ImageDTO{
-		ID:    image.ID,
-		URL:   image.URL.String(),
-		Title: image.Title,
-	}
-}
-
-func (i ImageDTO) ToDomain() *entity.Image {
-	return &entity.Image{
+func (i ImageDTO) ToDomain() entity.Image {
+	return entity.Image{
 		ID:    i.ID,
-		URL:   entity.NewURL(i.URL),
+		URL:   i.URL,
 		Title: i.Title,
 	}
 }
